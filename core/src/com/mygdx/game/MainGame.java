@@ -1,3 +1,11 @@
+/*
+* Class to show options menu before going into the main game baord screen
+* - Continue button
+* - Play / New Game button
+* - Load Game button
+* - Teacher Panel button
+ */
+
 package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
