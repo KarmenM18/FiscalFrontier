@@ -1,9 +1,11 @@
 package com.mygdx.game;
 
+import java.io.File;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -68,5 +70,15 @@ public final class Utility {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Check if a file already exists and can be accessed
+     * @param filename Path to file
+     * @return True if the file exists, False if it doesn't
+     */
+    public static Boolean fileExists(String filename) {
+        File f = new File(filename);
+        return f.exists() && f.isFile();
     }
 }

@@ -36,10 +36,11 @@ public class GameBoard extends ScreenAdapter {
     private Label moneyLabel;
     private Label scoreLabel;
     private Label starsLabel;
+    private Dialog confirmMenuDialog;
 
-    Texture img;
-    // TODO: Have a separate class to store game state
-    int currTurn; // The current active player turn
+    private Texture background;
+
+    private GameState gameState;
 
 
     /**
@@ -58,19 +59,21 @@ public class GameBoard extends ScreenAdapter {
         hudStage = new Stage(new ScreenViewport(), main.batch);
         initializeHUD();
 
-        assets.load("badlogic.jpg", Texture.class);
+        assets.load("background.jpeg", Texture.class);
         assets.finishLoading();
 
-        img = assets.get("badlogic.jpg");
-        Image imgActor =  new Image(img);
-        stage.addActor(imgActor);
+        // Initialize background
+        background = assets.get("background.jpeg");
+        Image backgroundImage = new Image(background);
+        backgroundImage.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage.addActor(backgroundImage);
 
         // Setup keyboard shortcuts
         stage.addListener(new InputListener() {
            @Override
            public boolean keyDown(InputEvent event, int keycode) {
                if (keycode == Input.Keys.ESCAPE) {
-                   main.setScreen(main.getMainMenuScreen());
+                   confirmMenuDialog.show(hudStage);
                    return true;
                }
                return false;
@@ -91,27 +94,44 @@ public class GameBoard extends ScreenAdapter {
         moneyLabel = new Label("moneyLabel", skin);
         // Initialize HUD
         hudTable = new Table();
-        hudTable.setFillParent(true);
-        hudTable.top().left();
+        hudTable.setBackground(skin.getDrawable("window"));
         hudTable.add(menuButton);
         hudTable.add(currPlayerLabel).padLeft(10).uniform();
         hudTable.add(scoreLabel).padLeft(10).uniform();
         hudTable.add(starsLabel).padLeft(10).uniform();
         hudTable.add(moneyLabel).padLeft(10).uniform();
         hudTable.add(nextTurnButton).expandX().right();
-        hudStage.addActor(hudTable);
+        Table table = new Table();
+        table.setBounds(0, (float) (hudStage.getHeight() * .94), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));
+        table.add(hudTable).width(hudStage.getWidth());
+
+        hudStage.addActor(table);
+
+        // Initialize confirm to menu box
+        confirmMenuDialog = new Dialog("Confirm Menu", skin) {
+            @Override
+            protected void result(Object object) {
+                if ((Boolean) object) {
+                    enterMenu();
+                }
+            }
+        };
+        confirmMenuDialog.text("Are you sure you want to exit to menu? Game progress will be saved.");
+        confirmMenuDialog.button("Yes", true);
+        confirmMenuDialog.button("No", false);
 
         // Add listeners
         menuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                main.setScreen(main.getMainMenuScreen());
+                confirmMenuDialog.show(hudStage);
             }
         });
         nextTurnButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                currTurn = (currTurn + 1) % main.playerList.size();
+                gameState.currPlayerTurn = (gameState.currPlayerTurn + 1) % gameState.playerList.size();
+                gameState.turnNumber++;
             }
         });
 
@@ -121,8 +141,29 @@ public class GameBoard extends ScreenAdapter {
         inputMultiplexer.addProcessor(hudStage);
     }
 
+    /**
+     * Setter for GameState.
+     * Must be set before switching screen to GameBoard.
+     * @param gameState GameState to load
+     */
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    /**
+     * Save the GameState and leave to the menu
+     */
+    private void enterMenu() {
+        main.saveGameState(gameState);
+        main.setScreen(main.getMainMenuScreen());
+    }
+
     @Override
     public void show() {
+        if (gameState == null) {
+            throw new IllegalStateException("Switched to GameBoard without a GameState set");
+        }
+
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -133,18 +174,19 @@ public class GameBoard extends ScreenAdapter {
         stage.draw();
 
         // Update HUD and draw on top of the game
-        Player currPlayer = main.playerList.get(currTurn);
-        currPlayerLabel.setText(currPlayer.name + "'s Turn");
+        Player currPlayer = gameState.playerList.get(gameState.currPlayerTurn);
+        currPlayerLabel.setText(currPlayer.profile.name + "'s Turn");
         scoreLabel.setText("Score: " + currPlayer.score);
         starsLabel.setText("Stars: " + currPlayer.stars);
         moneyLabel.setText("Money: $" + currPlayer.money);
 
+        hudStage.act(Gdx.graphics.getDeltaTime());
         hudStage.draw();
     }
 
     @Override
     public void dispose() {
-        img.dispose();
+        background.dispose();
         stage.dispose();
         hudStage.dispose();
     }

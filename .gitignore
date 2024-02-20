@@ -114,4 +114,4 @@ Thumbs.db
 /ios/IOSLauncher.app.dSYM
 
 ## Save files
-players.ser
+*.ser

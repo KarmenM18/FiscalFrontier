@@ -22,7 +22,7 @@ public class MainGame extends Game {
 	private AssetManager assets = new AssetManager();
 	private Config config = new Config();
 
-	List<Player> playerList; // List of players
+	List<PlayerProfile> profileList; // List of player profiles
 	
 	@Override
 	public void create() {
@@ -35,15 +35,14 @@ public class MainGame extends Game {
 		gameBoard = new GameBoard(this, assets, config);
 
 		// Load players from save if possible
-		File f = new File(config.playerSavePath);
-		if (f.exists() && f.isFile()) {
-			playerList = (List<Player>)Utility.loadObject(config.playerSavePath);
+		if (Utility.fileExists(config.playerSavePath)) {
+			profileList = (List<PlayerProfile>)Utility.loadObject(config.playerSavePath);
 		} else {
-			playerList = new ArrayList<Player>();
-			playerList.add(new Player("Player 1", Utility.getRandom(0, 1000), Utility.getRandom(0, 1000), Utility.getRandom(0, 1000)));
-			playerList.add(new Player("Player 2", Utility.getRandom(0, 1000), Utility.getRandom(0, 1000), Utility.getRandom(0, 1000)));
-			playerList.add(new Player("Player 3", Utility.getRandom(0, 1000), Utility.getRandom(0, 1000), Utility.getRandom(0, 1000)));
-			playerList.add(new Player("Player 4", Utility.getRandom(0, 1000), Utility.getRandom(0, 1000), Utility.getRandom(0, 1000)));
+			profileList = new ArrayList<PlayerProfile>();
+			profileList.add(new PlayerProfile("Player 1"));
+			profileList.add(new PlayerProfile("Player 2"));
+			profileList.add(new PlayerProfile("Player 3"));
+			profileList.add(new PlayerProfile("Player 4"));
 		}
 
 		// Set starting screen
@@ -67,21 +66,39 @@ public class MainGame extends Game {
 	/**
 	 * @return Get MainMenuScreen object
 	 */
-	public Screen getMainMenuScreen() {
+	public MainMenuScreen getMainMenuScreen() {
 		return mainMenuScreen;
 	}
 
 	/**
 	 * @return Get GameBoard object
 	 */
-	public Screen getGameBoard() {
+	public GameBoard getGameBoard() {
 		return gameBoard;
 	}
 
+	// Saving stuff TODO: Save manager
 	/**
-	 * Save player list to file
+	 * Save player profile list to file
 	 */
-	public void savePlayers() {
-		Utility.saveObject(playerList, config.playerSavePath);
+	public void saveProfiles() {
+		Utility.saveObject(profileList, config.playerSavePath);
+	}
+	/**
+	 * Save a GameState to file
+	 */
+	public void saveGameState(GameState gs) {
+		Utility.saveObject(gs, config.gameStateSavePath);
+	}
+	/**
+	 * Load a GameState from file
+	 */
+	public GameState loadGameState(String filename) {
+		try {
+			return (GameState) Utility.loadObject(filename);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

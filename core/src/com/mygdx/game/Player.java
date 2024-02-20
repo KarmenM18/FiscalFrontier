@@ -14,7 +14,7 @@ import java.io.Serializable;
  * Represents a player in the game.
  */
 public class Player implements Serializable {
-    String name;
+    PlayerProfile profile;
     int score;
     int stars;
     int money;
@@ -22,22 +22,22 @@ public class Player implements Serializable {
     /**
      * Constructor with only name required
      *
-     * @param name Player name
+     * @param profile Player profile, used to link in-game player with their out-of-game profile
      */
-    public Player(String name) {
-        this(name, 0, 0, 0);
+    public Player(PlayerProfile profile) {
+        this(profile, 0, 0, 0);
     }
 
     /**
      * Constructor for Player class
      *
-     * @param name Player name
+     * @param profile Player profile, used to link in-game player with their out-of-game profile
      * @param money Player money
      * @param score Player score
      * @param stars Player stars
      */
-    public Player(String name, int money, int score, int stars) {
-        this.name = name;
+    public Player(PlayerProfile profile, int money, int score, int stars) {
+        this.profile = profile;
         this.score = score;
         this.stars = stars;
         this.money = money;
