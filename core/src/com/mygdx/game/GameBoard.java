@@ -175,10 +175,10 @@ public class GameBoard extends ScreenAdapter {
 
         // Update HUD and draw on top of the game
         Player currPlayer = gameState.playerList.get(gameState.currPlayerTurn);
-        currPlayerLabel.setText(currPlayer.profile.name + "'s Turn");
-        scoreLabel.setText("Score: " + currPlayer.score);
-        starsLabel.setText("Stars: " + currPlayer.stars);
-        moneyLabel.setText("Money: $" + currPlayer.money);
+        currPlayerLabel.setText(currPlayer.getPlayerProfile().name + "'s Turn");
+        scoreLabel.setText("Score: " + currPlayer.getScore());
+        starsLabel.setText("Stars: " + currPlayer.getStars());
+        moneyLabel.setText("Money: $" + currPlayer.getMoney());
 
         hudStage.act(Gdx.graphics.getDeltaTime());
         hudStage.draw();
