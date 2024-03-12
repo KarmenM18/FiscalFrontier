@@ -1,5 +1,5 @@
 /*
-* Class used for GameBoard events during player turns
+* Class used for the game board screen.
 * - Rolling
 * - Taking Turns
 * - Shop
@@ -10,54 +10,64 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Observer.Observable;
+import com.mygdx.game.Observer.Observer;
 
-public class GameBoard extends ScreenAdapter {
-    private MainGame main;
-    private AssetManager assets;
-    private Config config;
-    private Skin skin;
+import java.util.*;
+import java.util.List;
+
+import static com.badlogic.gdx.math.MathUtils.atan2;
+import static java.lang.Math.abs;
+
+public class GameBoard extends GameScreen {
+    // Observables are used to inform about events to subscribed Observers. The Observer Pattern
+    private Observable<Void> pauseEvent = new Observable<Void>();
+    private Observable<Void> shopEvent = new Observable<Void>();
+
+    private Texture background;
     private InputMultiplexer inputMultiplexer;
+    private InputAdapter clickListener;
+    private OrthographicCamera camera;
 
-    private Stage stage;
     private Stage hudStage; // The stage for the HUD of the game
     private Table hudTable;
-    private TextButton menuButton;
+    private TextButton pauseButton;
+    private TextButton rollButton;
     private TextButton nextTurnButton;
+    private TextButton shopButton;
     private Label currPlayerLabel;
     private Label moneyLabel;
     private Label scoreLabel;
     private Label starsLabel;
-    private Dialog confirmMenuDialog;
-
-    private Texture background;
+    private Label rollLabel;
 
     private GameState gameState;
+    private int width = 1024;
+    private int height = 576;
+    private float newCameraX;
+    private float newCameraY;
+    private float newCameraAngle;
 
-
-    /**
-     * Constructor for the GameBoard class
-     *
-     * @param main reference to the shared MainGame object
-     * @param assets reference to the shared AssetManager
-     * @param config reference to the shared Config
-     */
-    public GameBoard(MainGame main, AssetManager assets, Config config) {
-        this.main = main;
-        this.assets = assets;
-        this.config = config;
-        this.skin = assets.get(config.uiPath, Skin.class);
-        stage = new Stage(new ScreenViewport(), main.batch);
-        hudStage = new Stage(new ScreenViewport(), main.batch);
-        initializeHUD();
+    public GameBoard(SpriteBatch batch, AssetManager assets) {
+        super(batch, assets);
 
         assets.load("background.jpeg", Texture.class);
         assets.finishLoading();
@@ -65,20 +75,62 @@ public class GameBoard extends ScreenAdapter {
         // Initialize background
         background = assets.get("background.jpeg");
         Image backgroundImage = new Image(background);
-        backgroundImage.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        backgroundImage.setSize(width, height);
         stage.addActor(backgroundImage);
 
         // Setup keyboard shortcuts
         stage.addListener(new InputListener() {
            @Override
            public boolean keyDown(InputEvent event, int keycode) {
-               if (keycode == Input.Keys.ESCAPE) {
-                   confirmMenuDialog.show(hudStage);
-                   return true;
+               if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.P) {
+                   // Go to pause screen by notifying observer in MainGame, the Observer Pattern
+                   pauseEvent.notifyObservers(null);
                }
-               return false;
+               else if (keycode == Input.Keys.I) {
+                   // Go to shop screen
+                   shopEvent.notifyObservers(null);
+               }
+               else {
+                   return false;
+               }
+
+               return true;
            }
         });
+
+        // Add node click listener
+        clickListener = new InputAdapter() {
+           @Override
+           public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+               Player currPlayer = gameState.getCurrentPlayer();
+               if (!currPlayer.canMove()) return false; // Player can't move anymore, don't do anything with the event
+
+               // Get position of the click
+               Vector3 touchPoint = new Vector3(screenX, screenY, 0);
+               camera.unproject(touchPoint);
+
+               Map<String, Node> nodeMap = gameState.getNodeMap();
+               for (String nodeID : currPlayer.getReachableNodes()) {
+                   Sprite sprite = nodeMap.get(nodeID).getSprite();
+                   if (sprite.getBoundingRectangle().contains(touchPoint.x, touchPoint.y)) {
+                       // Player selected a reachable node, we update their position and activate the node
+                       currPlayer.move(nodeID, nodeMap);
+                       moveCameraPlayer();
+
+                       return true;
+                   }
+               }
+
+               return false;
+           }
+        };
+
+        // Initialize HUD
+        hudStage = new Stage(new ScreenViewport(), batch);
+        initializeHUD();
+
+        // Initialize camera
+        camera = new OrthographicCamera(width, height);
     }
 
     /**
@@ -86,59 +138,159 @@ public class GameBoard extends ScreenAdapter {
      */
     private void initializeHUD() {
         // Initialize buttons and labels
-        menuButton = new TextButton("Menu", skin);
+        pauseButton = new TextButton("Pause", skin);
         nextTurnButton = new TextButton("Next Turn", skin);
+        rollButton = new TextButton("Roll", skin);
         currPlayerLabel = new Label("currPlayerLabel", skin);
         scoreLabel = new Label("scoreLabel", skin);
         starsLabel = new Label("starsLabel", skin);
         moneyLabel = new Label("moneyLabel", skin);
+        rollLabel = new Label("rollLabel", skin);
+        rollLabel.setVisible(false);
+
         // Initialize HUD
         hudTable = new Table();
         hudTable.setBackground(skin.getDrawable("window"));
-        hudTable.add(menuButton);
-        hudTable.add(currPlayerLabel).padLeft(10).uniform();
-        hudTable.add(scoreLabel).padLeft(10).uniform();
-        hudTable.add(starsLabel).padLeft(10).uniform();
-        hudTable.add(moneyLabel).padLeft(10).uniform();
+        hudTable.add(pauseButton);
+        hudTable.add(currPlayerLabel).padLeft(5).uniform();
+        hudTable.add(scoreLabel).padLeft(5).uniform();
+        hudTable.add(starsLabel).padLeft(5).uniform();
+        hudTable.add(moneyLabel).padLeft(5).uniform();
+        hudTable.add(rollButton).padLeft(5).uniform();
+        hudTable.add(rollLabel).padLeft(5).uniform();
         hudTable.add(nextTurnButton).expandX().right();
-        Table table = new Table();
-        table.setBounds(0, (float) (hudStage.getHeight() * .94), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));
-        table.add(hudTable).width(hudStage.getWidth());
+        // Put the hud table into another table to align it properly with the top of the screen
+        Table t = new Table();
+        t.setBounds(0, (float) (hudStage.getHeight() * .94), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));
+        t.add(hudTable).width(hudStage.getWidth());
 
-        hudStage.addActor(table);
-
-        // Initialize confirm to menu box
-        confirmMenuDialog = new Dialog("Confirm Menu", skin) {
-            @Override
-            protected void result(Object object) {
-                if ((Boolean) object) {
-                    enterMenu();
-                }
-            }
-        };
-        confirmMenuDialog.text("Are you sure you want to exit to menu? Game progress will be saved.");
-        confirmMenuDialog.button("Yes", true);
-        confirmMenuDialog.button("No", false);
+        hudStage.addActor(t);
 
         // Add listeners
-        menuButton.addListener(new ChangeListener() {
+        pauseButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                confirmMenuDialog.show(hudStage);
+                pauseEvent.notifyObservers(null);
             }
         });
         nextTurnButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameState.currPlayerTurn = (gameState.currPlayerTurn + 1) % gameState.playerList.size();
-                gameState.turnNumber++;
+                rollButton.setVisible(true);
+                rollLabel.setVisible(false);
+                gameState.nextTurn();
+                moveCameraPlayer();
+            }
+        });
+        rollButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Player currPlayer = gameState.getCurrentPlayer();
+                if (!currPlayer.canRoll()) return;
+
+                rollLabel.setText(gameState.getCurrentPlayer().rollDie(gameState.getNodeMap()));
+                rollLabel.setVisible(true);
+
+                // Disable button if the player cannot roll anymore
+                if (!currPlayer.canRoll()) {
+                    rollButton.setVisible(false);
+                }
             }
         });
 
-        // Setup input multiplexer so hud and main stage work at the same time
+        // Setup input multiplexer so all input handlers work at the same time
         inputMultiplexer = new InputMultiplexer();
-        inputMultiplexer.addProcessor(stage);
         inputMultiplexer.addProcessor(hudStage);
+        inputMultiplexer.addProcessor(stage);
+        inputMultiplexer.addProcessor(clickListener);
+    }
+
+    /**
+     * Set the new position for the camera to the current player.
+     * Used to smoothly move the camera towards the current players position.
+     */
+    private void moveCameraPlayer() {
+        Sprite currPlayerSprite = gameState.getCurrentPlayer().getSprite();
+        newCameraX = currPlayerSprite.getX();
+        newCameraY = currPlayerSprite.getY();
+        // Get angle between current camera position and new one.
+        newCameraAngle = MathUtils.atan2(newCameraY - camera.position.y, newCameraX - camera.position.x);
+    }
+
+    @Override
+    public void show() {
+        if (gameState == null) {
+            throw new IllegalStateException("Switched to GameBoard without a GameState set");
+        }
+
+        moveCameraPlayer();
+        Gdx.input.setInputProcessor(inputMultiplexer);
+    }
+
+    @Override
+    public void render(float delta) {
+        /*
+         * Rendering section
+         */
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
+
+        Batch batch = stage.getBatch();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+
+        // Draw nodes
+        Map<String, Node> nodeMap = gameState.getNodeMap();
+        for (Node node : nodeMap.values()) {
+            Sprite sprite = node.getSprite();
+            sprite.draw(batch);
+        }
+
+        // Render player sprites
+        List<Player> playerList = gameState.getPlayerList();
+        for (Player player : playerList) {
+            Sprite sprite = player.getSprite();
+            sprite.draw(batch);
+        }
+        batch.end();
+
+        // Update HUD and draw on top of the game
+        Player currPlayer = gameState.getCurrentPlayer();
+        currPlayerLabel.setText(currPlayer.getName() + "'s Turn");
+        scoreLabel.setText("Score: " + currPlayer.getScore());
+        starsLabel.setText("Stars: " + currPlayer.getStars());
+        moneyLabel.setText("Money: $" + currPlayer.getMoney());
+
+        hudStage.act(Gdx.graphics.getDeltaTime());
+        hudStage.draw();
+
+        /*
+         * Game logic section
+         */
+
+        if (!currPlayer.canMove() && !currPlayer.canRoll()) {
+            nextTurnButton.setVisible(true);
+        }
+        else {
+            nextTurnButton.setVisible(false);
+        }
+
+        // Move camera towards new position unless it's already close enough
+        if (!Utility.epsilonEqual(camera.position.x, newCameraX, 8f)) {
+            camera.translate(MathUtils.cos(newCameraAngle) * 4f, 0);
+        }
+        if (!Utility.epsilonEqual(camera.position.y, newCameraY, 8f)) {
+            camera.translate(0, MathUtils.sin(newCameraAngle) * 4f);
+        }
+        camera.update();
+    }
+
+    @Override
+    public void dispose() {
+        background.dispose();
+        stage.dispose();
+        hudStage.dispose();
     }
 
     /**
@@ -148,46 +300,15 @@ public class GameBoard extends ScreenAdapter {
      */
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
+        // Roll button only visible if the current player has rolls left
+        rollButton.setVisible(gameState.getCurrentPlayer().canRoll());
+        rollLabel.setVisible(!gameState.getCurrentPlayer().canRoll());
     }
 
-    /**
-     * Save the GameState and leave to the menu
-     */
-    private void enterMenu() {
-        main.saveGameState(gameState);
-        main.setScreen(main.getMainMenuScreen());
+    public GameState getGameState() {
+        return gameState;
     }
 
-    @Override
-    public void show() {
-        if (gameState == null) {
-            throw new IllegalStateException("Switched to GameBoard without a GameState set");
-        }
-
-        Gdx.input.setInputProcessor(inputMultiplexer);
-    }
-
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw();
-
-        // Update HUD and draw on top of the game
-        Player currPlayer = gameState.playerList.get(gameState.currPlayerTurn);
-        currPlayerLabel.setText(currPlayer.profile.name + "'s Turn");
-        scoreLabel.setText("Score: " + currPlayer.score);
-        starsLabel.setText("Stars: " + currPlayer.stars);
-        moneyLabel.setText("Money: $" + currPlayer.money);
-
-        hudStage.act(Gdx.graphics.getDeltaTime());
-        hudStage.draw();
-    }
-
-    @Override
-    public void dispose() {
-        background.dispose();
-        stage.dispose();
-        hudStage.dispose();
-    }
+    public void addPauseListener(Observer<Void> ob) { pauseEvent.addObserver(ob); }
+    public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
 }

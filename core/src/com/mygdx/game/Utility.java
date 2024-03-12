@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static java.lang.Math.abs;
+
 public final class Utility {
     private static final Random random = new Random();
 
@@ -80,5 +82,16 @@ public final class Utility {
     public static Boolean fileExists(String filename) {
         File f = new File(filename);
         return f.exists() && f.isFile();
+    }
+
+    /**
+     * Check equality of two floats with an epsilon value. Allows "close enough" equality checking.
+     * @param a float one
+     * @param b float two
+     * @param epsilon epsilon value
+     * @return True or False based on abs(a - b) <= epsilon
+     */
+    public static Boolean epsilonEqual(float a, float b, float epsilon) {
+        return abs(a - b) <= epsilon;
     }
 }
