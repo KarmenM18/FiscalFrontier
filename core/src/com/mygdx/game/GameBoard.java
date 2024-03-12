@@ -24,7 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -257,7 +256,7 @@ public class GameBoard extends GameScreen {
 
         // Update HUD and draw on top of the game
         Player currPlayer = gameState.getCurrentPlayer();
-        currPlayerLabel.setText(currPlayer.getName() + "'s Turn");
+        currPlayerLabel.setText(currPlayer.getPlayerProfile().name + "'s Turn");
         scoreLabel.setText("Score: " + currPlayer.getScore());
         starsLabel.setText("Stars: " + currPlayer.getStars());
         moneyLabel.setText("Money: $" + currPlayer.getMoney());

@@ -8,19 +8,23 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class Node implements Serializable {
+public abstract class Node implements Serializable {
     protected String nodeID;
     protected Sprite sprite; // Sprite to render node on the board
     protected Texture tileTexture;
+    protected int x, y;
+    protected int baseMoney;
+    protected int penaltyAmount;
+
     protected String north = null;
     protected String east = null;
     protected String south = null;
     protected String west = null;
-    protected int x, y;
 
     public Node(String id, int x, int y, String north, String east, String south, String west, Map<String, Node> map, AssetManager assets) {
         this(id, x, y, assets);
@@ -60,7 +64,7 @@ public class Node implements Serializable {
     /**
      * Runs when the Node is landed on.
      */
-    public void activate(Player player) {
+    public void activate(Player player, SpriteBatch batch) {
     }
 
     /**
