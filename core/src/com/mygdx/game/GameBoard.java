@@ -64,6 +64,11 @@ public class GameBoard extends GameScreen {
     private float newCameraX;
     private float newCameraY;
     private float newCameraAngle;
+    // Camera control variables
+    private boolean cameraMoveUp = false;
+    private boolean cameraMoveRight = false;
+    private boolean cameraMoveDown = false;
+    private boolean cameraMoveLeft = false;
 
     public GameBoard(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
@@ -89,9 +94,22 @@ public class GameBoard extends GameScreen {
                    // Go to shop screen
                    shopEvent.notifyObservers(null);
                }
-               else {
-                   return false;
-               }
+               else if (keycode == Input.Keys.W) { cameraMoveUp = true; }
+               else if (keycode == Input.Keys.D) { cameraMoveRight = true; }
+               else if (keycode == Input.Keys.S) { cameraMoveDown = true; }
+               else if (keycode == Input.Keys.A) { cameraMoveLeft = true; }
+               else return false;
+
+               return true;
+           }
+
+           @Override
+           public boolean keyUp(InputEvent event, int keycode) {
+               if (keycode == Input.Keys.W) { cameraMoveUp = false; }
+               else if (keycode == Input.Keys.D) { cameraMoveRight = false; }
+               else if (keycode == Input.Keys.S) { cameraMoveDown = false; }
+               else if (keycode == Input.Keys.A) { cameraMoveLeft = false; }
+               else return false;
 
                return true;
            }
@@ -109,11 +127,12 @@ public class GameBoard extends GameScreen {
                camera.unproject(touchPoint);
 
                Map<String, Node> nodeMap = gameState.getNodeMap();
-               for (String nodeID : currPlayer.getReachableNodes()) {
+               for (ArrayList<String> path : currPlayer.getReachablePaths()) {
+                   String nodeID = path.getLast();
                    Sprite sprite = nodeMap.get(nodeID).getSprite();
                    if (sprite.getBoundingRectangle().contains(touchPoint.x, touchPoint.y)) {
                        // Player selected a reachable node, we update their position and activate the node
-                       currPlayer.move(nodeID, nodeMap);
+                       currPlayer.move(nodeID, nodeMap, batch);
                        moveCameraPlayer();
 
                        return true;
@@ -256,7 +275,7 @@ public class GameBoard extends GameScreen {
 
         // Update HUD and draw on top of the game
         Player currPlayer = gameState.getCurrentPlayer();
-        currPlayerLabel.setText(currPlayer.getPlayerProfile().name + "'s Turn");
+        currPlayerLabel.setText(currPlayer.getPlayerProfile().getName() + "'s Turn");
         scoreLabel.setText("Score: " + currPlayer.getScore());
         starsLabel.setText("Stars: " + currPlayer.getStars());
         moneyLabel.setText("Money: $" + currPlayer.getMoney());
@@ -275,12 +294,20 @@ public class GameBoard extends GameScreen {
             nextTurnButton.setVisible(false);
         }
 
-        // Move camera towards new position unless it's already close enough
-        if (!Utility.epsilonEqual(camera.position.x, newCameraX, 8f)) {
-            camera.translate(MathUtils.cos(newCameraAngle) * 4f, 0);
+        // Camera logic - handle WASD input
+        if (cameraMoveUp || cameraMoveRight || cameraMoveDown || cameraMoveLeft) {
+            newCameraX += 4f * (cameraMoveRight ? 1 : 0) + -4f * (cameraMoveLeft ? 1 : 0);
+            newCameraY += 4f * (cameraMoveUp ? 1 : 0) + -4f * (cameraMoveDown ? 1 : 0);
+            // Recalculate angle
+            newCameraAngle = MathUtils.atan2(newCameraY - camera.position.y, newCameraX - camera.position.x);
         }
-        if (!Utility.epsilonEqual(camera.position.y, newCameraY, 8f)) {
-            camera.translate(0, MathUtils.sin(newCameraAngle) * 4f);
+
+        // Move camera towards new position unless it's already close enough
+        if (!Utility.epsilonEqual(camera.position.x, newCameraX, 10f)) {
+            camera.translate(MathUtils.cos(newCameraAngle) * 5f, 0);
+        }
+        if (!Utility.epsilonEqual(camera.position.y, newCameraY, 10f)) {
+            camera.translate(0, MathUtils.sin(newCameraAngle) * 5f);
         }
         camera.update();
     }

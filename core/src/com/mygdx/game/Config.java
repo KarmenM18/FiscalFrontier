@@ -22,6 +22,7 @@ public class Config {
     private String gameStateSavePath = "gameState.json";
     private String tilePath = "tileGemini.jpeg";
     private String starTilePath = "starTile.jpg";
+    private String penaltyTilePath = "penalty-node1.png";
     private String playerPath = "player.png";
     private int maxPlayers = 5;
 
@@ -47,6 +48,10 @@ public class Config {
 
     public String getStarTilePath() {
         return starTilePath;
+    }
+
+    public String getPenaltyTilePath() {
+        return penaltyTilePath;
     }
 
     public String getPlayerPath() {

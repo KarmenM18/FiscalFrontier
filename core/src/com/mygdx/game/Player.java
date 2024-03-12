@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 // TODO: Add a useItem() method, which uses the use() method of the item class.
@@ -19,7 +18,7 @@ import java.util.Map;
  * Contains methods to get and modify the player's current game data, including as their stars, money, score, items,
  * and position on the game board. Any information about the player which is consistent across multiple game states,
  * such as their name and high score, is stored in their persistent player profile, which can be access through the
- * {@link getPlayerProfile} method.
+ * {@link #getPlayerProfile()} method.
  * @see PlayerProfile
  *
  * @author Joelene Hales
@@ -46,7 +45,7 @@ public class Player implements Serializable {
      * Player's item inventory.
      */
     private ArrayList<Item> items;
-    
+
     /**
      * ID of the node where the player is on the game board.
      */
@@ -65,7 +64,11 @@ public class Player implements Serializable {
     private int maxRolls;
     private int movesLeft;
     private int maxMoves;
-    private List<String> reachableNodes;
+    private ArrayList<ArrayList<String>> reachablePaths;
+    /**
+     * The previous tile the player was on. Used to disallow going backwards.
+     */
+    private ArrayList<String> previousPath;
 
     /**
      * Constructor creates a player with existing game data.
@@ -78,7 +81,7 @@ public class Player implements Serializable {
      * @param currentTile Player's current tile ID
      */
     public Player(PlayerProfile profile, AssetManager assets, int money, int stars, int score, ArrayList<Item> items, String currentTile) {
-        
+
         // Initialize all player attributes
         this.profile = profile;
         this.stars = stars;
@@ -91,10 +94,11 @@ public class Player implements Serializable {
         this.movesLeft = maxMoves;
         this.maxRolls = 1;
         this.rollsLeft = maxRolls;
-        reachableNodes = new ArrayList<>();
-        
+        this.reachablePaths = new ArrayList<>();
+        this.previousPath = new ArrayList<>();
+
         Config config = Config.getInstance();
-        sprite = new Sprite((Texture)assets.get(profile.getSpritePath()));
+        sprite = new Sprite((Texture) assets.get(profile.getSpritePath()));
         loadTextures(assets);
         sprite.setSize(50, 50);
         sprite.setPosition(0, 0);
@@ -119,23 +123,47 @@ public class Player implements Serializable {
         sprite.setTexture(assets.get(profile.getSpritePath()));
     }
 
-    public void nextTurn(Map<String, Node> nodeMap) {
+    /**
+     * Used to refresh Player attributes
+     * Run at the end of the Player's turn.
+     *
+     * @param nodeMap Map of nodes
+     */
+    public void endTurn(Map<String, Node> nodeMap) {
         movesLeft = maxMoves;
         rollsLeft = maxRolls;
-        // Clear reachable nodes
-        for (String reachable : reachableNodes) {
-            nodeMap.get(reachable).setNoColor();
+        // Clear reachable node colors
+        for (ArrayList<String> reachablePath : reachablePaths) {
+            nodeMap.get(reachablePath.getLast()).setNoColor();
         }
-        reachableNodes.clear();
+        // Set previous path tiles back to normal
+        for (String prevID : previousPath) {
+            nodeMap.get(prevID).setNoColor();
+        }
+
+        reachablePaths.clear();
         dieRoll = 0;
     }
 
+    public void startTurn(Map<String, Node> nodeMap) {
+        // Set previous path tiles gray
+        for (String prevID : previousPath) {
+            nodeMap.get(prevID).setGray();
+        }
+    }
+
     public int rollDie(Map<String, Node> nodeMap) {
-        dieRoll = Utility.getRandom(1, 6);
+        dieRoll = Utility.getRandom(1, 4);
+
+        // Get previous node if a previous path exists or just use null
+        String previousNode = null;
+        if (previousPath.size() >= 2) {
+            previousNode = previousPath.get(previousPath.size() - 2);
+        }
         // Get reachable nodes and color them
-        reachableNodes = nodeMap.get(currentTile).getReachable(dieRoll, nodeMap);
-        for (String reachable : reachableNodes) {
-            nodeMap.get(reachable).setGreen();
+        reachablePaths = nodeMap.get(currentTile).getReachable(dieRoll, previousNode, nodeMap);
+        for (ArrayList<String> reachablePath : reachablePaths) {
+            nodeMap.get(reachablePath.getLast()).setGreen();
         }
 
         rollsLeft--;
@@ -153,8 +181,34 @@ public class Player implements Serializable {
      * @throws IllegalArgumentException if the nodeID doesn't exist in nodeMap
      */
     public void move(String tileID, Map<String, Node> nodeMap, SpriteBatch batch) {
-        if (!reachableNodes.contains(tileID)) {
+        // Check if a path exists to the given tileID
+        ArrayList<String> validPath = null;
+        for (ArrayList<String> path : reachablePaths) {
+            if (path.getLast().equals(tileID)) {
+                // TODO: Selects first valid path. if there are multiple, it's possible the player would want to choose
+                //  the path themselves.
+                validPath = path;
+                break;
+            }
+        }
+        if (validPath == null) {
             throw new IllegalArgumentException("Invalid movement; Node not in reachable list.");
+        }
+
+        // Set green tiles back to normal and clear reachable tile paths
+        for (ArrayList<String> reachablePath : reachablePaths) {
+            nodeMap.get(reachablePath.getLast()).setNoColor();
+        }
+
+        // Remove previous path
+        for (String pathID : previousPath) {
+            nodeMap.get(pathID).setNoColor();
+        }
+
+        previousPath = validPath; // Set previousPath to the new one
+        // Color path gray
+        for (String pathID : previousPath) {
+            nodeMap.get(pathID).setGray();
         }
 
         setCurrentTile(tileID, nodeMap);
@@ -162,11 +216,7 @@ public class Player implements Serializable {
         // Call the node's activation function
         nodeMap.get(tileID).activate(this, batch);
 
-        // Clear reachable nodes
-        for (String reachable : reachableNodes) {
-            nodeMap.get(reachable).setNoColor();
-        }
-        reachableNodes.clear();
+        reachablePaths.clear();
         dieRoll = 0;
         movesLeft--;
     }
@@ -329,28 +379,35 @@ public class Player implements Serializable {
     /**
      * Get current value of Player's roll.
      *
-     * @return roll value
+     * @return Roll value
      */
     public int getDieRoll() { return dieRoll; }
 
     /**
      * Check if Player has moves left.
      *
-     * @return true or false
+     * @return True or false
      */
     public boolean canMove() { return movesLeft > 0; }
 
     /**
      * Check if Player has rolls left.
      *
-     * @return true or false
+     * @return True or false
      */
     public boolean canRoll() { return rollsLeft > 0; }
 
     /**
-     * Get the list of current reachable nodes.
+     * Get the list of current reachable tile paths.
      *
      * @return List of Node IDs
      */
-    public List<String> getReachableNodes() { return reachableNodes; }
+    public ArrayList<ArrayList<String>> getReachablePaths() { return reachablePaths; }
+
+    /**
+     * Get Sprite
+     *
+     * @return Sprite
+     */
+    public Sprite getSprite() { return sprite; }
 }
