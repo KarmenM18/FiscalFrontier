@@ -50,6 +50,7 @@ public class MainGame extends Game {
 		gameBoard = new GameBoard(batch, assets);
 		pauseScreen = new PauseScreen(batch, assets);
 		shopScreen = new ShopScreen(batch, assets);
+		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
 		//saveScreen = new SaveScreen(batch, assets);
 
 		// Load players from save if possible
@@ -72,14 +73,24 @@ public class MainGame extends Game {
 			//TODO Send Current Player Info To Screen
 			setScreen(pauseScreen);
 		});
+
+		knowledgeListScreen.addBackToPause(v -> setScreen(pauseScreen));
+
 		// Set PauseScreen observers
 		pauseScreen.addSaveGameListener(v -> saveGameState(gameBoard.getGameState()));
 		pauseScreen.addMenuListener(v -> {
 			setScreen(mainMenuScreen);
 		});
 		pauseScreen.addBoardListener(v -> setScreen(gameBoard));
+		pauseScreen.addKnowledgeEventListener(v -> {
+			knowledgeListScreen.setPlayerKnowledge(gameBoard.getGameState().getCurrentPlayer().getPlayerProfile().getLearned());
+			knowledgeListScreen.updateTable();
+			setScreen(knowledgeListScreen);
+		});
+
 		// Set ShopScreen observers
 		shopScreen.addBoardListener(v -> setScreen(gameBoard));
+
 		// Set MainMenuScreen observers
 		mainMenuScreen.addStartGameListener(v -> {
 			// Create new game with all players in it TODO player selection
@@ -87,11 +98,12 @@ public class MainGame extends Game {
 			gameBoard.setGameState(newGame);
 			setScreen(gameBoard);
 		});
+
 		mainMenuScreen.addContinueGameListener(v -> {
 			GameState gs;
 			if (Utility.fileExists(config.getGameStateSavePath())) {
-				gs = loadGameState();
-				gameBoard.setGameState(gs);
+				//gs = loadGameState();
+				//gameBoard.setGameState(gs);
 				setScreen(gameBoard);
 			}
 			// TODO inform the user that there is no save to continue from
