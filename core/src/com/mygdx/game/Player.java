@@ -134,7 +134,7 @@ public class Player implements Serializable {
         rollsLeft = maxRolls;
         // Clear reachable node colors
         for (ArrayList<String> reachablePath : reachablePaths) {
-            nodeMap.get(reachablePath.getLast()).setNoColor();
+            nodeMap.get(reachablePath.get(reachablePath.size() - 1)).setNoColor();
         }
         // Set previous path tiles back to normal
         for (String prevID : previousPath) {
@@ -163,7 +163,7 @@ public class Player implements Serializable {
         // Get reachable nodes and color them
         reachablePaths = nodeMap.get(currentTile).getReachable(dieRoll, previousNode, nodeMap);
         for (ArrayList<String> reachablePath : reachablePaths) {
-            nodeMap.get(reachablePath.getLast()).setGreen();
+            nodeMap.get(reachablePath.get(reachablePath.size() - 1)).setGreen();
         }
 
         rollsLeft--;
@@ -184,7 +184,7 @@ public class Player implements Serializable {
         // Check if a path exists to the given tileID
         ArrayList<String> validPath = null;
         for (ArrayList<String> path : reachablePaths) {
-            if (path.getLast().equals(tileID)) {
+            if (path.get(path.size() - 1).equals(tileID)) {
                 // TODO: Selects first valid path. if there are multiple, it's possible the player would want to choose
                 //  the path themselves.
                 validPath = path;
@@ -197,7 +197,7 @@ public class Player implements Serializable {
 
         // Set green tiles back to normal and clear reachable tile paths
         for (ArrayList<String> reachablePath : reachablePaths) {
-            nodeMap.get(reachablePath.getLast()).setNoColor();
+            nodeMap.get(reachablePath.get(reachablePath.size() - 1)).setNoColor();
         }
 
         // Remove previous path

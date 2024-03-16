@@ -134,16 +134,16 @@ public abstract class Node implements Serializable {
         String eastID = (currX + 1) + "," + currY;
         String southID = currX + "," + (currY - 1);
         String westID = (currX - 1) + "," + currY;
-        if (curr.getNorth() && !northID.equals(path.getLast())) {
+        if (curr.getNorth() && !northID.equals(path.get(path.size() - 1))) {
             getReachableRecur(map.get(northID), newPath, distance + 1, target, found, map);
         }
-        if (curr.getEast() && !eastID.equals(path.getLast())) {
+        if (curr.getEast() && !eastID.equals(path.get(path.size() - 1))) {
             getReachableRecur(map.get(eastID), newPath, distance + 1, target, found, map);
         }
-        if (curr.getSouth() && !southID.equals(path.getLast())) {
+        if (curr.getSouth() && !southID.equals(path.get(path.size() - 1))) {
             getReachableRecur(map.get(southID), newPath, distance + 1, target, found, map);
         }
-        if (curr.getWest() && !westID.equals(path.getLast())) {
+        if (curr.getWest() && !westID.equals(path.get(path.size() - 1))) {
             getReachableRecur(map.get(westID), newPath, distance + 1, target, found, map);
         }
     }

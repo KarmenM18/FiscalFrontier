@@ -68,8 +68,8 @@ public class GameState implements Serializable {
 
         assert(nodeIDs.size() >= playerList.size());
         for (Player player : playerList) {
-            player.setCurrentTile(nodeIDs.getLast(), nodeMap);
-            nodeIDs.removeLast();
+            player.setCurrentTile(nodeIDs.get(nodeIDs.size() - 1), nodeMap);
+            nodeIDs.remove(nodeIDs.size() - 1);
         }
     }
 

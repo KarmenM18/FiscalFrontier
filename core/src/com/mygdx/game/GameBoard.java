@@ -130,7 +130,7 @@ public class GameBoard extends GameScreen {
 
                Map<String, Node> nodeMap = gameState.getNodeMap();
                for (ArrayList<String> path : currPlayer.getReachablePaths()) {
-                   String nodeID = path.getLast();
+                   String nodeID = path.get(path.size() - 1);
                    Sprite sprite = nodeMap.get(nodeID).getSprite();
                    if (sprite.getBoundingRectangle().contains(touchPoint.x, touchPoint.y)) {
                        // Player selected a reachable node, we update their position and activate the node
