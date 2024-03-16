@@ -3,10 +3,12 @@ package com.mygdx.game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Observer.Observable;
 
 import java.util.Map;
 
 public class EventNode extends Node {
+    protected Observable<Void> callEventNode = new Observable<Void>();
     protected int penaltyAmount = 5;
     protected Texture eventTexture;
 

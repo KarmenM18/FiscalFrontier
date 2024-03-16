@@ -50,8 +50,8 @@ public abstract class Node implements Serializable {
         Config config = Config.getInstance();
         tileTexture = assets.get(config.getTilePath());
         sprite = new Sprite(tileTexture);
-        sprite.setSize(50, 50);
-        sprite.setPosition(x * 75, y * 75);
+        sprite.setSize(100, 100);
+        sprite.setPosition(x * 150, y * 150);
         loadTextures(assets);
     }
 
@@ -186,8 +186,8 @@ public abstract class Node implements Serializable {
     public boolean getWest() { return west; }
 
     // Getters for position
-    public int getXPos() { return x * 75; }
-    public int getYPos() { return y * 75; }
+    public int getXPos() { return x * 150; }
+    public int getYPos() { return y * 150; }
     public int getMapX() { return x; }
     public int getMapY() { return y; }
 }

@@ -23,11 +23,13 @@ import com.mygdx.game.Observer.Observer;
 public class MainMenuScreen extends GameScreen {
     private Observable<Void> startGameEvent = new Observable<Void>();
     private Observable<Void> continueGameEvent = new Observable<Void>();
+    private Observable<Void> loadGameScreenEvent = new Observable<Void>();
 
     private Table table;
     private TextButton quitButton;
     private TextButton playButton;
     private TextButton continueButton;
+    private TextButton loadGameButton;
     private Dialog confirmQuitDialog;
 
     public MainMenuScreen(SpriteBatch batch, AssetManager assets) {
@@ -41,6 +43,7 @@ public class MainMenuScreen extends GameScreen {
         quitButton = new TextButton("Quit", skin);
         playButton = new TextButton("New Game", skin);
         continueButton = new TextButton("Continue Game", skin);
+        loadGameButton = new TextButton("Load Game", skin);
         // Initialize confirm to quit dialog box
         confirmQuitDialog = new Dialog("Confirm Quit", skin) {
             @Override
@@ -62,7 +65,10 @@ public class MainMenuScreen extends GameScreen {
         table.row().pad(10, 0, 10, 0);
         table.add(continueButton).fillX();
         table.row().pad(10, 0, 10, 0);
+        table.add(loadGameButton).fillX();
+        table.row().pad(10, 0, 10, 0);
         table.add(quitButton).fillX();
+
 
         // Add listeners
         quitButton.addListener(new ChangeListener() {
@@ -83,9 +89,16 @@ public class MainMenuScreen extends GameScreen {
                 continueGameEvent.notifyObservers(null);
             }
         });
+        loadGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                loadGameScreenEvent.notifyObservers(null);
+            }
+        });
 
     }
 
     void addStartGameListener(Observer<Void> ob) { startGameEvent.addObserver(ob); }
     void addContinueGameListener(Observer<Void> ob) { continueGameEvent.addObserver(ob); }
+    void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
 }

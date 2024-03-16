@@ -100,7 +100,7 @@ public class Player implements Serializable {
         Config config = Config.getInstance();
         sprite = new Sprite((Texture) assets.get(profile.getSpritePath()));
         loadTextures(assets);
-        sprite.setSize(50, 50);
+        sprite.setSize(100, 100);
         sprite.setPosition(0, 0);
     }
 
