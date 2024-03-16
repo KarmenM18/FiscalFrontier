@@ -96,6 +96,12 @@ public class MainGame extends Game {
 			}
 			// TODO inform the user that there is no save to continue from
 		});
+		mainMenuScreen.addInstructorDashboardListener(v -> {
+			// Open instructor dashboard
+			InstructorDashboard instructorDashboard = new InstructorDashboard(batch, assets);
+			setScreen(instructorDashboard);
+			// TODO: Not done implementing
+		});
 	}
 
 	@Override
