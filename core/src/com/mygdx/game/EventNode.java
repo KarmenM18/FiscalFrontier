@@ -30,6 +30,6 @@ public class EventNode extends Node {
     @Override
     public void activate(Player player, SpriteBatch batch) {
         //GameBoard.globalEventNode(penaltyAmount, player);
-            //TODO call the globalEvent method from Gameboard
+        //TODO try to call the globalEvent method from Gameboard
     }
 }
