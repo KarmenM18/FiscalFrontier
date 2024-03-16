@@ -280,7 +280,7 @@ public class GameBoard extends GameScreen {
         currPlayerLabel.setText(currPlayer.getPlayerProfile().getName() + "'s Turn");
         scoreLabel.setText("Score: " + currPlayer.getScore());
         starsLabel.setText("Stars: " + currPlayer.getStars());
-        moneyLabel.setText("Money: $" + currPlayer.getMoney());
+        moneyLabel.setText("Mofney: $" + currPlayer.getMoney());
 
         hudStage.act(Gdx.graphics.getDeltaTime());
         hudStage.draw();
@@ -339,4 +339,35 @@ public class GameBoard extends GameScreen {
 
     public void addPauseListener(Observer<Void> ob) { pauseEvent.addObserver(ob); }
     public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
+
+
+    /**
+     * global event for event node, reduce all player's money
+     * @param penaltyAmount
+     */
+    public void globalEventNode(int penaltyAmount){
+        //for event node, all player affected
+        //TODO set logic to apply penalty to all players
+        //how to do this to all player?
+        //player.setMoney(player.getMoney - penaltyAmount);
+        List<Player> pList = getGameState().getPlayerList();
+        for (Player p : pList){
+            p.setMoney(p.getMoney() - penaltyAmount);
+        }
+    }
+
+    /**
+     * global event from player item
+     * should not reduce the activating player's money
+     * Overload for global item
+     * @param penaltyAmount
+     * @param p
+     */
+    public void globalEventItem(int penaltyAmount, Player p){
+        //for item, make sure to pass activating player when called
+        //first apply penalty to all player
+        //then add the same back to the activating player
+        globalEventNode(penaltyAmount);
+        p.setMoney(p.getMoney() + penaltyAmount);
+    }
 }
