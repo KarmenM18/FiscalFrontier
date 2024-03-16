@@ -3,15 +3,18 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class GameScreen extends ScreenAdapter {
     protected AssetManager assets;
-    protected Config config;
     protected Skin skin;
     protected Stage stage;
 
@@ -25,7 +28,7 @@ public class GameScreen extends ScreenAdapter {
         Config config = Config.getInstance();
         this.assets = assets;
         this.skin = assets.get(config.getUiPath(), Skin.class);
-        stage = new Stage(new ScreenViewport(), batch);
+        stage = new Stage(new FitViewport(1920, 1080), batch);
     }
 
     /**
@@ -48,6 +51,11 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
 
     /**

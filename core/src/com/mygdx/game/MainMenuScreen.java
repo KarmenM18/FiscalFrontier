@@ -1,5 +1,5 @@
 /*
- * Class to show options menu before going into the main game board screen
+ * Class to show options menu before going into the main game baord screen
  * - Continue button
  * - Play / New Game button
  * - Load Game button
@@ -18,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Null;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
@@ -26,12 +25,14 @@ public class MainMenuScreen extends GameScreen {
     private Observable<Void> startGameEvent = new Observable<Void>();
     private Observable<Void> continueGameEvent = new Observable<Void>();
     private Observable<Void> instructorDashboardEvent = new Observable<Void>();
+    private Observable<Void> loadGameScreenEvent = new Observable<Void>();
 
     private Table table;
     private TextButton quitButton;
     private TextButton playButton;
     private TextButton continueButton;
     private TextButton instructorDashboardButton;
+    private TextButton loadGameButton;
     private Dialog confirmQuitDialog;
 
     private Dialog instructorPasswordDialog;
@@ -48,6 +49,7 @@ public class MainMenuScreen extends GameScreen {
         quitButton = new TextButton("Quit", skin);
         playButton = new TextButton("New Game", skin);
         continueButton = new TextButton("Continue Game", skin);
+        loadGameButton = new TextButton("Load Game", skin);
         instructorDashboardButton = new TextButton("Instructor Dashboard", skin);
 
         // Initialize confirm to quit dialog box
@@ -117,9 +119,12 @@ public class MainMenuScreen extends GameScreen {
         table.row().pad(10, 0, 10, 0);
         table.add(continueButton).fillX();
         table.row().pad(10, 0, 10, 0);
+        table.add(loadGameButton).fillX();
+        table.row().pad(10, 0, 10, 0);
         table.add(instructorDashboardButton).fillX();
         table.row().pad(10, 0, 10, 0);
         table.add(quitButton).fillX();
+
 
         // Add listeners
         quitButton.addListener(new ChangeListener() {
@@ -140,6 +145,12 @@ public class MainMenuScreen extends GameScreen {
                 continueGameEvent.notifyObservers(null);
             }
         });
+        loadGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                loadGameScreenEvent.notifyObservers(null);
+            }
+        });
         instructorDashboardButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -153,4 +164,5 @@ public class MainMenuScreen extends GameScreen {
     void addContinueGameListener(Observer<Void> ob) { continueGameEvent.addObserver(ob); }
     void addInstructorDashboardListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
 
+    void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
 }

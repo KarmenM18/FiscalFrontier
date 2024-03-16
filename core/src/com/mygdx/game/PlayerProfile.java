@@ -23,9 +23,10 @@ public class PlayerProfile {
     public PlayerProfile(String name) {
         this.name = name;
         lifetimeScore = 0;
-        knowledgeLevel = 0;
+        knowledgeLevel = (int) Math.random()*13;
         highScore = 0;
 
+        this.updateKnowledgeBase();
         Config config = Config.getInstance();
         spritePath = config.getPlayerPath();
     }
@@ -99,4 +100,6 @@ public class PlayerProfile {
         }
         return null;
     }
+
+    public LinkedList<String> getLearned () {return this.learned;}
 }

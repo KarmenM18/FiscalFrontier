@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -38,7 +39,7 @@ import static java.lang.Math.abs;
 
 public class GameBoard extends GameScreen {
     // Observables are used to inform about events to subscribed Observers. The Observer Pattern
-    private Observable<Void> pauseEvent = new Observable<Void>();
+    private Observable<PlayerProfile> pauseEvent = new Observable<PlayerProfile>();
     private Observable<Void> shopEvent = new Observable<Void>();
 
     private Texture background;
@@ -61,8 +62,8 @@ public class GameBoard extends GameScreen {
     private ArrayList<Item> playerItems;
 
     private GameState gameState;
-    private int width = 1024;
-    private int height = 576;
+    private int width = 1920;
+    private int height = 1080;
     private float newCameraX;
     private float newCameraY;
     private float newCameraAngle;
@@ -146,7 +147,7 @@ public class GameBoard extends GameScreen {
         };
 
         // Initialize HUD
-        hudStage = new Stage(new ScreenViewport(), batch);
+        hudStage = new Stage(new FitViewport(1920, 1080), batch);
         initializeHUD();
 
         // Initialize camera
@@ -315,6 +316,11 @@ public class GameBoard extends GameScreen {
     }
 
     @Override
+    public void resize(int width, int height) {
+        hudStage.getViewport().update(width, height, true);
+    }
+
+    @Override
     public void dispose() {
         background.dispose();
         stage.dispose();
@@ -337,7 +343,7 @@ public class GameBoard extends GameScreen {
         return gameState;
     }
 
-    public void addPauseListener(Observer<Void> ob) { pauseEvent.addObserver(ob); }
+    public void addPauseListener(Observer<PlayerProfile> ob) { pauseEvent.addObserver(ob); }
     public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
 
 

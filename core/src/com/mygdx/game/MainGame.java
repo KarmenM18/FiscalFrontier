@@ -24,7 +24,9 @@ public class MainGame extends Game {
 	private PauseScreen pauseScreen;
 	private ShopScreen shopScreen;
 	private MainMenuScreen mainMenuScreen;
+	private KnowledgeListScreen knowledgeListScreen;
 	//private SaveScreen saveScreen;
+	private SaveScreen saveScreen;
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
 
@@ -66,7 +68,10 @@ public class MainGame extends Game {
 
 		// Set gameBoard observers
 		gameBoard.addShopListener(v -> setScreen(shopScreen));
-		gameBoard.addPauseListener(v -> setScreen(pauseScreen));
+		gameBoard.addPauseListener(currentPlayer -> {
+			//TODO Send Current Player Info To Screen
+			setScreen(pauseScreen);
+		});
 		// Set PauseScreen observers
 		pauseScreen.addSaveGameListener(v -> saveGameState(gameBoard.getGameState()));
 		pauseScreen.addMenuListener(v -> {
@@ -130,7 +135,7 @@ public class MainGame extends Game {
 	/**
 	 * Load a GameState from file
 	 */
-	public GameState loadGameState() {
-		return saveSystem.readGameState(assets);
+	public GameState loadGameState(String path) {
+		return saveSystem.readGameState(path, assets);
 	}
 }

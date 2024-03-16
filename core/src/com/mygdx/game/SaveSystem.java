@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.JsonValue;
 
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SaveSystem {
@@ -42,10 +43,10 @@ public class SaveSystem {
         }
     }
 
-    public GameState readGameState(AssetManager assets) {
+    public GameState readGameState(String savePath, AssetManager assets) {
         try {
             Config config = Config.getInstance();
-            String gsString = Files.readString(Paths.get(config.getGameStateSavePath()));
+            String gsString = Files.readString(Path.of(savePath));
             GameState gs = json.fromJson(GameState.class, gsString);
             gs.loadTextures(assets);
             return gs;
