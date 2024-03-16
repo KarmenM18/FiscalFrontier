@@ -38,6 +38,7 @@ public class MainGame extends Game {
 		assets.load(config.getUiPath(), Skin.class);
 		assets.load(config.getTilePath(), Texture.class);
 		assets.load(config.getStarTilePath(), Texture.class);
+		assets.load(config.getEventTilePath(), Texture.class);
 		assets.load(config.getPenaltyTilePath(), Texture.class);
 		assets.load(config.getPlayerPath(), Texture.class);
 		assets.load("background.jpeg", Texture.class);

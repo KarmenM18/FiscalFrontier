@@ -35,20 +35,9 @@ public class StarNode extends Node {
     public void activate(Player player, SpriteBatch batch) {
         if (hasStar) {
             // TODO setup purchase logic
-            if(player.getMoney() >= starCost){
-                // TODO get oberver to check if player choose to buy star
-
-
-                // Add star to player and remove it from the tile
-                player.addStar();
-                sprite.setTexture(tileTexture);
-                hasStar = false;
-
-            }else{
-                //TODO display message denying player from buying star
-                // force to next player's turn
-            }
-
+            player.addStar();
+            this.hasStar = false;
+            checkStar();
         }
     }
 
