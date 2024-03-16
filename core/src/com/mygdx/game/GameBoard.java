@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -61,8 +62,8 @@ public class GameBoard extends GameScreen {
     private ArrayList<Item> playerItems;
 
     private GameState gameState;
-    private int width = 1024;
-    private int height = 576;
+    private int width = 1920;
+    private int height = 1080;
     private float newCameraX;
     private float newCameraY;
     private float newCameraAngle;
@@ -146,7 +147,7 @@ public class GameBoard extends GameScreen {
         };
 
         // Initialize HUD
-        hudStage = new Stage(new ScreenViewport(), batch);
+        hudStage = new Stage(new FitViewport(1920, 1080), batch);
         initializeHUD();
 
         // Initialize camera
@@ -312,6 +313,11 @@ public class GameBoard extends GameScreen {
             camera.translate(0, MathUtils.sin(newCameraAngle) * 5f);
         }
         camera.update();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        hudStage.getViewport().update(width, height, true);
     }
 
     @Override
