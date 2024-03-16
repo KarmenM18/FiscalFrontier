@@ -6,6 +6,8 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.mygdx.game.Observer.Observable;
+import com.mygdx.game.Observer.Observer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ public class GameState implements Serializable {
     private List<Player> playerList;
     private int currPlayerTurn;
     private int turnNumber;
+    private EventNode eventNode;
     private HashMap<String, Node> nodeMap;
 
     /**
@@ -45,7 +48,7 @@ public class GameState implements Serializable {
         nodeMap.put("0,0", new NormalNode(0, 0, false, false, false, true, nodeMap, assets));
         nodeMap.put("1,0", new NormalNode(1, 0, false, false, false, true, nodeMap, assets));
         nodeMap.put("2,0", new NormalNode(2, 0, false, true, false, true, nodeMap, assets));
-        nodeMap.put("2,1", new NormalNode(2, 1, false, false, true, false, nodeMap, assets));
+        nodeMap.put("2,1", new EventNode(2, 1, false, false, true, false, nodeMap, assets));
         nodeMap.put("2,2", new NormalNode(2, 2, false, false, true, false, nodeMap, assets));
         nodeMap.put("3,0", new PenaltyNode(3, 0, false, true, false, false, nodeMap, assets));
         nodeMap.put("4,0", new NormalNode(4, 0, true, false, false, false, nodeMap, assets));
@@ -57,6 +60,8 @@ public class GameState implements Serializable {
         nodeMap.put("-1,2", new NormalNode(-1, 2, false, true, false, false, nodeMap, assets));
         nodeMap.put("0,2", new PenaltyNode(0, 2, false, true, false, false, nodeMap, assets));
         nodeMap.put("1,2", new NormalNode(1, 2, false, true, false, false, nodeMap, assets));
+
+        eventNode.addEventListener(v -> globalEventMode(eventNode.penaltyAmount));
 
         // Set starting nodes - player cannot start on a special node, only a plain node
         // They also can't start on the same node as another player
@@ -116,4 +121,17 @@ public class GameState implements Serializable {
      * @return Map of nodes
      */
     public Map<String, Node> getNodeMap() { return nodeMap; }
+
+    /**
+     * global event for event node, reduce all player's money
+     * @param penaltyAmount
+     */
+    public void globalEventMode(int penaltyAmount){
+        for (Player p :  getPlayerList()){
+            p.setMoney(p.getMoney() - penaltyAmount);
+        }
+    }
+
+
+
 }

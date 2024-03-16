@@ -3,11 +3,16 @@ package com.mygdx.game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.mygdx.game.Observer.Observable;
+import com.mygdx.game.Observer.Observer;
 
 import java.util.Map;
 
 public class EventNode extends Node {
     protected int penaltyAmount = 5;
+    protected Observable<Void> globalEvent = new Observable<Void>();
     protected Texture eventTexture;
 
     public EventNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
@@ -29,7 +34,8 @@ public class EventNode extends Node {
 
     @Override
     public void activate(Player player, SpriteBatch batch) {
-        //GameBoard.globalEventNode(penaltyAmount, player);
-        //TODO try to call the globalEvent method from Gameboard
+        globalEvent.notifyObservers(null);
     }
+    public void addEventListener(Observer<Void> ob) {globalEvent.addObserver(ob); }
+
 }
