@@ -73,11 +73,11 @@ public class GameBoard extends GameScreen {
     public GameBoard(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
-        assets.load("background.jpeg", Texture.class);
+        assets.load("gameboard.png", Texture.class);
         assets.finishLoading();
 
         // Initialize background
-        background = assets.get("background.jpeg");
+        background = assets.get("gameboard.png");
         Image backgroundImage = new Image(background);
         backgroundImage.setSize(width, height);
         stage.addActor(backgroundImage);
