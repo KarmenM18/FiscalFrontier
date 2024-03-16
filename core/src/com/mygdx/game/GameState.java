@@ -116,7 +116,6 @@ public class GameState implements Serializable {
      */
     public List<Player> getPlayerList() { return playerList; }
 
-
     /**
      * @return Map of nodes
      */
@@ -127,11 +126,13 @@ public class GameState implements Serializable {
      * @param penaltyAmount
      */
     public void globalEventMode(int penaltyAmount){
+        //TODO adjust Money penalty logic for hardmode
         for (Player p : getPlayerList()){
-            p.setMoney(p.getMoney() - penaltyAmount);
+            if(p.getStars() > 0){
+                p.setStars(p.getStars() - 1);
+            }else if(p.getMoney() > 0){
+                p.setMoney(p.getMoney() - penaltyAmount);
+            }
         }
     }
-
-
-
 }
