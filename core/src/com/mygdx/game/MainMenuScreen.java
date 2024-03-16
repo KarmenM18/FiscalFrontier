@@ -92,7 +92,9 @@ public class MainMenuScreen extends GameScreen {
                 String correctPassword = "TEST";  // FIXME: Add a correct password
 
                 if (inputPassword.equals(correctPassword)) {
-                    instructorDashboardEvent.notifyObservers(null);}
+                    instructorPasswordDialog.hide();
+                    instructorDashboardEvent.notifyObservers(null);
+                }
                 else {
 
                     // Display error message
@@ -163,6 +165,5 @@ public class MainMenuScreen extends GameScreen {
     void addStartGameListener(Observer<Void> ob) { startGameEvent.addObserver(ob); }
     void addContinueGameListener(Observer<Void> ob) { continueGameEvent.addObserver(ob); }
     void addInstructorDashboardListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
-
     void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
 }

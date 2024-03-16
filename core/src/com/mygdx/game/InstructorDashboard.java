@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
 public class InstructorDashboard extends GameScreen {
@@ -23,11 +24,21 @@ public class InstructorDashboard extends GameScreen {
     private TextButton manageStudentsButton;
     /** Button to return to the main menu screen. */
     private TextButton returnButton;
+    /** Event displays all student information. */
+    private Observable<Void> viewStudentsEvent = new Observable<Void>();
+    /** Event enters manage class mode. */
+    private Observable<Void> manageStudentsEvent = new Observable<Void>();
+    /** Event returns to main menu. */
+    private Observable<Void> returnEvent = new Observable<Void>();
+
+    private MainMenuScreen mainMenuScreen;
+
+    private Game game;
+
 
     public InstructorDashboard(SpriteBatch batch, AssetManager assets) {
-        super(batch, assets);
 
-        // TODO: Finish loading assets
+        super(batch, assets);
 
         // Setup GUI
         table = new Table();
@@ -38,7 +49,14 @@ public class InstructorDashboard extends GameScreen {
         manageStudentsButton = new TextButton("Manage Students", skin);
         returnButton = new TextButton("Return to Main Menu", skin);
 
-    }
+        // Display buttons and layout GUI
+        table.setFillParent(true); // Size table to stage
+        table.add(viewStudentsButton).fillX();
+        table.row().pad(10, 0, 10, 0);
+        table.add(manageStudentsButton).fillX();
+        table.row().pad(10, 0, 10, 0);
+        table.add(returnButton).fillX();
 
+    }
 
 }
