@@ -90,7 +90,7 @@ public class MainGame extends Game {
 		mainMenuScreen.addContinueGameListener(v -> {
 			GameState gs;
 			if (Utility.fileExists(config.getGameStateSavePath())) {
-				gs = loadGameState();
+				gs = loadGameState(config.getGameStateSavePath());
 				gameBoard.setGameState(gs);
 				setScreen(gameBoard);
 			}
