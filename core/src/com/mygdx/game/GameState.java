@@ -127,7 +127,7 @@ public class GameState implements Serializable {
      * @param penaltyAmount
      */
     public void globalEventMode(int penaltyAmount){
-        for (Player p :  getPlayerList()){
+        for (Player p : getPlayerList()){
             p.setMoney(p.getMoney() - penaltyAmount);
         }
     }

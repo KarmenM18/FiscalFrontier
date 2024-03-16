@@ -32,6 +32,11 @@ public class EventNode extends Node {
         sprite.setTexture(eventTexture);
     }
 
+    /**
+     * coule be used with item too
+     * @param player
+     * @param batch
+     */
     @Override
     public void activate(Player player, SpriteBatch batch) {
         globalEvent.notifyObservers(null);
