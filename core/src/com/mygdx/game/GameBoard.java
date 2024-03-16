@@ -58,6 +58,8 @@ public class GameBoard extends GameScreen {
     private Label starsLabel;
     private Label rollLabel;
 
+    private ArrayList<Item> playerItems;
+
     private GameState gameState;
     private int width = 1024;
     private int height = 576;

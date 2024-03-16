@@ -6,16 +6,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Map;
 
-public class PenaltyNode extends Node{
+public class PenaltyNode extends Node {
     protected int penaltyAmount = 5;
     protected Texture penaltyTexture;
 
-    public PenaltyNode(String id, int x, int y, String north, String east, String south, String west, Map<String, Node> map, AssetManager assets) {
-        super(id, x, y, north, east, south, west, map, assets);
+    public PenaltyNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
+        super(mapX, mapY, north, east, south, west, map, assets);
     }
 
-    public PenaltyNode(String id, int x, int y, AssetManager assets) {
-        super(id, x, y, assets);
+    public PenaltyNode(int mapX, int mapY, AssetManager assets) {
+        super(mapX, mapY, assets);
     }
 
     private PenaltyNode() {}

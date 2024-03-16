@@ -42,21 +42,21 @@ public class GameState implements Serializable {
 
         // Setup nodes
         nodeMap = new HashMap<String, Node>();
-        nodeMap.put("0,0", new NormalNode("0,0", 50, 50, assets));
-        nodeMap.put("1,0", new NormalNode("1,0", 150, 50, null, null, null, "0,0", nodeMap, assets));
-        nodeMap.put("2,0", new NormalNode("2,0", 250, 50, null, null, null, "1,0", nodeMap, assets));
-        nodeMap.put("2,1", new NormalNode("2,1", 250, 150, null, null, "2,0", null, nodeMap, assets));
-        nodeMap.put("2,2", new NormalNode("2,2", 250, 250, null, null, "2,1", null, nodeMap, assets));
-        nodeMap.put("3,0", new PenaltyNode("3,0", 350, 50, null, null, null, "2,0", nodeMap, assets));
-        nodeMap.put("4,0", new NormalNode("4,0", 450, 50, null, null, null, "3,0", nodeMap, assets));
-        nodeMap.put("4,1", new NormalNode("4,1", 450, 150, null, null, "4,0", null, nodeMap, assets));
-        nodeMap.put("3,2", new NormalNode("3,2", 350, 250, null, null, null, "2,2", nodeMap, assets));
-        nodeMap.put("4,2", new StarNode("4,2", 450, 250, null, null, "4,1", "3,2", nodeMap, assets));
-        nodeMap.put("-1,0", new NormalNode("-1,0", -50, 50, null, "0,0", null, null, nodeMap, assets));
-        nodeMap.put("-1,1", new StarNode("-1,1", -50, 150, null, null, "-1,0", null, nodeMap, assets));
-        nodeMap.put("-1,2", new NormalNode("-1,2", -50, 250, null, null, "-1,1", null, nodeMap, assets));
-        nodeMap.put("0,2", new PenaltyNode("0,2", 50, 250, null, null, null, "-1,2", nodeMap, assets));
-        nodeMap.put("1,2", new NormalNode("1,2", 150, 250, null, "2,2", null, "0,2", nodeMap, assets));
+        nodeMap.put("0,0", new NormalNode(0, 0, false, false, false, true, nodeMap, assets));
+        nodeMap.put("1,0", new NormalNode(1, 0, false, false, false, true, nodeMap, assets));
+        nodeMap.put("2,0", new NormalNode(2, 0, false, true, false, true, nodeMap, assets));
+        nodeMap.put("2,1", new NormalNode(2, 1, false, false, true, false, nodeMap, assets));
+        nodeMap.put("2,2", new NormalNode(2, 2, false, false, true, false, nodeMap, assets));
+        nodeMap.put("3,0", new PenaltyNode(3, 0, false, true, false, false, nodeMap, assets));
+        nodeMap.put("4,0", new NormalNode(4, 0, true, false, false, false, nodeMap, assets));
+        nodeMap.put("4,1", new NormalNode(4, 1, true, false, false, false, nodeMap, assets));
+        nodeMap.put("3,2", new NormalNode(3, 2, false, false, false, true, nodeMap, assets));
+        nodeMap.put("4,2", new StarNode(4, 2, false, false, false, true, nodeMap, assets));
+        nodeMap.put("-1,0", new NormalNode(-1, 0, true, false, false, false, nodeMap, assets));
+        nodeMap.put("-1,1", new StarNode(-1, 1, true, false, false, false, nodeMap, assets));
+        nodeMap.put("-1,2", new NormalNode(-1, 2, false, true, false, false, nodeMap, assets));
+        nodeMap.put("0,2", new PenaltyNode(0, 2, false, true, false, false, nodeMap, assets));
+        nodeMap.put("1,2", new NormalNode(1, 2, false, true, false, false, nodeMap, assets));
 
         // Set starting nodes - player cannot start on a special node, only a plain node
         // They also can't start on the same node as another player

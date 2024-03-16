@@ -32,7 +32,11 @@ public class SaveSystem {
         try {
             Config config = Config.getInstance();
             String JSONed = json.prettyPrint(gs);
-            Files.writeString(Paths.get(config.getGameStateSavePath()), JSONed);
+
+            // Keep increasing the save number until we find an empty slot
+            int saveNumber = 1;
+            while (Utility.fileExists(config.getGameStateSavePath() + "_" + saveNumber + ".json")) saveNumber++;
+            Files.writeString(Paths.get(config.getGameStateSavePath() + "_" + saveNumber + ".json"), JSONed);
         } catch (Exception e) {
             e.printStackTrace();
         }

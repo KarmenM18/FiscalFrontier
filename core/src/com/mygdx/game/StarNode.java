@@ -12,13 +12,13 @@ public class StarNode extends Node {
     boolean hasStar = true;
     Texture starTexture;
 
-    public StarNode(String id, int x, int y, String north, String east, String south, String west, Map<String, Node> map, AssetManager assets) {
-        super(id, x, y, north, east, south, west, map, assets);
+    public StarNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
+        super(mapX, mapY, north, east, south, west, map, assets);
         checkStar();
     }
 
-    public StarNode(String id, int x, int y, AssetManager assets) {
-        super(id, x, y, assets);
+    public StarNode(int mapX, int mapY, AssetManager assets) {
+        super(mapX, mapY, assets);
         checkStar();
     }
     private StarNode() {}

@@ -24,6 +24,7 @@ public class MainGame extends Game {
 	private PauseScreen pauseScreen;
 	private ShopScreen shopScreen;
 	private MainMenuScreen mainMenuScreen;
+	//private SaveScreen saveScreen;
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
 
@@ -47,6 +48,7 @@ public class MainGame extends Game {
 		gameBoard = new GameBoard(batch, assets);
 		pauseScreen = new PauseScreen(batch, assets);
 		shopScreen = new ShopScreen(batch, assets);
+		//saveScreen = new SaveScreen(batch, assets);
 
 		// Load players from save if possible
 		if (Utility.fileExists(config.getPlayerSavePath())) {

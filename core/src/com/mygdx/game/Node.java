@@ -19,43 +19,39 @@ public abstract class Node implements Serializable {
     protected Texture tileTexture; // Texture of the board tile
     protected int x, y;
 
-    // IDs of adjacent nodes
-    protected String north = null;
-    protected String east = null;
-    protected String south = null;
-    protected String west = null;
+    // Enabled directions. These control which adjacent nodes are accessible from this node
+    protected boolean north = false;
+    protected boolean east = false;
+    protected boolean south = false;
+    protected boolean west = false;
 
     /**
      * Constructor for Node
      */
-    public Node(String id, int x, int y, String north, String east, String south, String west, Map<String, Node> map, AssetManager assets) {
-        this(id, x, y, assets);
+    public Node(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
+        this(mapX, mapY, assets);
 
-        // Set linkage between nodes
+        // Set available directions
         this.north = north;
         this.east = east;
         this.south = south;
         this.west = west;
-        if (north != null) { map.get(north).setSouth(id); }
-        if (east != null) { map.get(east).setWest(id); }
-        if (south != null) { map.get(south).setNorth(id); }
-        if (west != null) { map.get(west).setEast(id); }
     }
 
     /**
      * Simpler constructor for Node
      */
-    public Node(String id, int x, int y, AssetManager assets) {
-        this.nodeID = id;
-        this.x = x;
-        this.y = y;
+    public Node(int mapX, int mapY, AssetManager assets) {
+        this.nodeID = String.valueOf(mapX) + "," + String.valueOf(mapY);
+        this.x = mapX;
+        this.y = mapY;
 
         // Setup sprite
         Config config = Config.getInstance();
         tileTexture = assets.get(config.getTilePath());
         sprite = new Sprite(tileTexture);
         sprite.setSize(50, 50);
-        sprite.setPosition(x, y);
+        sprite.setPosition(x * 75, y * 75);
         loadTextures(assets);
     }
 
@@ -88,19 +84,23 @@ public abstract class Node implements Serializable {
     public ArrayList<ArrayList<String>> getReachable(int distance, String prevNodeID, Map<String, Node> nodeMap) {
         ArrayList<ArrayList<String>> foundNodes = new ArrayList<>();
 
-        // Try all directions except null and the previous node
         ArrayList<String> path = new ArrayList<>(List.of(nodeID));
-        if (north != null && !north.equals(prevNodeID)) {
-            getReachableRecur(nodeMap.get(north), path, 1, distance, foundNodes, nodeMap);
+        // Try all directions enabled directions by adding / removing 1 from the x and y coordinates
+        String northID = String.valueOf(x) + "," + String.valueOf(y + 1);
+        String eastID = String.valueOf(x + 1) + "," + String.valueOf(y);
+        String southID = String.valueOf(x) + "," + String.valueOf(y - 1);
+        String westID = String.valueOf(x - 1) + "," + String.valueOf(y);
+        if (north && !northID.equals(prevNodeID)) {
+            getReachableRecur(nodeMap.get(northID), path, 1, distance, foundNodes, nodeMap);
         }
-        if (east != null && !east.equals(prevNodeID)) {
-            getReachableRecur(nodeMap.get(east), path, 1, distance, foundNodes, nodeMap);
+        if (east && !eastID.equals(prevNodeID)) {
+            getReachableRecur(nodeMap.get(eastID), path, 1, distance, foundNodes, nodeMap);
         }
-        if (south != null && !south.equals(prevNodeID)) {
-            getReachableRecur(nodeMap.get(south), path, 1, distance, foundNodes, nodeMap);
+        if (south && !southID.equals(prevNodeID)) {
+            getReachableRecur(nodeMap.get(southID), path, 1, distance, foundNodes, nodeMap);
         }
-        if (west != null && !west.equals(prevNodeID)) {
-            getReachableRecur(nodeMap.get(west), path, 1, distance, foundNodes, nodeMap);
+        if (west && !westID.equals(prevNodeID)) {
+            getReachableRecur(nodeMap.get(westID), path, 1, distance, foundNodes, nodeMap);
         }
 
         return foundNodes;
@@ -128,18 +128,23 @@ public abstract class Node implements Serializable {
             return;
         }
 
-        // Try all directions except null and the previous node
-        if (curr.north != null && !curr.north.equals(path.getLast())) {
-            getReachableRecur(map.get(curr.north), newPath, distance + 1, target, found, map);
+        int currX = curr.getMapX();
+        int currY = curr.getMapY();
+        String northID = currX + "," + (currY + 1);
+        String eastID = (currX + 1) + "," + currY;
+        String southID = currX + "," + (currY - 1);
+        String westID = (currX - 1) + "," + currY;
+        if (curr.getNorth() && !northID.equals(path.getLast())) {
+            getReachableRecur(map.get(northID), newPath, distance + 1, target, found, map);
         }
-        if (curr.east != null && !curr.east.equals(path.getLast())) {
-            getReachableRecur(map.get(curr.east), newPath, distance + 1, target, found, map);
+        if (curr.getEast() && !eastID.equals(path.getLast())) {
+            getReachableRecur(map.get(eastID), newPath, distance + 1, target, found, map);
         }
-        if (curr.south != null && !curr.south.equals(path.getLast())) {
-            getReachableRecur(map.get(curr.south), newPath, distance + 1, target, found, map);
+        if (curr.getSouth() && !southID.equals(path.getLast())) {
+            getReachableRecur(map.get(southID), newPath, distance + 1, target, found, map);
         }
-        if (curr.west != null && !curr.west.equals(path.getLast())) {
-            getReachableRecur(map.get(curr.west), newPath, distance + 1, target, found, map);
+        if (curr.getWest() && !westID.equals(path.getLast())) {
+            getReachableRecur(map.get(westID), newPath, distance + 1, target, found, map);
         }
     }
 
@@ -170,13 +175,19 @@ public abstract class Node implements Serializable {
         return sprite;
     }
 
-    // Setters for Node links
-    public void setNorth(String n) { north = n; }
-    public void setEast(String n) { east = n; }
-    public void setSouth(String n) { south = n; }
-    public void setWest(String n) { west = n; }
+    // Getters and Setters for Node links
+    public void setNorth(boolean e) { north = e; }
+    public void setEast(boolean e) { east = e; }
+    public void setSouth(boolean e) { south = e; }
+    public void setWest(boolean e) { west = e; }
+    public boolean getNorth() { return north; }
+    public boolean getEast() { return east; }
+    public boolean getSouth() { return south; }
+    public boolean getWest() { return west; }
 
     // Getters for position
-    public int getXPos() { return x; }
-    public int getYPos() { return y; }
+    public int getXPos() { return x * 75; }
+    public int getYPos() { return y * 75; }
+    public int getMapX() { return x; }
+    public int getMapY() { return y; }
 }
