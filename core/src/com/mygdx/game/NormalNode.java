@@ -20,7 +20,7 @@ public class NormalNode extends Node {
 
     @Override
     public void activate(Player player, SpriteBatch batch) {
-        //maybe add logic for showing the node graphic??
+        //maybe add logic for showing the adding money graphic??
         player.setMoney(player.getMoney() + baseMoney);
     }
 }
