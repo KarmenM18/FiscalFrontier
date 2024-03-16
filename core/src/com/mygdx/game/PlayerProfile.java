@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.Random;
 
 /**
  * Represents a player when not on the game board.
@@ -21,11 +22,14 @@ public class PlayerProfile {
     private String spritePath; // Path of the sprite to use when rendering the Player
 
     public PlayerProfile(String name) {
+
+        Random rn = new Random();
         this.name = name;
         lifetimeScore = 0;
-        knowledgeLevel = 0;
+        knowledgeLevel = rn.nextInt(13)+1;
         highScore = 0;
 
+        this.updateKnowledgeBase();
         Config config = Config.getInstance();
         spritePath = config.getPlayerPath();
     }
@@ -77,7 +81,7 @@ public class PlayerProfile {
 
         //Reading from file
         try {
-            Scanner catalog = new Scanner(new File("knowledge catalog.txt"));
+            Scanner catalog = new Scanner(new File("external/knowledge catalog.txt"));
             for (int i = 0; i < line; i++) { //Getting all knowledge up to line
                 if (!catalog.hasNextLine()) break; //No more lines to read
 
@@ -99,4 +103,6 @@ public class PlayerProfile {
         }
         return null;
     }
+
+    public LinkedList<String> getLearned () {return this.learned;}
 }

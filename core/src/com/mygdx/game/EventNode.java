@@ -7,10 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
+import com.mygdx.game.Observer.Observable;
 
 import java.util.Map;
 
 public class EventNode extends Node {
+    protected Observable<Void> callEventNode = new Observable<Void>();
     protected int penaltyAmount = 5;
     protected Observable<Void> globalEvent = new Observable<Void>();
     protected Texture eventTexture;
