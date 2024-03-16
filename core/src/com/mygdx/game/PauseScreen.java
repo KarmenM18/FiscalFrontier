@@ -16,11 +16,15 @@ public class PauseScreen extends GameScreen {
     private Observable<Void> menuEvent = new Observable<Void>();
     private Observable<Void> boardEvent = new Observable<Void>();
 
+    private PlayerProfile currentPlayer;
+
     private Table table;
     private Label title;
     private Dialog confirmMenuDialog;
     private Button menuButton;
     private Button resumeButton;
+    private Button saveGameButton;
+    private Button viewKnowledgeButton;
 
     /**
      * Constructor.
@@ -37,11 +41,17 @@ public class PauseScreen extends GameScreen {
         // Setup GUI
         table = new Table();
         stage.addActor(table);
-        menuButton = new TextButton("Menu", skin);
-        resumeButton = new TextButton("Resume", skin);
+        saveGameButton = new TextButton("Save Current Game", skin);
+        viewKnowledgeButton = new TextButton("View Knowledge Catalog", skin);
+        resumeButton = new TextButton("Resume Game", skin);
+        menuButton = new TextButton("Exit To Main Menu", skin);
 
         // Layout GUI
         table.setFillParent(true); // Size table to stage
+        table.add(saveGameButton).fillX();
+        table.row();
+        table.add(viewKnowledgeButton).fillX();
+        table.row();
         table.add(resumeButton).fillX();
         table.row();
         table.add(menuButton).fillX();
@@ -91,7 +101,22 @@ public class PauseScreen extends GameScreen {
                 boardEvent.notifyObservers(null);
             }
         });
+        saveGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("Save Game Pressed");
+            }
+        });
+        viewKnowledgeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("View Player Knowledge Base Pressed");
+                System.out.println("Current Player Name: " + currentPlayer.getName());
+            }
+        });
     }
+
+    public void setCurrentPlayer (PlayerProfile currentPlayer) {this.currentPlayer = currentPlayer;}
 
     public void addSaveGameListener(Observer<GameState> ob) { saveGameEvent.addObserver(ob); }
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }

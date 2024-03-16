@@ -66,7 +66,11 @@ public class MainGame extends Game {
 
 		// Set gameBoard observers
 		gameBoard.addShopListener(v -> setScreen(shopScreen));
-		gameBoard.addPauseListener(v -> setScreen(pauseScreen));
+		gameBoard.addPauseListener(currentPlayer -> {
+			//TODO Send Current Player Info To Screen
+			pauseScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer().getPlayerProfile());
+			setScreen(pauseScreen);
+		});
 		// Set PauseScreen observers
 		pauseScreen.addSaveGameListener(v -> saveGameState(gameBoard.getGameState()));
 		pauseScreen.addMenuListener(v -> {

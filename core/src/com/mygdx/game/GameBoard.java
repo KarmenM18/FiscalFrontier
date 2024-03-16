@@ -38,7 +38,7 @@ import static java.lang.Math.abs;
 
 public class GameBoard extends GameScreen {
     // Observables are used to inform about events to subscribed Observers. The Observer Pattern
-    private Observable<Void> pauseEvent = new Observable<Void>();
+    private Observable<PlayerProfile> pauseEvent = new Observable<PlayerProfile>();
     private Observable<Void> shopEvent = new Observable<Void>();
 
     private Texture background;
@@ -337,7 +337,7 @@ public class GameBoard extends GameScreen {
         return gameState;
     }
 
-    public void addPauseListener(Observer<Void> ob) { pauseEvent.addObserver(ob); }
+    public void addPauseListener(Observer<PlayerProfile> ob) { pauseEvent.addObserver(ob); }
     public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
 
 
