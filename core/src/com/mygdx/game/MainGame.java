@@ -102,11 +102,17 @@ public class MainGame extends Game {
 		mainMenuScreen.addContinueGameListener(v -> {
 			GameState gs;
 			if (Utility.fileExists(config.getGameStateSavePath())) {
-				//gs = loadGameState();
-				//gameBoard.setGameState(gs);
+				gs = loadGameState(config.getGameStateSavePath());
+				gameBoard.setGameState(gs);
 				setScreen(gameBoard);
 			}
 			// TODO inform the user that there is no save to continue from
+		});
+		mainMenuScreen.addInstructorDashboardListener(v -> {
+			// Open instructor dashboard
+			InstructorDashboard instructorDashboard = new InstructorDashboard(batch, assets);
+			setScreen(instructorDashboard);
+			// TODO: Not done implementing
 		});
 	}
 
