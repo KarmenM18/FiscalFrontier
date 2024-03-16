@@ -88,4 +88,15 @@ public class PlayerProfile {
         }
 
     }
+
+    public String getRandomTip () {
+
+        int randTip = (int) (Math.random() * this.learned.size());
+        try {
+            return this.learned.get(randTip);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
