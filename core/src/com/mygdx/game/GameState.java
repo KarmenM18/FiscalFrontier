@@ -10,6 +10,9 @@ import com.mygdx.game.Items.Bike;
 import com.mygdx.game.Items.FreezeItem;
 import com.mygdx.game.Items.MultiDice;
 import com.mygdx.game.Items.Shield;
+import com.mygdx.game.Node.*;
+import com.mygdx.game.Node.StarNode;
+
 
 import java.io.Serializable;
 import java.util.*;

@@ -27,6 +27,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Items.Item;
+import com.mygdx.game.Node.Node;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 

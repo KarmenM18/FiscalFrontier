@@ -1,13 +1,13 @@
-package com.mygdx.game;
+package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.mygdx.game.Config;
+import com.mygdx.game.Node.Node;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
-import com.mygdx.game.Observer.Observable;
+import com.mygdx.game.Player;
 
 import java.util.Map;
 
