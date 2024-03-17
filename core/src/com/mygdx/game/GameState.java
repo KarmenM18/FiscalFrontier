@@ -21,6 +21,10 @@ public class GameState implements Serializable {
     private List<Player> playerList;
     private int currPlayerTurn;
     private int turnNumber;
+    /**
+     * TODO: check if roundNumber is 26, end game and change to score screen if so
+     * maybe add warning at round 24 25??
+     */
     private int roundNumber;
     private HashMap<String, Node> nodeMap;
     transient private AssetManager assetMan;
