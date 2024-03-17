@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import javax.swing.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
@@ -65,6 +66,7 @@ public class Player implements Serializable {
     private int maxRolls;
     private int movesLeft;
     private int maxMoves;
+    private boolean useMutliDice = false;
     private ArrayList<ArrayList<String>> reachablePaths;
     /**
      * The previous tile the player was on. Used to disallow going backwards.
@@ -95,6 +97,7 @@ public class Player implements Serializable {
         this.movesLeft = maxMoves;
         this.maxRolls = 1;
         this.rollsLeft = maxRolls;
+        this.useMutliDice = false;
         this.reachablePaths = new ArrayList<>();
         this.previousPath = new ArrayList<>();
 
@@ -161,6 +164,9 @@ public class Player implements Serializable {
 
     public int rollDie(Map<String, Node> nodeMap) {
         dieRoll = Utility.getRandom(1, 4);
+        if(useMutliDice){
+            dieRoll += Utility.getRandom(1, 4);
+        }
 
         // Get previous node if a previous path exists or just use null
         String previousNode = null;
@@ -283,7 +289,9 @@ public class Player implements Serializable {
         this.stars++;
     }
 
-
+    public void setUseMutliDice(boolean use){
+        this.useMutliDice = use;
+    }
     // TODO: Confirm score formula
 
     /**

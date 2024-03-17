@@ -8,6 +8,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.io.Serializable;
+import java.lang.foreign.PaddingLayout;
 import java.util.*;
 
 public class GameState implements Serializable {
@@ -46,6 +47,7 @@ public class GameState implements Serializable {
             // TODO TESTING, 25% CHANCE PER ADDITIONAL RANDOM ITEM
             for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
                player.addItem(new Bike(skin));
+               player.addItem(new MultiDice(skin));
             }
         }
 
