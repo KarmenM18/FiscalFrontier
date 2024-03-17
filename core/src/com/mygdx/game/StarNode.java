@@ -34,10 +34,17 @@ public class StarNode extends Node {
     @Override
     public void activate(Player player, SpriteBatch batch) {
         if (hasStar) {
-            // TODO setup purchase logic
-            player.addStar();
-            this.hasStar = false;
-            checkStar();
+            if(player.getMoney() < starCost){
+                this.hasStar = true;
+                checkStar();
+                //TODO make sure to remove this line
+                System.out.println("you don't get any star!");
+            }else {
+                // TODO setup purchase logic
+                player.addStar();
+                this.hasStar = false;
+                checkStar();
+            }
         }
     }
 
