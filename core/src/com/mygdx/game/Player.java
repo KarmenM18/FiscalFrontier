@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -121,6 +122,12 @@ public class Player implements Serializable {
 
     public void loadTextures(AssetManager assets) {
         sprite.setTexture(assets.get(profile.getSpritePath()));
+        // Load textures for all items
+        Config config = Config.getInstance();
+        Skin skin = assets.get(config.getUiPath(), Skin.class);
+        for (Item item : items) {
+            item.loadTextures(skin);
+        }
     }
 
     /**
@@ -321,6 +328,14 @@ public class Player implements Serializable {
         this.sprite.setPosition(newTile.getXPos(), newTile.getYPos());
     }
 
+    /**
+     * Get all the player's items
+     *
+     * @return List of Items
+     */
+    public ArrayList<Item> getItems() {
+        return items;
+    }
 
     /**
      * Adds an item to the player's inventory.
@@ -383,6 +398,7 @@ public class Player implements Serializable {
      */
     public int getDieRoll() { return dieRoll; }
 
+
     /**
      * Check if Player has moves left.
      *
@@ -396,6 +412,8 @@ public class Player implements Serializable {
      * @return True or false
      */
     public boolean canRoll() { return rollsLeft > 0; }
+
+    public void setRollsLeft(int value) { rollsLeft = value; }
 
     /**
      * Get the list of current reachable tile paths.

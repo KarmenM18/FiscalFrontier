@@ -5,6 +5,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ObjectMap;
 
 import java.io.Serializable;
@@ -38,6 +39,13 @@ public class GameState implements Serializable {
             // Each player gets a different color
             player.getSprite().setColor(Utility.getRandom(0, 255) / 255f, Utility.getRandom(0, 255) / 255f, Utility.getRandom(0, 255) / 255f, 1);
             this.playerList.add(player);
+
+            Config config = Config.getInstance();
+            Skin skin = assets.get(config.getUiPath(), Skin.class);
+            // TODO TESTING, 25% CHANCE PER ADDITIONAL RANDOM ITEM
+            for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
+               player.addItem(new Bike(skin));
+            }
         }
 
         // Setup nodes

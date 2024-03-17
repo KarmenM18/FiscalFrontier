@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -52,7 +51,6 @@ public class SaveScreen extends GameScreen {
         menuButton.align(Align.topLeft);
 
         // Layout GUI
-        stage.addActor(menuButton);
         stage.addActor(scrollPane);
 
         // Set shortcuts
@@ -91,6 +89,8 @@ public class SaveScreen extends GameScreen {
     private void findSaves() {
         // Remove old buttons and create new ones as needed
         table.clear();
+        table.add(menuButton);
+        table.row().pad(10, 0, 10, 0);
 
         int saveNum = 1;
         File saveFolder = new File(".");

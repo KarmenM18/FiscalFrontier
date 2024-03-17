@@ -25,7 +25,6 @@ public class MainGame extends Game {
 	private ShopScreen shopScreen;
 	private MainMenuScreen mainMenuScreen;
 	private KnowledgeListScreen knowledgeListScreen;
-	//private SaveScreen saveScreen;
 	private SaveScreen saveScreen;
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
@@ -50,7 +49,7 @@ public class MainGame extends Game {
 		gameBoard = new GameBoard(batch, assets);
 		pauseScreen = new PauseScreen(batch, assets);
 		shopScreen = new ShopScreen(batch, assets);
-		//saveScreen = new SaveScreen(batch, assets);
+		saveScreen = new SaveScreen(batch, assets);
 
 		// Load players from save if possible
 		if (Utility.fileExists(config.getPlayerSavePath())) {
@@ -80,6 +79,13 @@ public class MainGame extends Game {
 		pauseScreen.addBoardListener(v -> setScreen(gameBoard));
 		// Set ShopScreen observers
 		shopScreen.addBoardListener(v -> setScreen(gameBoard));
+		// Set SaveScreen observers
+		saveScreen.addMenuListener(v -> setScreen(mainMenuScreen));
+		saveScreen.addLoadSaveListener(savePath -> {
+			GameState gs = loadGameState(savePath);
+			gameBoard.setGameState(gs);
+			setScreen(gameBoard);
+		});
 		// Set MainMenuScreen observers
 		mainMenuScreen.addStartGameListener(v -> {
 			// Create new game with all players in it TODO player selection
@@ -89,12 +95,16 @@ public class MainGame extends Game {
 		});
 		mainMenuScreen.addContinueGameListener(v -> {
 			GameState gs;
+			// TODO: load LAST save
 			if (Utility.fileExists(config.getGameStateSavePath())) {
 				gs = loadGameState(config.getGameStateSavePath());
 				gameBoard.setGameState(gs);
 				setScreen(gameBoard);
 			}
 			// TODO inform the user that there is no save to continue from
+		});
+		mainMenuScreen.addLoadGameListener(v -> {
+			setScreen(saveScreen);
 		});
 		mainMenuScreen.addInstructorDashboardListener(v -> {
 			// Open instructor dashboard

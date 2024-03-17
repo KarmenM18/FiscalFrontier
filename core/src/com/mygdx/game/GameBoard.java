@@ -10,18 +10,17 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -33,9 +32,6 @@ import com.mygdx.game.Observer.Observer;
 
 import java.util.*;
 import java.util.List;
-
-import static com.badlogic.gdx.math.MathUtils.atan2;
-import static java.lang.Math.abs;
 
 public class GameBoard extends GameScreen {
     // Observables are used to inform about events to subscribed Observers. The Observer Pattern
@@ -59,7 +55,8 @@ public class GameBoard extends GameScreen {
     private Label starsLabel;
     private Label rollLabel;
 
-    private ArrayList<Item> playerItems;
+    transient private ArrayList<Item> playerItems; // Transient as it will be regenerated when the state is deserialized
+    transient private ArrayList<TextButton> itemButtons;
 
     private GameState gameState;
     private int width = 1920;
@@ -75,6 +72,8 @@ public class GameBoard extends GameScreen {
 
     public GameBoard(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
+
+        itemButtons = new ArrayList<>();
 
         assets.load("gameboard.png", Texture.class);
         assets.finishLoading();
@@ -201,6 +200,9 @@ public class GameBoard extends GameScreen {
                 rollLabel.setVisible(false);
                 gameState.nextTurn();
                 moveCameraPlayer();
+
+                // Update items to the new player
+                updateItemButtons();
             }
         });
         rollButton.addListener(new ChangeListener() {
@@ -213,9 +215,7 @@ public class GameBoard extends GameScreen {
                 rollLabel.setVisible(true);
 
                 // Disable button if the player cannot roll anymore
-                if (!currPlayer.canRoll()) {
-                    rollButton.setVisible(false);
-                }
+                checkRollButton();
             }
         });
 
@@ -245,6 +245,7 @@ public class GameBoard extends GameScreen {
         }
 
         moveCameraPlayer();
+        updateItemButtons();
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -325,6 +326,47 @@ public class GameBoard extends GameScreen {
         background.dispose();
         stage.dispose();
         hudStage.dispose();
+    }
+
+    public void updateItemButtons() {
+        // Update item activation buttons TODO do we want items to be usable on the game board? What about passive items?
+        for (TextButton button : itemButtons) {
+            button.addAction(Actions.removeActor());
+        }
+        itemButtons.clear();
+
+        float x = 0;
+        for (Item item : gameState.getCurrentPlayer().getItems()) {
+            if (item.isPassive()) continue; // Skip passive items
+
+            TextButton button = new TextButton("Use " + item.getName(), skin);
+            button.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    boolean delete = item.use(gameState.getCurrentPlayer(), gameState, hudStage);
+                    if (delete) gameState.getCurrentPlayer().removeItem(item.getName());
+                    checkRollButton();
+                    updateItemButtons();
+                }
+            });
+            button.setX(x);
+            x += button.getWidth();
+            itemButtons.add(button);
+            hudStage.addActor(button);
+        }
+    }
+
+    /**
+     * Checks if the roll button should be visible, based on the if the player can roll
+     */
+    public void checkRollButton() {
+        if (!gameState.getCurrentPlayer().canRoll()) {
+            rollButton.setVisible(false);
+            // Disable items as well TODO: intended behavior?
+            for (Button button : itemButtons) {
+                button.setVisible(false);
+            }
+        }
     }
 
     /**
