@@ -10,6 +10,7 @@ import com.mygdx.game.Items.Bike;
 import com.mygdx.game.Items.FreezeItem;
 
 import java.io.Serializable;
+import java.lang.foreign.PaddingLayout;
 import java.util.*;
 
 public class GameState implements Serializable {
@@ -48,6 +49,7 @@ public class GameState implements Serializable {
             // TODO TESTING, 25% CHANCE PER ADDITIONAL RANDOM ITEM
             for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
                player.addItem(new Bike(skin));
+               player.addItem(new MultiDice(skin));
             }
             for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
                 player.addItem(new FreezeItem(skin));
@@ -97,7 +99,7 @@ public class GameState implements Serializable {
         for (Node node : nodeMap.values()) {
             // Restore Node Observers
             if (node instanceof EventNode) {
-                ((EventNode)node).addEventListener(penaltyAmount -> globalEventMode(penaltyAmount));
+                ((EventNode)node).addEventListener(penaltyAmount -> globalEvent(penaltyAmount));
             }
             node.loadTextures(assets);
         }
@@ -148,7 +150,7 @@ public class GameState implements Serializable {
      * global event for event node, reduce all player's money
      * @param penaltyAmount
      */
-    public void globalEventMode(int penaltyAmount){
+    public void globalEvent(int penaltyAmount){
         //TODO adjust Money penalty logic for hardmode
         for (Player p : getPlayerList()){
             if(p.getStars() > 0){
@@ -219,7 +221,7 @@ public class GameState implements Serializable {
 
     public void createEventNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
         EventNode eventNode = new EventNode(x, y, false, false, true, false, nodeMap, assetMan);
-        eventNode.addEventListener(penaltyValue -> globalEventMode(penaltyValue));
+        eventNode.addEventListener(penaltyValue -> globalEvent(penaltyValue));
         nodeMap.put(x + "," + y, eventNode);
     }
 }
