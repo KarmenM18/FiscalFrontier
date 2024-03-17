@@ -22,6 +22,8 @@ public class GameState implements Serializable {
 
     private AssetManager assetMan;
     private int currentStar;
+    private int maxStar = 3;
+    private int minStar = 1;
 
     /**
      * Constructor
@@ -73,8 +75,6 @@ public class GameState implements Serializable {
 
         eventNode.addEventListener(v -> globalEventMode(eventNode.penaltyAmount));
 
-
-        currentStar = 0;
         // Set starting nodes - player cannot start on a special node, only a plain node
         // They also can't start on the same node as another player
         ArrayList<String> nodeIDs = new ArrayList<>();
@@ -111,9 +111,9 @@ public class GameState implements Serializable {
     public void nextTurn() {
         // Wipe Player's calculated turn values
         getCurrentPlayer().endTurn(nodeMap);
+        checkStar(nodeMap);
         currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
         getCurrentPlayer().startTurn(nodeMap);
-        emptyStar(nodeMap);
         turnNumber++;
     }
 
@@ -150,37 +150,59 @@ public class GameState implements Serializable {
     }
 
     /**
-     * TODO find a place to use this function every turn
-     * to update/check the gamestate/gameboard for # of star
+     * Runs when there is less star than per turn limit
+     * per turn limit is rand based on minStar and maxStar
      * @param nodeMap
      */
-    public void emptyStar(HashMap<String, Node> nodeMap){
+    public void checkStar(HashMap<String, Node> nodeMap){
+        //should only run when map has
+        //not getting the right current node
+        removeStar(nodeMap);
+        currentStar = 0;
         for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
-            Node node1 = node.getValue();
-            int x = node1.getMapX();
-            int y = node1.getMapY();
-            boolean north = node1.getNorth();
-            boolean south = node1.getSouth();
-            boolean west = node1.getWest();
-            boolean east = node1.getEast();
-            if(currentStar >= 2){
-                break;
-            }
-            if(currentStar < 1) {
-                if (node1 instanceof NormalNode) {
-                    StarNode newStar = new StarNode(x, y, north, east, south, west, nodeMap, assetMan);
-                    //remove the existing node first
-                    nodeMap.put(node.getKey(), newStar);
-                    newStar.hasStar = true;
-                    newStar.checkStar();
-                    currentStar++;
-                }
-            }
-            if(node1 instanceof StarNode && !((StarNode) node1).hasStar){
-                nodeMap.put(node.getKey(), new NormalNode(x, y, north, east, south, west, nodeMap, assetMan));
-                currentStar--;
+            if (node.getValue() instanceof StarNode) {
+                currentStar++;
             }
         }
-    }
+        int starLimit = Utility.getRandom(minStar, maxStar + 1); //setting random number of max star every turn
+        if(currentStar < starLimit){ //only add new star if currentStar is less than maxStar
+            List<Node> normalNodeList = new ArrayList<Node>();
+            for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+                Node node1 = node.getValue();
+                if (node1 instanceof NormalNode) {
+                    normalNodeList.add(node1);
+                    Utility.shuffle(normalNodeList);
+                }
+            }
+            Node randNode = normalNodeList.get(Utility.getRandom(0, normalNodeList.size() - 1));
+            String randKey = randNode.getID();
+            int x = randNode.getMapX();
+            int y = randNode.getMapY();
+            boolean north = randNode.getNorth();
+            boolean south = randNode.getSouth();
+            boolean west = randNode.getWest();
+            boolean east = randNode.getEast();
+            StarNode newStar = new StarNode(x, y, north, east, south, west, nodeMap, assetMan);
+            nodeMap.remove(randKey);
+            newStar.hasStar = true;
+            newStar.checkStar();
+            nodeMap.put(randKey, newStar);
 
+        }
+    }
+    public void removeStar(HashMap<String, Node> nodeMap){
+        Node currentNode = nodeMap.get(getCurrentPlayer().getCurrentTile());
+        if(currentNode instanceof StarNode){
+            String currentKey = currentNode.getID();
+            int x = currentNode.getMapX();
+            int y = currentNode.getMapY();
+            boolean north = currentNode.getNorth();
+            boolean south = currentNode.getSouth();
+            boolean west = currentNode.getWest();
+            boolean east = currentNode.getEast();
+            nodeMap.remove(currentKey);
+            NormalNode newNormal = new NormalNode(x, y, north, east, south, west, nodeMap, assetMan);
+            nodeMap.put(currentKey, newNormal);
+        }
+    }
 }
