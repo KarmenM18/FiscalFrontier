@@ -34,6 +34,12 @@ public class PenaltyNode extends Node {
         sprite.setTexture(penaltyTexture);
     }
 
+
+    /**
+     * TODO need to discuss easy/hard mode difference 
+     * @param player
+     * @param batch
+     */
     @Override
     public void activate(Player player, SpriteBatch batch) {
         if(player.getHasShield()){
@@ -41,6 +47,8 @@ public class PenaltyNode extends Node {
         }else if(player.getMoney() >= penaltyAmount){
             //maybe add logic on the penalty graphic
             player.setMoney(player.getMoney() - penaltyAmount);
+        }else if(player.getStars() > 0){
+            player.setStars(player.getStars() - 1);
         }
     }
 }
