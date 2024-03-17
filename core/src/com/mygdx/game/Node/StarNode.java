@@ -24,6 +24,9 @@ public class StarNode extends Node {
         super(mapX, mapY, assets);
         checkStar();
     }
+    /**
+     * necessary for serialization
+     */
     private StarNode() {}
 
     @Override

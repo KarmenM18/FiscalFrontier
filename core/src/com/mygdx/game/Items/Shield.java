@@ -13,4 +13,8 @@ public class Shield extends Item{
         player.setHasShield(true);
         return true;
     }
+    /**
+     * necessary for serialization
+     */
+    private Shield(){}
 }

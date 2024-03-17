@@ -14,5 +14,8 @@ public class MultiDice extends Item {
         player.setUseMutliDice(true);
         return true;
     }
-
+    /**
+     * necessary for serialization
+     */
+    private MultiDice(){}
 }

@@ -23,10 +23,14 @@ public class EventNode extends Node {
         super(mapX, mapY, north, east, south, west, map, assets);
     }
 
+
     public EventNode(int mapX, int mapY, AssetManager assets) {
         super(mapX, mapY, assets);
     }
 
+    /**
+     * necessary for serialization
+     */
     private EventNode() {}
 
     @Override

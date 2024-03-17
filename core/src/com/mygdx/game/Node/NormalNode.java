@@ -18,6 +18,9 @@ public class NormalNode extends Node {
         super(mapX, mapY, assets);
     }
 
+    /**
+     * necessary for serialization
+     */
     private NormalNode() {}
 
     @Override

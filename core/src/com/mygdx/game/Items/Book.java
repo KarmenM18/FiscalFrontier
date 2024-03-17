@@ -18,4 +18,8 @@ public class Book extends Item{
         player.levelUp();
         return true;
     }
+    /**
+     * necessary for serialization
+     */
+    private Book(){}
 }

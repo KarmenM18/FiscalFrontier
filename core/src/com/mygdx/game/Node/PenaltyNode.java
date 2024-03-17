@@ -21,6 +21,9 @@ public class PenaltyNode extends Node {
         super(mapX, mapY, assets);
     }
 
+    /**
+     * necessary for serialization
+     */
     private PenaltyNode() {}
 
     @Override
