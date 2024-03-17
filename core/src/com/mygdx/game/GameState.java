@@ -8,9 +8,10 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.Bike;
 import com.mygdx.game.Items.FreezeItem;
+import com.mygdx.game.Items.MultiDice;
+import com.mygdx.game.Items.Shield;
 
 import java.io.Serializable;
-import java.lang.foreign.PaddingLayout;
 import java.util.*;
 
 public class GameState implements Serializable {
@@ -50,6 +51,7 @@ public class GameState implements Serializable {
             for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
                player.addItem(new Bike(skin));
                player.addItem(new MultiDice(skin));
+               player.addItem(new Shield(skin));
             }
             for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
                 player.addItem(new FreezeItem(skin));
@@ -153,7 +155,9 @@ public class GameState implements Serializable {
     public void globalEvent(int penaltyAmount){
         //TODO adjust Money penalty logic for hardmode
         for (Player p : getPlayerList()){
-            if(p.getStars() > 0){
+            if(p.getHasShield()){
+                //do nothing
+            }else if(p.getStars() > 0){
                 p.setStars(p.getStars() - 1);
             }else if(p.getMoney() > 0){
                 p.setMoney(p.getMoney() - penaltyAmount);

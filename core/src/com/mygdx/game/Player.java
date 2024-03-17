@@ -73,6 +73,7 @@ public class Player implements Serializable {
     private int movesLeft;
     private int maxMoves;
     private boolean useMutliDice = false;
+    private boolean hasShield = false;
     private ArrayList<ArrayList<String>> reachablePaths;
     /**
      * The previous tile the player was on. Used to disallow going backwards.
@@ -105,6 +106,7 @@ public class Player implements Serializable {
         this.maxRolls = 1;
         this.rollsLeft = maxRolls;
         this.useMutliDice = false;
+        this.hasShield = false;
         this.reachablePaths = new ArrayList<>();
         this.previousPath = new ArrayList<>();
 
@@ -298,6 +300,12 @@ public class Player implements Serializable {
 
     public void setUseMutliDice(boolean use){
         this.useMutliDice = use;
+    }
+    public boolean getHasShield(){
+        return hasShield;
+    }
+    public void setHasShield(boolean has){
+        this.hasShield = has;
     }
     // TODO: Confirm score formula
 
