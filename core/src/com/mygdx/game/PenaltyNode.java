@@ -30,12 +30,11 @@ public class PenaltyNode extends Node {
 
     @Override
     public void activate(Player player, SpriteBatch batch) {
-        if(player.getMoney() >= penaltyAmount){
+        if(player.getHasShield()){
+            //do nothing
+        }else if(player.getMoney() >= penaltyAmount){
             //maybe add logic on the penalty graphic
             player.setMoney(player.getMoney() - penaltyAmount);
-        } else {
-            //maybe add logic for showing penalty not applied due to not enough mooney
-            //return
         }
     }
 }
