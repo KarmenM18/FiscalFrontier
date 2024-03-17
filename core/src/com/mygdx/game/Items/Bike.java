@@ -1,7 +1,10 @@
-package com.mygdx.game;
+package com.mygdx.game.Items;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.mygdx.game.GameState;
+import com.mygdx.game.Node;
+import com.mygdx.game.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;

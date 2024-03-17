@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.mygdx.game.Items.Item;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,6 +49,11 @@ public class Player implements Serializable {
     private ArrayList<Item> items;
 
     /**
+     * Player's frozen state. When they are frozen, they skip their next turn.
+     */
+    private boolean frozen;
+
+    /**
      * ID of the node where the player is on the game board.
      */
     private String currentTile;
@@ -89,6 +95,7 @@ public class Player implements Serializable {
         this.money = money;
         this.score = score;
         this.items = items;
+        this.frozen = false;
         this.currentTile = currentTile;
         this.dieRoll = 0;
         this.maxMoves = 1;
@@ -428,4 +435,10 @@ public class Player implements Serializable {
      * @return Sprite
      */
     public Sprite getSprite() { return sprite; }
+
+    /**
+     * FreezeItem the Player for a turn. Their next turn is skipped
+     */
+    public void setFrozen(boolean t) { frozen = t; }
+    public boolean isFrozen() { return frozen; }
 }

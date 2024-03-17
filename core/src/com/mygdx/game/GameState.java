@@ -6,6 +6,8 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.mygdx.game.Items.Bike;
+import com.mygdx.game.Items.FreezeItem;
 
 import java.io.Serializable;
 import java.util.*;
@@ -46,6 +48,9 @@ public class GameState implements Serializable {
             // TODO TESTING, 25% CHANCE PER ADDITIONAL RANDOM ITEM
             for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
                player.addItem(new Bike(skin));
+            }
+            for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
+                player.addItem(new FreezeItem(skin));
             }
         }
 
@@ -111,6 +116,13 @@ public class GameState implements Serializable {
         removeStar(nodeMap);
         checkStar(nodeMap);
         currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
+        if (getCurrentPlayer().isFrozen()) {
+            // TODO Inform that player was frozen
+            getCurrentPlayer().setFrozen(false);
+            // Skip turn
+            currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
+            turnNumber++;
+        }
         getCurrentPlayer().startTurn(nodeMap);
         turnNumber++;
     }
