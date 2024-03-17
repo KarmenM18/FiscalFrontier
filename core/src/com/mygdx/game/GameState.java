@@ -65,10 +65,7 @@ public class GameState implements Serializable {
         nodeMap.put("-1,2", new NormalNode(-1, 2, false, true, false, false, nodeMap, assets));
         nodeMap.put("0,2", new PenaltyNode(0, 2, false, true, false, false, nodeMap, assets));
         nodeMap.put("1,2", new NormalNode(1, 2, false, true, false, false, nodeMap, assets));
-        EventNode eventNode = new EventNode(2, 1, false, false, true, false, nodeMap, assets);
-        nodeMap.put("2,1", eventNode);
-
-        eventNode.addEventListener(penaltyAmount -> globalEventMode(penaltyAmount));
+        createEventNode(2, 1, false, false, true, false);
 
         // Set starting nodes - player cannot start on a special node, only a plain node
         // They also can't start on the same node as another player
@@ -93,6 +90,7 @@ public class GameState implements Serializable {
     public void loadTextures(AssetManager assets) {
         assetMan = assets;
         for (Node node : nodeMap.values()) {
+            // Restore Node Observers
             if (node instanceof EventNode) {
                 ((EventNode)node).addEventListener(penaltyAmount -> globalEventMode(penaltyAmount));
             }
@@ -205,5 +203,11 @@ public class GameState implements Serializable {
                 nodeMap.put(currentKey, newNormal);
             }
         }
+    }
+
+    public void createEventNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
+        EventNode eventNode = new EventNode(x, y, false, false, true, false, nodeMap, assetMan);
+        eventNode.addEventListener(penaltyValue -> globalEventMode(penaltyValue));
+        nodeMap.put(x + "," + y, eventNode);
     }
 }
