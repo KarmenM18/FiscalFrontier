@@ -14,6 +14,7 @@ public class Item {
     protected boolean passive; // Passive items cannot be activated, they just affect the Player in some way
     transient protected Dialog usedItemDialog; // Transient; must be rebuilt by calling loadTextures after deserialization
 
+
     /**
      * Standard constructor
      *
