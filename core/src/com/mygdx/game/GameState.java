@@ -19,11 +19,9 @@ public class GameState implements Serializable {
     private int turnNumber;
     private EventNode eventNode;
     private HashMap<String, Node> nodeMap;
-
     private AssetManager assetMan;
-    private int currentStar;
-    private int maxStar = 3;
-    private int minStar = 1;
+    private final int maxStar = 3;
+    private final int minStar = 1;
 
     /**
      * Constructor
@@ -158,7 +156,7 @@ public class GameState implements Serializable {
         //should only run when map has
         //not getting the right current node
         removeStar(nodeMap);
-        currentStar = 0;
+        int currentStar = 0;
         for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
             if (node.getValue() instanceof StarNode) {
                 currentStar++;
