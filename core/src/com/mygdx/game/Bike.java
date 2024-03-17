@@ -25,4 +25,5 @@ public class Bike extends Item {
         return true;
     }
 
+    private Bike() {}
 }

@@ -37,7 +37,10 @@ public class Item {
         this(name, false, skin);
     }
 
-    private Item() {}
+    /**
+     * No-arg constructor for deserialization
+     */
+    protected Item() {}
 
     public void loadTextures(Skin skin) {
         usedItemDialog = new Dialog("Used Item", skin); // ChangeListener does nothing, as the user just has to press ok

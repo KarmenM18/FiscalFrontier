@@ -6,9 +6,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.mygdx.game.Observer.Observable;
-import com.mygdx.game.Observer.Observer;
 
 import java.io.Serializable;
 import java.util.*;
@@ -17,9 +14,8 @@ public class GameState implements Serializable {
     private List<Player> playerList;
     private int currPlayerTurn;
     private int turnNumber;
-    private EventNode eventNode;
     private HashMap<String, Node> nodeMap;
-    private AssetManager assetMan;
+    transient private AssetManager assetMan;
     private final int maxStar = 3;
     private final int minStar = 1;
 
@@ -68,10 +64,10 @@ public class GameState implements Serializable {
         nodeMap.put("-1,2", new NormalNode(-1, 2, false, true, false, false, nodeMap, assets));
         nodeMap.put("0,2", new PenaltyNode(0, 2, false, true, false, false, nodeMap, assets));
         nodeMap.put("1,2", new NormalNode(1, 2, false, true, false, false, nodeMap, assets));
-        eventNode = new EventNode(2, 1, false, false, true, false, nodeMap, assets);
+        EventNode eventNode = new EventNode(2, 1, false, false, true, false, nodeMap, assets);
         nodeMap.put("2,1", eventNode);
 
-        eventNode.addEventListener(v -> globalEventMode(eventNode.penaltyAmount));
+        eventNode.addEventListener(penaltyAmount -> globalEventMode(penaltyAmount));
 
         // Set starting nodes - player cannot start on a special node, only a plain node
         // They also can't start on the same node as another player
@@ -94,7 +90,11 @@ public class GameState implements Serializable {
     private GameState() {}
 
     public void loadTextures(AssetManager assets) {
+        assetMan = assets;
         for (Node node : nodeMap.values()) {
+            if (node instanceof EventNode) {
+                ((EventNode)node).addEventListener(penaltyAmount -> globalEventMode(penaltyAmount));
+            }
             node.loadTextures(assets);
         }
 

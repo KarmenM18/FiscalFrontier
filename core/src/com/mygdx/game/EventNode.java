@@ -12,9 +12,11 @@ import com.mygdx.game.Observer.Observable;
 import java.util.Map;
 
 public class EventNode extends Node {
-    protected Observable<Void> callEventNode = new Observable<Void>();
+    // Observable must be transient as the Observer contains a reference to the GameState, creating a loop
+    // Recreate observers when deserializing
+    transient protected Observable<Void> callEventNode = new Observable<Void>();
+    transient protected Observable<Integer> globalEvent = new Observable<Integer>();
     protected int penaltyAmount = 5;
-    protected Observable<Void> globalEvent = new Observable<Void>();
     protected Texture eventTexture;
 
     public EventNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
@@ -41,8 +43,8 @@ public class EventNode extends Node {
      */
     @Override
     public void activate(Player player, SpriteBatch batch) {
-        globalEvent.notifyObservers(null);
+        globalEvent.notifyObservers(penaltyAmount);
     }
-    public void addEventListener(Observer<Void> ob) {globalEvent.addObserver(ob); }
+    public void addEventListener(Observer<Integer> ob) {globalEvent.addObserver(ob); }
 
 }
