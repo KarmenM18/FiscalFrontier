@@ -193,6 +193,7 @@ public class GameBoard extends GameScreen {
                 pauseEvent.notifyObservers(null);
             }
         });
+        //TODO change to automatic next turn
         nextTurnButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
