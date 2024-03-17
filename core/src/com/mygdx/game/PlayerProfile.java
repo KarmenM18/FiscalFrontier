@@ -17,6 +17,9 @@ public class PlayerProfile {
     private String name;
     private int lifetimeScore;
     private int highScore;
+    /**
+     * TODO: remove knowledge level since level is now discrete
+     */
     private int knowledgeLevel;
     private LinkedList<String> learned = new LinkedList<>(); //Storing all the learned knowledge from a knowledge catalog
     private String spritePath; // Path of the sprite to use when rendering the Player
