@@ -15,8 +15,7 @@ public class PauseScreen extends GameScreen {
     private Observable<GameState> saveGameEvent = new Observable<GameState>();
     private Observable<Void> menuEvent = new Observable<Void>();
     private Observable<Void> boardEvent = new Observable<Void>();
-
-    private PlayerProfile currentPlayer;
+    private Observable<Void> knowledgeEvent = new Observable<Void>();
 
     private Table table;
     private Label title;
@@ -110,15 +109,13 @@ public class PauseScreen extends GameScreen {
         viewKnowledgeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("View Player Knowledge Base Pressed");
-                System.out.println("Current Player Name: " + currentPlayer.getName());
+                knowledgeEvent.notifyObservers(null); //Moving to show knowledge screen
             }
         });
     }
 
-    public void setCurrentPlayer (PlayerProfile currentPlayer) {this.currentPlayer = currentPlayer;}
-
     public void addSaveGameListener(Observer<GameState> ob) { saveGameEvent.addObserver(ob); }
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
     public void addBoardListener(Observer<Void> ob) { boardEvent.addObserver(ob); }
+    public void addKnowledgeEventListener(Observer<Void> ob) { knowledgeEvent.addObserver(ob);}
 }
