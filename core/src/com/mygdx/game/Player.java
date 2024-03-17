@@ -74,6 +74,8 @@ public class Player implements Serializable {
     private int maxMoves;
     private boolean useMutliDice = false;
     private boolean hasShield = false;
+    private int level;
+
     private ArrayList<ArrayList<String>> reachablePaths;
     /**
      * The previous tile the player was on. Used to disallow going backwards.
@@ -107,6 +109,7 @@ public class Player implements Serializable {
         this.rollsLeft = maxRolls;
         this.useMutliDice = false;
         this.hasShield = false;
+        this.level = 0;
         this.reachablePaths = new ArrayList<>();
         this.previousPath = new ArrayList<>();
 
@@ -271,6 +274,15 @@ public class Player implements Serializable {
         this.money = amount;
     }
 
+
+    public int getLevel(){
+        return this.level;
+    }
+    public void levelUp(){
+        if(this.level < 8){
+            this.level++;
+        }
+    }
 
     /**
      * Returns the player's stars.

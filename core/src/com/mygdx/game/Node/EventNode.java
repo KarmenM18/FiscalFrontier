@@ -47,4 +47,14 @@ public class EventNode extends Node {
     }
     public void addEventListener(Observer<Integer> ob) {globalEvent.addObserver(ob); }
 
+    //TODO decide where the star selling should go, shop/sellnode or something else
+    public void sellStar(Player p, int starToMoney, int starsToSell){
+        if(p.getStars() <= 0){
+            //show dialogue for player has no star
+        }else{
+            int moneyGained = starToMoney * starsToSell;
+            p.setStars(p.getStars() - starsToSell);
+            p.setMoney(p.getMoney() + moneyGained);
+        }
+    }
 }

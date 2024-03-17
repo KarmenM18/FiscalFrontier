@@ -21,6 +21,7 @@ public class GameState implements Serializable {
     private List<Player> playerList;
     private int currPlayerTurn;
     private int turnNumber;
+    private int roundNumber;
     private HashMap<String, Node> nodeMap;
     transient private AssetManager assetMan;
     private final int maxStar = 3;
@@ -41,6 +42,7 @@ public class GameState implements Serializable {
         this.playerList = new ArrayList<Player>();
         currPlayerTurn = 0;
         turnNumber = 0;
+        roundNumber = 0;
 
         for (PlayerProfile playerProfile : profileList) {
             Player player = new Player(playerProfile, assets);
@@ -113,6 +115,23 @@ public class GameState implements Serializable {
             player.loadTextures(assets);
         }
     }
+
+    /**
+     * moving to next round, not affecting anything other than player level
+     * for now
+     * once 26 rounds is reached, end the game????
+     */
+    public void nextRound(){
+        if(turnNumber % playerList.size() == 0 && turnNumber != 0){
+            roundNumber++;
+        }
+        if(roundNumber > 0 && roundNumber % 2 == 0){
+            for (Player p : getPlayerList()){
+                p.levelUp();
+            }
+        }
+    }
+
 
     /**
      * End the current Player's turn, and start the next Player's turn
