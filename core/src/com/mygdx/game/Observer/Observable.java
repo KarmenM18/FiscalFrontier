@@ -6,7 +6,7 @@ package com.mygdx.game.Observer;
 import java.util.ArrayList;
 
 public class Observable<T> {
-    private ArrayList<Observer<T>> observerList = new ArrayList<Observer<T>>();;
+    private ArrayList<Observer<T>> observerList = new ArrayList<Observer<T>>();
 
     /**
      * Add an observer to the list.

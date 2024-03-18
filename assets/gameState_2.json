@@ -3,25 +3,52 @@ playerList: [
 	{
 		profile: {
 			name: Player 1
+			knowledgeLevel: 5
+			learned: [
+				Budgeting: Create a budget to track your income and expenses. It's the foundation of financial planning.
+				Emergency Fund: Build an emergency fund with at least 3-6 months' worth of living expenses to cover unexpected costs.
+				"Savings Goals: Set specific savings goals for short-term (e.g., vacation), medium-term (e.g., down payment), and long-term (e.g., retirement)."
+				Automate Savings: Set up automatic transfers from your checking account to your savings account to ensure consistent savings.
+				Invest Early: Start investing as early as possible to take advantage of compounding returns.
+				"Diversify Investments: Spread your investments across different asset classes (stocks, bonds, real estate) to reduce risk."
+				Retirement Accounts: Contribute to retirement accounts such as 401(k)s and IRAs to save for retirement tax-efficiently.
+				Employer Match: Contribute enough to your employer-sponsored retirement plan to receive the full employer match – it's essentially free money.
+				Pay Yourself First: Prioritize saving and investing by allocating a portion of your income before paying bills and expenses.
+				Avoid Debt: Minimize debt by living within your means and using credit responsibly.
+				High-Interest Debt: Prioritize paying off high-interest debt like credit card debt to avoid hefty interest charges.
+				"Credit Score: Monitor your credit score regularly and take steps to improve it, as it can affect loan approvals and interest rates."
+				"Credit Cards: Use credit cards wisely, paying off the balance in full each month to avoid interest charges and build credit."
+				Comparison Shop: Compare prices and look for deals before making significant purchases to save money.
+				Track Spending: Keep track of your expenses to identify areas where you can cut back and save more.
+				"Reduce Monthly Bills: Negotiate with service providers or switch to cheaper alternatives for utilities, insurance, and subscriptions."
+				"Health Savings Account (HSA): If eligible, contribute to an HSA to save for medical expenses tax-free."
+				"Tax Planning: Take advantage of tax deductions, credits, and other strategies to minimize your tax bill."
+				Review Insurance Coverage: Regularly review your insurance policies to ensure you have adequate coverage at a reasonable cost.
+				"Side Income: Explore opportunities for additional income through freelancing, part-time work, or passive income streams."
+				Investment Fees: Be mindful of investment fees and choose low-cost investment options to maximize returns.
+				Educate Yourself: Continuously educate yourself about personal finance topics to make informed decisions.
+				"Estate Planning: Create or update your will, designate beneficiaries, and consider setting up trusts to protect your assets and ensure they're distributed according to your wishes."
+				Long-Term Care Insurance: Evaluate the need for long-term care insurance to protect against potentially high costs in the future.
+				Avoid Impulse Purchases: Pause before making impulse purchases and consider whether the item is a need or a want.
+			]
 			spritePath: player.png
 		}
 		items: []
-		currentTile: "-1,2"
+		currentTile: "3,0"
 		sprite: {
 			texture: null
 			u2: 1
 			v2: 1
 			regionWidth: 250
 			regionHeight: 180
-			vertices: [ -150, 300, -1.5345814E38, 0, 1, -150, 400, -1.5345814E38, 0, 0, -50, 400, -1.5345814E38, 1, 0, -50, 300, -1.5345814E38, 1, 1 ]
+			vertices: [ 450, 0, -6.655035E37, 0, 1, 450, 100, -6.655035E37, 0, 0, 550, 100, -6.655035E37, 1, 0, 550, 0, -6.655035E37, 1, 1 ]
 			color: {
-				r: 0.92941177
-				g: 0.8980392
-				b: 0.9019608
+				r: 0.5254902
+				g: 0.26666668
+				b: 0.28235295
 				a: 1
 			}
-			x: -150
-			y: 300
+			x: 450
 			width: 100
 			height: 100
 			originX: 125
@@ -33,29 +60,41 @@ playerList: [
 		movesLeft: 1
 		maxMoves: 1
 		reachablePaths: []
-		previousPath: []
+		previousPath: [
+			"2,0"
+			"3,0"
+		]
 	}
 	{
 		profile: {
 			name: Player 2
+			knowledgeLevel: 1
+			learned: [
+				Budgeting: Create a budget to track your income and expenses. It's the foundation of financial planning.
+				Emergency Fund: Build an emergency fund with at least 3-6 months' worth of living expenses to cover unexpected costs.
+				"Savings Goals: Set specific savings goals for short-term (e.g., vacation), medium-term (e.g., down payment), and long-term (e.g., retirement)."
+				Automate Savings: Set up automatic transfers from your checking account to your savings account to ensure consistent savings.
+				Invest Early: Start investing as early as possible to take advantage of compounding returns.
+			]
 			spritePath: player.png
 		}
 		items: []
-		currentTile: "1,0"
+		currentTile: "3,2"
 		sprite: {
 			texture: null
 			u2: 1
 			v2: 1
 			regionWidth: 250
 			regionHeight: 180
-			vertices: [ 150, 0, -1.4484757E38, 0, 1, 150, 100, -1.4484757E38, 0, 0, 250, 100, -1.4484757E38, 1, 0, 250, 0, -1.4484757E38, 1, 1 ]
+			vertices: [ 450, 300, -8.836756E37, 0, 1, 450, 400, -8.836756E37, 0, 0, 550, 400, -8.836756E37, 1, 0, 550, 300, -8.836756E37, 1, 1 ]
 			color: {
-				r: 0.25490198
-				g: 0.94509804
-				b: 0.8509804
+				r: 0.9490196
+				g: 0.9607843
+				b: 0.5176471
 				a: 1
 			}
-			x: 150
+			x: 450
+			y: 300
 			width: 100
 			height: 100
 			originX: 125
@@ -72,41 +111,34 @@ playerList: [
 	{
 		profile: {
 			name: Player 3
-			spritePath: player.png
-		}
-		items: []
-		currentTile: "1,2"
-		sprite: {
-			texture: null
-			u2: 1
-			v2: 1
-			regionWidth: 250
-			regionHeight: 180
-			vertices: [ 150, 300, -1.1189957E38, 0, 1, 150, 400, -1.1189957E38, 0, 0, 250, 400, -1.1189957E38, 1, 0, 250, 300, -1.1189957E38, 1, 1 ]
-			color: {
-				r: 0.14901961
-				g: 0.36862746
-				b: 0.65882355
-				a: 1
-			}
-			x: 150
-			y: 300
-			width: 100
-			height: 100
-			originX: 125
-			originY: 90
-			dirty: false
-		}
-		rollsLeft: 1
-		maxRolls: 1
-		movesLeft: 1
-		maxMoves: 1
-		reachablePaths: []
-		previousPath: []
-	}
-	{
-		profile: {
-			name: Player 4
+			knowledgeLevel: 5
+			learned: [
+				Budgeting: Create a budget to track your income and expenses. It's the foundation of financial planning.
+				Emergency Fund: Build an emergency fund with at least 3-6 months' worth of living expenses to cover unexpected costs.
+				"Savings Goals: Set specific savings goals for short-term (e.g., vacation), medium-term (e.g., down payment), and long-term (e.g., retirement)."
+				Automate Savings: Set up automatic transfers from your checking account to your savings account to ensure consistent savings.
+				Invest Early: Start investing as early as possible to take advantage of compounding returns.
+				"Diversify Investments: Spread your investments across different asset classes (stocks, bonds, real estate) to reduce risk."
+				Retirement Accounts: Contribute to retirement accounts such as 401(k)s and IRAs to save for retirement tax-efficiently.
+				Employer Match: Contribute enough to your employer-sponsored retirement plan to receive the full employer match – it's essentially free money.
+				Pay Yourself First: Prioritize saving and investing by allocating a portion of your income before paying bills and expenses.
+				Avoid Debt: Minimize debt by living within your means and using credit responsibly.
+				High-Interest Debt: Prioritize paying off high-interest debt like credit card debt to avoid hefty interest charges.
+				"Credit Score: Monitor your credit score regularly and take steps to improve it, as it can affect loan approvals and interest rates."
+				"Credit Cards: Use credit cards wisely, paying off the balance in full each month to avoid interest charges and build credit."
+				Comparison Shop: Compare prices and look for deals before making significant purchases to save money.
+				Track Spending: Keep track of your expenses to identify areas where you can cut back and save more.
+				"Reduce Monthly Bills: Negotiate with service providers or switch to cheaper alternatives for utilities, insurance, and subscriptions."
+				"Health Savings Account (HSA): If eligible, contribute to an HSA to save for medical expenses tax-free."
+				"Tax Planning: Take advantage of tax deductions, credits, and other strategies to minimize your tax bill."
+				Review Insurance Coverage: Regularly review your insurance policies to ensure you have adequate coverage at a reasonable cost.
+				"Side Income: Explore opportunities for additional income through freelancing, part-time work, or passive income streams."
+				Investment Fees: Be mindful of investment fees and choose low-cost investment options to maximize returns.
+				Educate Yourself: Continuously educate yourself about personal finance topics to make informed decisions.
+				"Estate Planning: Create or update your will, designate beneficiaries, and consider setting up trusts to protect your assets and ensure they're distributed according to your wishes."
+				Long-Term Care Insurance: Evaluate the need for long-term care insurance to protect against potentially high costs in the future.
+				Avoid Impulse Purchases: Pause before making impulse purchases and consider whether the item is a need or a want.
+			]
 			spritePath: player.png
 		}
 		items: []
@@ -117,11 +149,11 @@ playerList: [
 			v2: 1
 			regionWidth: 250
 			regionHeight: 180
-			vertices: [ 600, 0, -9.092988E37, 0, 1, 600, 100, -9.092988E37, 0, 0, 700, 100, -9.092988E37, 1, 0, 700, 0, -9.092988E37, 1, 1 ]
+			vertices: [ 600, 0, -6.145996E37, 0, 1, 600, 100, -6.145996E37, 0, 0, 700, 100, -6.145996E37, 1, 0, 700, 0, -6.145996E37, 1, 1 ]
 			color: {
-				r: 0.91764706
-				g: 0.8156863
-				b: 0.53333336
+				r: 0.03137255
+				g: 0.9529412
+				b: 0.21960784
 				a: 1
 			}
 			x: 600
@@ -138,7 +170,56 @@ playerList: [
 		reachablePaths: []
 		previousPath: []
 	}
+	{
+		profile: {
+			name: Player 4
+			knowledgeLevel: 2
+			learned: [
+				Budgeting: Create a budget to track your income and expenses. It's the foundation of financial planning.
+				Emergency Fund: Build an emergency fund with at least 3-6 months' worth of living expenses to cover unexpected costs.
+				"Savings Goals: Set specific savings goals for short-term (e.g., vacation), medium-term (e.g., down payment), and long-term (e.g., retirement)."
+				Automate Savings: Set up automatic transfers from your checking account to your savings account to ensure consistent savings.
+				Invest Early: Start investing as early as possible to take advantage of compounding returns.
+				"Diversify Investments: Spread your investments across different asset classes (stocks, bonds, real estate) to reduce risk."
+				Retirement Accounts: Contribute to retirement accounts such as 401(k)s and IRAs to save for retirement tax-efficiently.
+				Employer Match: Contribute enough to your employer-sponsored retirement plan to receive the full employer match – it's essentially free money.
+				Pay Yourself First: Prioritize saving and investing by allocating a portion of your income before paying bills and expenses.
+				Avoid Debt: Minimize debt by living within your means and using credit responsibly.
+			]
+			spritePath: player.png
+		}
+		items: []
+		currentTile: "1,0"
+		sprite: {
+			texture: null
+			u2: 1
+			v2: 1
+			regionWidth: 250
+			regionHeight: 180
+			vertices: [ 150, 0, -1.5300458E38, 0, 1, 150, 100, -1.5300458E38, 0, 0, 250, 100, -1.5300458E38, 1, 0, 250, 0, -1.5300458E38, 1, 1 ]
+			color: {
+				r: 0.21960784
+				g: 0.21568628
+				b: 0.9019608
+				a: 1
+			}
+			x: 150
+			width: 100
+			height: 100
+			originX: 125
+			originY: 90
+			dirty: false
+		}
+		rollsLeft: 1
+		maxRolls: 1
+		movesLeft: 1
+		maxMoves: 1
+		reachablePaths: []
+		previousPath: []
+	}
 ]
+currPlayerTurn: 1
+turnNumber: 1
 nodeMap: {
 	0,0: {
 		class: com.mygdx.game.NormalNode
@@ -263,6 +344,11 @@ nodeMap: {
 			originX: 768
 			originY: 768
 			dirty: false
+			bounds: {
+				x: 450
+				width: 100
+				height: 100
+			}
 		}
 		tileTexture: null
 		x: 3

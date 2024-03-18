@@ -1,15 +1,18 @@
-package com.mygdx.game;
+package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Config;
+import com.mygdx.game.Node.Node;
+import com.mygdx.game.Player;
 
 import java.util.Map;
 
 
 public class StarNode extends Node {
     int starCost = 10;
-    boolean hasStar = true;
+    public boolean hasStar = true;
     Texture starTexture;
 
     public StarNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
@@ -21,6 +24,9 @@ public class StarNode extends Node {
         super(mapX, mapY, assets);
         checkStar();
     }
+    /**
+     * necessary for serialization
+     */
     private StarNode() {}
 
     @Override
@@ -34,21 +40,17 @@ public class StarNode extends Node {
     @Override
     public void activate(Player player, SpriteBatch batch) {
         if (hasStar) {
-            // TODO setup purchase logic
-            if(player.getMoney() >= starCost){
-                // TODO get oberver to check if player choose to buy star
-
-
-                // Add star to player and remove it from the tile
+            if(player.getMoney() < starCost){
+                this.hasStar = true;
+                checkStar();
+                //TODO make sure to remove this line
+                System.out.println("you don't get any star!");
+            }else {
+                // TODO setup purchase logic
                 player.addStar();
-                sprite.setTexture(tileTexture);
-                hasStar = false;
-
-            }else{
-                //TODO display message denying player from buying star
-                // force to next player's turn
+                this.hasStar = false;
+                checkStar();
             }
-
         }
     }
 

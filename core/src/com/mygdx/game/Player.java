@@ -4,6 +4,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.mygdx.game.Items.Item;
+import com.mygdx.game.Node.Node;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -47,6 +50,11 @@ public class Player implements Serializable {
     private ArrayList<Item> items;
 
     /**
+     * Player's frozen state. When they are frozen, they skip their next turn.
+     */
+    private boolean frozen;
+
+    /**
      * ID of the node where the player is on the game board.
      */
     private String currentTile;
@@ -64,6 +72,10 @@ public class Player implements Serializable {
     private int maxRolls;
     private int movesLeft;
     private int maxMoves;
+    private boolean useMutliDice = false;
+    private boolean hasShield = false;
+    private int level;
+
     private ArrayList<ArrayList<String>> reachablePaths;
     /**
      * The previous tile the player was on. Used to disallow going backwards.
@@ -88,12 +100,16 @@ public class Player implements Serializable {
         this.money = money;
         this.score = score;
         this.items = items;
+        this.frozen = false;
         this.currentTile = currentTile;
         this.dieRoll = 0;
         this.maxMoves = 1;
         this.movesLeft = maxMoves;
         this.maxRolls = 1;
         this.rollsLeft = maxRolls;
+        this.useMutliDice = false;
+        this.hasShield = false;
+        this.level = 0;
         this.reachablePaths = new ArrayList<>();
         this.previousPath = new ArrayList<>();
 
@@ -121,6 +137,12 @@ public class Player implements Serializable {
 
     public void loadTextures(AssetManager assets) {
         sprite.setTexture(assets.get(profile.getSpritePath()));
+        // Load textures for all items
+        Config config = Config.getInstance();
+        Skin skin = assets.get(config.getUiPath(), Skin.class);
+        for (Item item : items) {
+            item.loadTextures(skin);
+        }
     }
 
     /**
@@ -154,6 +176,9 @@ public class Player implements Serializable {
 
     public int rollDie(Map<String, Node> nodeMap) {
         dieRoll = Utility.getRandom(1, 4);
+        if(useMutliDice){
+            dieRoll += Utility.getRandom(1, 4);
+        }
 
         // Get previous node if a previous path exists or just use null
         String previousNode = null;
@@ -250,6 +275,15 @@ public class Player implements Serializable {
     }
 
 
+    public int getLevel(){
+        return this.level;
+    }
+    public void levelUp(){
+        if(this.level < 8){
+            this.level++;
+        }
+    }
+
     /**
      * Returns the player's stars.
      *
@@ -276,7 +310,15 @@ public class Player implements Serializable {
         this.stars++;
     }
 
-
+    public void setUseMutliDice(boolean use){
+        this.useMutliDice = use;
+    }
+    public boolean getHasShield(){
+        return hasShield;
+    }
+    public void setHasShield(boolean has){
+        this.hasShield = has;
+    }
     // TODO: Confirm score formula
 
     /**
@@ -321,6 +363,14 @@ public class Player implements Serializable {
         this.sprite.setPosition(newTile.getXPos(), newTile.getYPos());
     }
 
+    /**
+     * Get all the player's items
+     *
+     * @return List of Items
+     */
+    public ArrayList<Item> getItems() {
+        return items;
+    }
 
     /**
      * Adds an item to the player's inventory.
@@ -383,6 +433,7 @@ public class Player implements Serializable {
      */
     public int getDieRoll() { return dieRoll; }
 
+
     /**
      * Check if Player has moves left.
      *
@@ -397,6 +448,8 @@ public class Player implements Serializable {
      */
     public boolean canRoll() { return rollsLeft > 0; }
 
+    public void setRollsLeft(int value) { rollsLeft = value; }
+
     /**
      * Get the list of current reachable tile paths.
      *
@@ -410,4 +463,10 @@ public class Player implements Serializable {
      * @return Sprite
      */
     public Sprite getSprite() { return sprite; }
+
+    /**
+     * FreezeItem the Player for a turn. Their next turn is skipped
+     */
+    public void setFrozen(boolean t) { frozen = t; }
+    public boolean isFrozen() { return frozen; }
 }

@@ -6,56 +6,6 @@ playerList: [
 			spritePath: player.png
 		}
 		items: []
-		currentTile: "-1,2"
-		sprite: {
-			texture: null
-			u2: 1
-			v2: 1
-			regionWidth: 250
-			regionHeight: 180
-			vertices: [ -150, 300, -1.6843843E38, 0, 1, -150, 400, -1.6843843E38, 0, 0, -50, 400, -1.6843843E38, 1, 0, -50, 300, -1.6843843E38, 1, 1 ]
-			color: {
-				r: 0.1254902
-				g: 0.4392157
-				b: 0.99215686
-				a: 1
-			}
-			x: -150
-			y: 300
-			width: 100
-			height: 100
-			originX: 125
-			originY: 90
-			dirty: false
-		}
-		dieRoll: 2
-		maxRolls: 1
-		movesLeft: 1
-		maxMoves: 1
-		reachablePaths: [
-			[
-				{
-					class: java.lang.String
-					value: "-1,2"
-				}
-				{
-					class: java.lang.String
-					value: "0,2"
-				}
-				{
-					class: java.lang.String
-					value: "1,2"
-				}
-			]
-		]
-		previousPath: []
-	}
-	{
-		profile: {
-			name: Player 2
-			spritePath: player.png
-		}
-		items: []
 		currentTile: "3,2"
 		sprite: {
 			texture: null
@@ -63,11 +13,11 @@ playerList: [
 			v2: 1
 			regionWidth: 250
 			regionHeight: 180
-			vertices: [ 450, 300, -8.66839E37, 0, 1, 450, 400, -8.66839E37, 0, 0, 550, 400, -8.66839E37, 1, 0, 550, 300, -8.66839E37, 1, 1 ]
+			vertices: [ 450, 300, -7.5580194E37, 0, 1, 450, 400, -7.5580194E37, 0, 0, 550, 400, -7.5580194E37, 1, 0, 550, 300, -7.5580194E37, 1, 1 ]
 			color: {
-				r: 0.42352942
-				g: 0.42745098
-				b: 0.50980395
+				r: 0.8666667
+				g: 0.4392157
+				b: 0.3882353
 				a: 1
 			}
 			x: 450
@@ -87,7 +37,7 @@ playerList: [
 	}
 	{
 		profile: {
-			name: Player 3
+			name: Player 2
 			spritePath: player.png
 		}
 		items: []
@@ -98,11 +48,11 @@ playerList: [
 			v2: 1
 			regionWidth: 250
 			regionHeight: 180
-			vertices: [ 600, 150, -9.668933E37, 0, 1, 600, 250, -9.668933E37, 0, 0, 700, 250, -9.668933E37, 1, 0, 700, 150, -9.668933E37, 1, 1 ]
+			vertices: [ 600, 150, -1.3462433E38, 0, 1, 600, 250, -1.3462433E38, 0, 0, 700, 250, -1.3462433E38, 1, 0, 700, 150, -1.3462433E38, 1, 1 ]
 			color: {
-				r: 0.3764706
-				g: 0.48235294
-				b: 0.5686275
+				r: 0.40784314
+				g: 0.56078434
+				b: 0.7921569
 				a: 1
 			}
 			x: 600
@@ -122,25 +72,60 @@ playerList: [
 	}
 	{
 		profile: {
-			name: Player 4
+			name: Player 3
 			spritePath: player.png
 		}
 		items: []
-		currentTile: "4,0"
+		currentTile: "2,0"
 		sprite: {
 			texture: null
 			u2: 1
 			v2: 1
 			regionWidth: 250
 			regionHeight: 180
-			vertices: [ 600, 0, -4.714643E37, 0, 1, 600, 100, -4.714643E37, 0, 0, 700, 100, -4.714643E37, 1, 0, 700, 0, -4.714643E37, 1, 1 ]
+			vertices: [ 300, 0, -8.540238E37, 0, 1, 300, 100, -8.540238E37, 0, 0, 400, 100, -8.540238E37, 1, 0, 400, 0, -8.540238E37, 1, 1 ]
 			color: {
-				r: 0.2901961
-				g: 0.8784314
-				b: 0.050980393
+				r: 0.8039216
+				g: 0.49803922
+				b: 0.5019608
 				a: 1
 			}
-			x: 600
+			x: 300
+			width: 100
+			height: 100
+			originX: 125
+			originY: 90
+			dirty: false
+		}
+		rollsLeft: 1
+		maxRolls: 1
+		movesLeft: 1
+		maxMoves: 1
+		reachablePaths: []
+		previousPath: []
+	}
+	{
+		profile: {
+			name: Player 4
+			spritePath: player.png
+		}
+		items: []
+		currentTile: "1,2"
+		sprite: {
+			texture: null
+			u2: 1
+			v2: 1
+			regionWidth: 250
+			regionHeight: 180
+			vertices: [ 150, 300, -1.2135067E38, 0, 1, 150, 400, -1.2135067E38, 0, 0, 250, 400, -1.2135067E38, 1, 0, 250, 300, -1.2135067E38, 1, 1 ]
+			color: {
+				r: 0.5803922
+				g: 0.5882353
+				b: 0.7137255
+				a: 1
+			}
+			x: 150
+			y: 300
 			width: 100
 			height: 100
 			originX: 125
@@ -294,11 +279,7 @@ nodeMap: {
 			v2: 1
 			regionWidth: 1536
 			regionHeight: 1536
-			vertices: [ 150, 300, -4.2866305E37, 0, 1, 150, 400, -4.2866305E37, 0, 0, 250, 400, -4.2866305E37, 1, 0, 250, 300, -4.2866305E37, 1, 1 ]
-			color: {
-				g: 1
-				a: 1
-			}
+			vertices: [ 150, 300, -1.7014117E38, 0, 1, 150, 400, -1.7014117E38, 0, 0, 250, 400, -1.7014117E38, 1, 0, 250, 300, -1.7014117E38, 1, 1 ]
 			x: 150
 			y: 300
 			width: 100

@@ -1,7 +1,9 @@
-package com.mygdx.game;
+package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Node.Node;
+import com.mygdx.game.Player;
 
 import java.util.Map;
 
@@ -16,6 +18,9 @@ public class NormalNode extends Node {
         super(mapX, mapY, assets);
     }
 
+    /**
+     * necessary for serialization
+     */
     private NormalNode() {}
 
     @Override

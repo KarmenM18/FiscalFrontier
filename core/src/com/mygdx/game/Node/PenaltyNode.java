@@ -1,8 +1,11 @@
-package com.mygdx.game;
+package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Config;
+import com.mygdx.game.Node.Node;
+import com.mygdx.game.Player;
 
 import java.util.Map;
 
@@ -18,6 +21,9 @@ public class PenaltyNode extends Node {
         super(mapX, mapY, assets);
     }
 
+    /**
+     * necessary for serialization
+     */
     private PenaltyNode() {}
 
     @Override
@@ -28,14 +34,21 @@ public class PenaltyNode extends Node {
         sprite.setTexture(penaltyTexture);
     }
 
+
+    /**
+     * TODO need to discuss easy/hard mode difference 
+     * @param player
+     * @param batch
+     */
     @Override
     public void activate(Player player, SpriteBatch batch) {
-        if(player.getMoney() >= penaltyAmount){
+        if(player.getHasShield()){
+            //do nothing
+        }else if(player.getMoney() >= penaltyAmount){
             //maybe add logic on the penalty graphic
             player.setMoney(player.getMoney() - penaltyAmount);
-        } else {
-            //maybe add logic for showing penalty not applied due to not enough mooney
-            //return
+        }else if(player.getStars() > 0){
+            player.setStars(player.getStars() - 1);
         }
     }
 }

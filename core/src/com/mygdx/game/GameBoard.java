@@ -10,32 +10,29 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Items.Item;
+import com.mygdx.game.Node.Node;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
 import java.util.*;
 import java.util.List;
-
-import static com.badlogic.gdx.math.MathUtils.atan2;
-import static java.lang.Math.abs;
 
 public class GameBoard extends GameScreen {
     // Observables are used to inform about events to subscribed Observers. The Observer Pattern
@@ -59,7 +56,8 @@ public class GameBoard extends GameScreen {
     private Label starsLabel;
     private Label rollLabel;
 
-    private ArrayList<Item> playerItems;
+    transient private ArrayList<Item> playerItems; // Transient as it will be regenerated when the state is deserialized
+    transient private ArrayList<TextButton> itemButtons;
 
     private GameState gameState;
     private int width = 1920;
@@ -75,6 +73,8 @@ public class GameBoard extends GameScreen {
 
     public GameBoard(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
+
+        itemButtons = new ArrayList<>();
 
         assets.load("gameboard.png", Texture.class);
         assets.finishLoading();
@@ -194,6 +194,7 @@ public class GameBoard extends GameScreen {
                 pauseEvent.notifyObservers(null);
             }
         });
+        //TODO change to automatic next turn
         nextTurnButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -201,6 +202,9 @@ public class GameBoard extends GameScreen {
                 rollLabel.setVisible(false);
                 gameState.nextTurn();
                 moveCameraPlayer();
+
+                // Update items to the new player
+                updateItemButtons();
             }
         });
         rollButton.addListener(new ChangeListener() {
@@ -213,9 +217,7 @@ public class GameBoard extends GameScreen {
                 rollLabel.setVisible(true);
 
                 // Disable button if the player cannot roll anymore
-                if (!currPlayer.canRoll()) {
-                    rollButton.setVisible(false);
-                }
+                checkRollButton();
             }
         });
 
@@ -245,6 +247,7 @@ public class GameBoard extends GameScreen {
         }
 
         moveCameraPlayer();
+        updateItemButtons();
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -281,7 +284,7 @@ public class GameBoard extends GameScreen {
         currPlayerLabel.setText(currPlayer.getPlayerProfile().getName() + "'s Turn");
         scoreLabel.setText("Score: " + currPlayer.getScore());
         starsLabel.setText("Stars: " + currPlayer.getStars());
-        moneyLabel.setText("Mofney: $" + currPlayer.getMoney());
+        moneyLabel.setText("Money: $" + currPlayer.getMoney());
 
         hudStage.act(Gdx.graphics.getDeltaTime());
         hudStage.draw();
@@ -327,6 +330,47 @@ public class GameBoard extends GameScreen {
         hudStage.dispose();
     }
 
+    public void updateItemButtons() {
+        // Update item activation buttons TODO do we want items to be usable on the game board? What about passive items?
+        for (TextButton button : itemButtons) {
+            button.addAction(Actions.removeActor());
+        }
+        itemButtons.clear();
+
+        float x = 0;
+        for (Item item : gameState.getCurrentPlayer().getItems()) {
+            if (item.isPassive()) continue; // Skip passive items
+
+            TextButton button = new TextButton("Use " + item.getName(), skin);
+            button.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    boolean delete = item.use(gameState.getCurrentPlayer(), gameState, hudStage);
+                    if (delete) gameState.getCurrentPlayer().removeItem(item.getName());
+                    checkRollButton();
+                    updateItemButtons();
+                }
+            });
+            button.setX(x);
+            x += button.getWidth();
+            itemButtons.add(button);
+            hudStage.addActor(button);
+        }
+    }
+
+    /**
+     * Checks if the roll button should be visible, based on the if the player can roll
+     */
+    public void checkRollButton() {
+        if (!gameState.getCurrentPlayer().canRoll()) {
+            rollButton.setVisible(false);
+            // Disable items as well TODO: intended behavior?
+            for (Button button : itemButtons) {
+                button.setVisible(false);
+            }
+        }
+    }
+
     /**
      * Setter for GameState.
      * Must be set before switching screen to GameBoard.
@@ -345,35 +389,4 @@ public class GameBoard extends GameScreen {
 
     public void addPauseListener(Observer<PlayerProfile> ob) { pauseEvent.addObserver(ob); }
     public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
-
-
-    /**
-     * global event for event node, reduce all player's money
-     * @param penaltyAmount
-     */
-    public void globalEventNode(int penaltyAmount){
-        //for event node, all player affected
-        //TODO set logic to apply penalty to all players
-        //how to do this to all player?
-        //player.setMoney(player.getMoney - penaltyAmount);
-        List<Player> pList = getGameState().getPlayerList();
-        for (Player p : pList){
-            p.setMoney(p.getMoney() - penaltyAmount);
-        }
-    }
-
-    /**
-     * global event from player item
-     * should not reduce the activating player's money
-     * Overload for global item
-     * @param penaltyAmount
-     * @param p
-     */
-    public void globalEventItem(int penaltyAmount, Player p){
-        //for item, make sure to pass activating player when called
-        //first apply penalty to all player
-        //then add the same back to the activating player
-        globalEventNode(penaltyAmount);
-        p.setMoney(p.getMoney() + penaltyAmount);
-    }
 }

@@ -2,13 +2,15 @@
  * The Node class. A node is a clickable tile on the board.
  * It is linked to other nodes in four possible directions.
  */
-package com.mygdx.game;
+package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Config;
+import com.mygdx.game.Player;
 
 import java.io.Serializable;
 import java.util.*;
@@ -18,6 +20,7 @@ public abstract class Node implements Serializable {
     protected Sprite sprite; // Sprite to render node on the board
     protected Texture tileTexture; // Texture of the board tile
     protected int x, y;
+    protected int separateDist = 150; // Distance between nodes on the map
 
     // Enabled directions. These control which adjacent nodes are accessible from this node
     protected boolean north = false;
@@ -51,7 +54,7 @@ public abstract class Node implements Serializable {
         tileTexture = assets.get(config.getTilePath());
         sprite = new Sprite(tileTexture);
         sprite.setSize(100, 100);
-        sprite.setPosition(x * 150, y * 150);
+        sprite.setPosition(x * separateDist, y * separateDist);
         loadTextures(assets);
     }
 
@@ -186,8 +189,10 @@ public abstract class Node implements Serializable {
     public boolean getWest() { return west; }
 
     // Getters for position
-    public int getXPos() { return x * 150; }
-    public int getYPos() { return y * 150; }
+
+    // Position scaled to node
+    public int getXPos() { return x * separateDist; }
+    public int getYPos() { return y * separateDist; }
     public int getMapX() { return x; }
     public int getMapY() { return y; }
 }

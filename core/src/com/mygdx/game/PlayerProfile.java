@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.Random;
 
 /**
  * Represents a player when not on the game board.
@@ -16,14 +17,19 @@ public class PlayerProfile {
     private String name;
     private int lifetimeScore;
     private int highScore;
+    /**
+     * TODO: remove knowledge level since level is now discrete
+     */
     private int knowledgeLevel;
     private LinkedList<String> learned = new LinkedList<>(); //Storing all the learned knowledge from a knowledge catalog
     private String spritePath; // Path of the sprite to use when rendering the Player
 
     public PlayerProfile(String name) {
+
+        Random rn = new Random();
         this.name = name;
         lifetimeScore = 0;
-        knowledgeLevel = (int) Math.random()*13;
+        knowledgeLevel = rn.nextInt(13)+1;
         highScore = 0;
 
         this.updateKnowledgeBase();
@@ -78,7 +84,7 @@ public class PlayerProfile {
 
         //Reading from file
         try {
-            Scanner catalog = new Scanner(new File("knowledge catalog.txt"));
+            Scanner catalog = new Scanner(new File("external/knowledge catalog.txt"));
             for (int i = 0; i < line; i++) { //Getting all knowledge up to line
                 if (!catalog.hasNextLine()) break; //No more lines to read
 

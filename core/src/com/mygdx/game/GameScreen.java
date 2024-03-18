@@ -53,6 +53,13 @@ public class GameScreen extends ScreenAdapter {
         stage.draw();
     }
 
+    /**
+     * Called when the screen is resized
+     *
+     *
+     * @param width
+     * @param height
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);

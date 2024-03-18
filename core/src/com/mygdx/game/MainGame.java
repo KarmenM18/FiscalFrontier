@@ -41,6 +41,7 @@ public class MainGame extends Game {
 		assets.load(config.getUiPath(), Skin.class);
 		assets.load(config.getTilePath(), Texture.class);
 		assets.load(config.getStarTilePath(), Texture.class);
+		assets.load(config.getEventTilePath(), Texture.class);
 		assets.load(config.getPenaltyTilePath(), Texture.class);
 		assets.load(config.getPlayerPath(), Texture.class);
 		assets.load("background.jpeg", Texture.class);
@@ -51,6 +52,8 @@ public class MainGame extends Game {
 		gameBoard = new GameBoard(batch, assets);
 		pauseScreen = new PauseScreen(batch, assets);
 		shopScreen = new ShopScreen(batch, assets);
+		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
+		saveScreen = new SaveScreen(batch, assets);
 		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets);
 		manageStudentsScreen = new ManageStudentsScreen(batch, assets);
 		//saveScreen = new SaveScreen(batch, assets);
@@ -75,14 +78,30 @@ public class MainGame extends Game {
 			//TODO Send Current Player Info To Screen
 			setScreen(pauseScreen);
 		});
+
+		knowledgeListScreen.addBackToPause(v -> setScreen(pauseScreen));
+
 		// Set PauseScreen observers
 		pauseScreen.addSaveGameListener(v -> saveGameState(gameBoard.getGameState()));
 		pauseScreen.addMenuListener(v -> {
 			setScreen(mainMenuScreen);
 		});
 		pauseScreen.addBoardListener(v -> setScreen(gameBoard));
+		pauseScreen.addKnowledgeEventListener(v -> {
+			knowledgeListScreen.setPlayerKnowledge(gameBoard.getGameState().getCurrentPlayer().getPlayerProfile().getLearned());
+			knowledgeListScreen.updateTable();
+			setScreen(knowledgeListScreen);
+		});
+
 		// Set ShopScreen observers
 		shopScreen.addBoardListener(v -> setScreen(gameBoard));
+		// Set SaveScreen observers
+		saveScreen.addMenuListener(v -> setScreen(mainMenuScreen));
+		saveScreen.addLoadSaveListener(savePath -> {
+			GameState gs = loadGameState(savePath);
+			gameBoard.setGameState(gs);
+			setScreen(gameBoard);
+		});
 		// Set MainMenuScreen observers
 		mainMenuScreen.addStartGameListener(v -> {
 			// Create new game with all players in it TODO player selection
@@ -92,6 +111,7 @@ public class MainGame extends Game {
 		});
 		mainMenuScreen.addContinueGameListener(v -> {
 			GameState gs;
+			// TODO: load LAST save
 			if (Utility.fileExists(config.getGameStateSavePath())) {
 				gs = loadGameState(config.getGameStateSavePath());
 				gameBoard.setGameState(gs);
@@ -100,6 +120,9 @@ public class MainGame extends Game {
 			// TODO inform the user that there is no save to continue from
 		});
 		// Set InstructorDashboardScreen observers
+		mainMenuScreen.addLoadGameListener(v -> {
+			setScreen(saveScreen);
+		});
 		mainMenuScreen.addInstructorDashboardListener(v -> {
 			setScreen(instructorDashboardScreen);  // Open instructor dashboard from main menu
 		});
