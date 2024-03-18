@@ -25,8 +25,9 @@ public class MainGame extends Game {
 	private ShopScreen shopScreen;
 	private MainMenuScreen mainMenuScreen;
 	private KnowledgeListScreen knowledgeListScreen;
-	//private SaveScreen saveScreen;
 	private SaveScreen saveScreen;
+	private InstructorDashboardScreen instructorDashboardScreen;
+	private ManageStudentsScreen manageStudentsScreen;
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
 
@@ -50,6 +51,8 @@ public class MainGame extends Game {
 		gameBoard = new GameBoard(batch, assets);
 		pauseScreen = new PauseScreen(batch, assets);
 		shopScreen = new ShopScreen(batch, assets);
+		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets);
+		manageStudentsScreen = new ManageStudentsScreen(batch, assets);
 		//saveScreen = new SaveScreen(batch, assets);
 
 		// Load players from save if possible
@@ -96,11 +99,19 @@ public class MainGame extends Game {
 			}
 			// TODO inform the user that there is no save to continue from
 		});
+		// Set InstructorDashboardScreen observers
 		mainMenuScreen.addInstructorDashboardListener(v -> {
-			// Open instructor dashboard
-			InstructorDashboard instructorDashboard = new InstructorDashboard(batch, assets);
-			setScreen(instructorDashboard);
-			// TODO: Not done implementing
+			setScreen(instructorDashboardScreen);  // Open instructor dashboard from main menu
+		});
+		instructorDashboardScreen.addMenuListener(v -> {
+			setScreen(mainMenuScreen);  // Return to main menu
+		});
+		instructorDashboardScreen.addManageStudentsListener(v -> {
+			setScreen(manageStudentsScreen);  // Enter manage students mode in instructor dashboard
+		});
+		// Set ManageStudentsScreen observers
+		manageStudentsScreen.addBackListener(v -> {
+			setScreen(instructorDashboardScreen);  // Enter manage students mode in instructor dashboard
 		});
 	}
 

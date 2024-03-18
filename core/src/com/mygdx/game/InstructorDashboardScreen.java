@@ -14,29 +14,24 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
-public class InstructorDashboard extends GameScreen {
+/**
+ * Initial screen loaded when entering instructor dashboard, displays student metrics.
+ */
+public class InstructorDashboardScreen extends GameScreen{
 
     /** Table storing all GUI buttons. */
     private Table table;
-    /** Button to view all student information. */
-    private TextButton viewStudentsButton;
-    /** Button to enter manage class mode. */
+    /** Button to enter manage students mode. */
     private TextButton manageStudentsButton;
     /** Button to return to the main menu screen. */
     private TextButton returnButton;
-    /** Event displays all student information. */
-    private Observable<Void> viewStudentsEvent = new Observable<Void>();
-    /** Event enters manage class mode. */
-    private Observable<Void> manageStudentsEvent = new Observable<Void>();
     /** Event returns to main menu. */
-    private Observable<Void> returnEvent = new Observable<Void>();
-
-    private MainMenuScreen mainMenuScreen;
-
-    private Game game;
+    private Observable<Void> menuEvent = new Observable<Void>();
+    /** Event enters manage students mode. */
+    private Observable<Void> manageStudentsEvent = new Observable<Void>();
 
 
-    public InstructorDashboard(SpriteBatch batch, AssetManager assets) {
+    public InstructorDashboardScreen(SpriteBatch batch, AssetManager assets) {
 
         super(batch, assets);
 
@@ -45,18 +40,35 @@ public class InstructorDashboard extends GameScreen {
         stage.addActor(table);
 
         // Initialize buttons
-        viewStudentsButton = new TextButton("View Students", skin);
         manageStudentsButton = new TextButton("Manage Students", skin);
         returnButton = new TextButton("Return to Main Menu", skin);
 
         // Display buttons and layout GUI
         table.setFillParent(true); // Size table to stage
-        table.add(viewStudentsButton).fillX();
-        table.row().pad(10, 0, 10, 0);
         table.add(manageStudentsButton).fillX();
         table.row().pad(10, 0, 10, 0);
         table.add(returnButton).fillX();
 
+        // Add button listeners
+        manageStudentsButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                manageStudentsEvent.notifyObservers(null);
+            }
+        });
+        returnButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                menuEvent.notifyObservers(null);
+            }
+        });
+
+
+
     }
+
+    /** Add listeners for each event handled by the MainGame screen manager. */
+    void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
+    void addManageStudentsListener(Observer<Void> ob) { manageStudentsEvent.addObserver(ob); }
 
 }
