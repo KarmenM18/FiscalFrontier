@@ -31,6 +31,8 @@ public class MainGame extends Game {
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
 
+	private ProfileManager profileManager;
+
 	List<PlayerProfile> profileList; // List of player profiles
 	
 	@Override
@@ -54,9 +56,9 @@ public class MainGame extends Game {
 		shopScreen = new ShopScreen(batch, assets);
 		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
 		saveScreen = new SaveScreen(batch, assets);
-		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets);
-		manageStudentsScreen = new ManageStudentsScreen(batch, assets);
-		//saveScreen = new SaveScreen(batch, assets);
+		profileManager = new ProfileManager("studentInformation.json");
+		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets, this.profileManager);
+		manageStudentsScreen = new ManageStudentsScreen(batch, assets, this.profileManager);
 
 		// Load players from save if possible
 		if (Utility.fileExists(config.getPlayerSavePath())) {
@@ -135,6 +137,16 @@ public class MainGame extends Game {
 		// Set ManageStudentsScreen observers
 		manageStudentsScreen.addBackListener(v -> {
 			setScreen(instructorDashboardScreen);  // Enter manage students mode in instructor dashboard
+		});
+		manageStudentsScreen.addAddStudentListener(studentName -> {
+			try {
+				profileManager.addStudent(studentName);
+				instructorDashboardScreen.loadDashboard();  // Reload data to reflect changes
+			}
+			catch (IllegalArgumentException e) {
+				System.out.println("Unable to add student.");  // FIXME: Make this a dialog box
+			}
+
 		});
 	}
 

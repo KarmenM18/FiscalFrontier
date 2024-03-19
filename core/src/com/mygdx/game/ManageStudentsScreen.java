@@ -13,32 +13,36 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 
 /**
  * Manage students mode screen in instructor dashboard.
+ * <br></br>
+ * Includes methods to add new students.
+ * TODO: Edit and remove
+ *
+ * @author Joelene Hales
  */
 public class ManageStudentsScreen extends GameScreen {
 
-    /**
-     * Table storing all GUI buttons.
-     */
+    /** Table storing all GUI buttons. */
     private Table table;
-    /**
-     * Button to exit manage students mode.
-     */
+    /** Button to exit manage students mode.  */
     private TextButton backButton;
-    /**
-     * Button to add a new student.
-     */
+    /** Button to add a new student. */
     private TextButton addStudentButton;
-    /**
-     * Event exits manage students mode and returns to the instructor dashboard.
-     */
+    /** Event exits manage students mode and returns to the instructor dashboard. */
     private Observable<Void> instructorDashboardEvent = new Observable<Void>();
-
+    /** Dialog prompts to enter student name when adding a new student. */
     private Dialog addStudentDialog;
+    ///** Popup used to display successful actions. */
+    //private Dialog confirmationPopup;
+    /** Object responsible for storing and managing student profiles. */
+    private ProfileManager profileManager;
+
+    private Observable<String> addStudentEvent = new Observable<String>();
 
 
-    public ManageStudentsScreen(SpriteBatch batch, AssetManager assets) {
+    public ManageStudentsScreen(SpriteBatch batch, AssetManager assets, ProfileManager profileManager) {
 
         super(batch, assets);
+        this.profileManager = profileManager;
 
         // Setup GUI
         table = new Table();
@@ -59,18 +63,17 @@ public class ManageStudentsScreen extends GameScreen {
         addStudentDialog.getContentTable().add(studentNameInput);
 
         TextButton addStudentConfirm = new TextButton("Confirm", skin);
-        TextButton addStudentCancel = new TextButton("Cancel", skin);
+        TextButton addStudentCancel = new TextButton("Back", skin);
 
         addStudentDialog.getButtonTable().add(addStudentConfirm);
         addStudentDialog.getButtonTable().add(addStudentCancel);
 
         addStudentConfirm.addListener(new ChangeListener() {
+
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-
-                String studentName = studentNameInput.getText();
-                // TODO: Verify student does not already exist
-                // TODO: Display confirmation message when successful
+                addStudentEvent.notifyObservers(studentNameInput.getText());
+                // TODO: Display confirmation message popup when successful
 
             }
         });
@@ -107,5 +110,6 @@ public class ManageStudentsScreen extends GameScreen {
 
     /** Add listeners for each event handled by the MainGame screen manager. */
     void addBackListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
+    void addAddStudentListener(Observer<String> ob) { addStudentEvent.addObserver(ob); }
 
 }

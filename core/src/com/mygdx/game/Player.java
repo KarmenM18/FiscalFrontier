@@ -12,8 +12,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
-// TODO: Add a useItem() method, which uses the use() method of the item class.
-// TODO: Add polling for item use -- in GameBoard?
 
 /**
  * Represents a player in a particular game state.

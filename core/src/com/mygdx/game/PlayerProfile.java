@@ -6,14 +6,23 @@ package com.mygdx.game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Random;
+import com.badlogic.gdx.utils.Json;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.Serializable;
 
 /**
  * Represents a player when not on the game board.
  */
 public class PlayerProfile {
+
     private String name;
     private int lifetimeScore;
     private int highScore;
@@ -24,19 +33,49 @@ public class PlayerProfile {
     private LinkedList<String> learned = new LinkedList<>(); //Storing all the learned knowledge from a knowledge catalog
     private String spritePath; // Path of the sprite to use when rendering the Player
 
-    public PlayerProfile(String name) {
 
-        Random rn = new Random();
+    /**
+     * Constructor used to load an existing player profile.
+     *
+     * @param name
+     * @param lifetimeScore
+     * @param highScore
+     * @param knowledgeLevel
+     */
+    public PlayerProfile(String name, int lifetimeScore, int highScore, int knowledgeLevel) {
+
+        // Initialize all profile fields
         this.name = name;
-        lifetimeScore = 0;
-        knowledgeLevel = rn.nextInt(13)+1;
-        highScore = 0;
+        this.lifetimeScore = lifetimeScore;
+        this.highScore = highScore;
+        this.knowledgeLevel = knowledgeLevel;
 
+        // Load knowledge base based on knowledge level
         this.updateKnowledgeBase();
+
         Config config = Config.getInstance();
         spritePath = config.getPlayerPath();
+
     }
 
+    /**
+     * Constructor creates a new player profile for a student.
+     *
+     * @param name Student's name
+     */
+    public PlayerProfile(String name) {
+
+        this(name, 0, 0, 1);
+
+        // Generate random knowledge level TODO: Is this intended?
+        Random rn = new Random();
+        this.knowledgeLevel = rn.nextInt(13)+1;
+
+    }
+
+    /**
+     * Private no-arg constructor for serialization
+     */
     private PlayerProfile() {}
 
     public void addXP(int xp) {
@@ -107,5 +146,16 @@ public class PlayerProfile {
         return null;
     }
 
+
     public LinkedList<String> getLearned () {return this.learned;}
+
+
+    /**
+     * Returns the number of tips unlocked.
+     * @return Number of tips unlocked
+     */
+    public int getTipCount() {
+        return this.learned.size();
+    }
+
 }
