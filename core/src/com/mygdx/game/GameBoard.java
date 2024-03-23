@@ -87,11 +87,11 @@ public class GameBoard extends GameScreen {
 
         itemButtons = new ArrayList<>();
 
-        assets.load("gameboard.png", Texture.class);
+        assets.load("background.jpg", Texture.class);
         assets.finishLoading();
 
         // Initialize background
-        background = assets.get("gameboard.png");
+        background = assets.get("background.jpg");
         Image backgroundImage = new Image(background);
         backgroundImage.setSize(width, height);
         stage.addActor(backgroundImage);

@@ -221,6 +221,7 @@ public class GameState implements Serializable {
         }
 
         //Initializing Stocks
+        iniStocks();
     }
 
     /**
