@@ -12,6 +12,7 @@ import com.mygdx.game.Items.MultiDice;
 import com.mygdx.game.Items.Shield;
 import com.mygdx.game.Node.*;
 import com.mygdx.game.Node.StarNode;
+import sun.nio.ch.Util;
 
 
 import java.io.Serializable;
@@ -35,6 +36,9 @@ public class GameState implements Serializable {
     private final int maxStar = 3;
     private final int minStar = 1;
     private int currentStar;
+    private final int maxPen = 5;
+    private final int minPen = 3;
+    private int currentPen;
     private boolean gameOver = false; // Set to true when roundNumber exceeds the round maximum. Should be checked by GameBoard
 
     /**
@@ -143,7 +147,7 @@ public class GameState implements Serializable {
         //left straight at the top
         for(x = 0; x > -9; x--){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
-            if(x == -4){
+            if(x == Utility.getRandom(-9,1)){
                 nodeMap.put(ID, new PenaltyNode(x, y, false, false, false, true, nodeMap, assets));
             }else{
                 nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
@@ -194,7 +198,7 @@ public class GameState implements Serializable {
         //back to J2, down path from J2
         for(y = 4; y > 0; y--) {
             String ID = String.valueOf(x) + "," + String.valueOf(y);
-            if(y == 2){
+            if(y == Utility.getRandom(0,5)){
                 nodeMap.put(ID, new PenaltyNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
             }else{
                 nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
@@ -390,7 +394,17 @@ public class GameState implements Serializable {
         eventNode.addEventListener(penaltyValue -> globalEvent(penaltyValue));
         nodeMap.put(x + "," + y, eventNode);
     }
-
+    /*
+    unused for now, could be used later
+    public void shufflePenalty(HashMap<String, Node> nodeMap){
+        currentPen = 0;
+        for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+            if (node.getValue() instanceof PenaltyNode) {
+                currentPen++;
+            }
+        }
+    }
+    */
     /**
      * @return all stocks in the shop
      */

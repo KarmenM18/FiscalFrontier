@@ -92,7 +92,7 @@ public class EndScreen extends GameScreen {
         // TODO: If we are weighting other things than score, this is where that logic should go
 
         finalGameState.getPlayerList().sort((o1, o2) -> o1.getScore() - o2.getScore());
-        Player winner = finalGameState.getPlayerList().getFirst();
+        Player winner = finalGameState.getPlayerList().get(0);
         for (Player player : finalGameState.getPlayerList()) {
             scoreTable.add(new Label(player.getPlayerProfile().getName(), skin)).pad(10);
             scoreTable.add(new Label(String.valueOf(player.getScore()), skin)).pad(10);
