@@ -81,7 +81,7 @@ project(":core") {
 
 }
 
-sourceSets {
+/*sourceSets {
     main {
         java {
             srcDirs 'core/src'
@@ -92,9 +92,8 @@ sourceSets {
             srcDirs 'core/test'
         }
     }
-}
+} */
 
-}
 
 tasks.withType(Test) {
     useJUnitPlatform()

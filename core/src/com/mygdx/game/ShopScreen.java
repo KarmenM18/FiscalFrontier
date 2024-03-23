@@ -44,5 +44,10 @@ public class ShopScreen extends GameScreen {
     }
 
     public void addBoardListener(Observer<Void> ob) { boardEvent.addObserver(ob); }
+
+    /**
+     * Updates to the current player's information
+     * @param player PlayerProfile to access player's items, stocks and current funds
+     */
     public void setCurrentPlayer(PlayerProfile player) {this.currentPlayer = player;}
 }

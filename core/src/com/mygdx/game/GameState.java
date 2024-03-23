@@ -134,7 +134,7 @@ public class GameState implements Serializable {
         if(turnNumber % playerList.size() == 0 && turnNumber != 0){
             roundNumber++;
         }
-        if(roundNumber > 0 && roundNumber % 2 == 0){
+        if(roundNumber > 0 && roundNumber % 3 == 0){
             for (Player p : getPlayerList()){
                 p.levelUp();
             }

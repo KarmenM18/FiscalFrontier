@@ -5,16 +5,19 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
-
 import java.util.LinkedList;
 
+/**
+ * Shows all knowledge that the current player has learned based on player's current knowledge level
+ * @author ecatil3
+ * @version 1.0
+ */
 public class KnowledgeListScreen extends GameScreen{
     private Observable<Void> pauseScreenEvent = new Observable<>();
 
@@ -24,12 +27,18 @@ public class KnowledgeListScreen extends GameScreen{
     private ScrollPane scroller;
     private LinkedList<String> playerKnowledge = new LinkedList<>();
 
+    /**
+     * Knoledge Screen Constructor / initialization
+     * @param batch SpriteBatch from libgdx
+     * @param assets AssetManager from libgdx
+     */
     public KnowledgeListScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
         title = new Label("learned Knowledge", skin);
         this.stage.addActor(title);
 
+        //Listening for return to pause screen
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
@@ -49,10 +58,20 @@ public class KnowledgeListScreen extends GameScreen{
         });
     }
 
+    /**
+     * Updates the list of the current play's obtained knowledge
+     * @param knowledge LinkList holding all player's current knowledge list
+     */
     public void setPlayerKnowledge (LinkedList<String> knowledge) {this.playerKnowledge = knowledge;}
+
+    /**
+     * @param ob Observer listener to get back to pause screen
+     */
     public void addBackToPause(Observer<Void> ob) {pauseScreenEvent.addObserver(ob);}
 
-    //Updates the screen to show just the player's learned knowledge base
+    /**
+     * Updates the screen to show just the player's learned knowledge
+     */
     public void updateTable () {
 
         table = new Table();
