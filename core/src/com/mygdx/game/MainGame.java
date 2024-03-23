@@ -1,8 +1,3 @@
-/*
-* Main class of the game
-* Contains the various screens of the game, as well as the AssetManager and the Config
- */
-
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;

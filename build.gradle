@@ -42,6 +42,18 @@ allprojects {
 project(":desktop") {
     apply plugin: "java-library"
 
+    sourceSets {
+        main {
+            java {
+                srcDirs 'core/src'
+            }
+        }
+        test {
+            java {
+                srcDirs 'core/test'
+            }
+        }
+    }
 
     dependencies {
         implementation project(":core")
@@ -62,7 +74,18 @@ project(":core") {
 
     apply plugin: "java-library"
 
-    sourceSets.test.java.srcDirs = ["test/"]
+    sourceSets {
+        main {
+            java {
+                srcDirs 'core/src'
+            }
+        }
+        test {
+            java {
+                srcDirs 'core/test'
+            }
+        }
+    }
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
@@ -73,6 +96,7 @@ project(":core") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
         testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.11.0'
@@ -80,20 +104,6 @@ project(":core") {
     }
 
 }
-
-/*sourceSets {
-    main {
-        java {
-            srcDirs 'core/src'
-        }
-    }
-    test {
-        java {
-            srcDirs 'core/test'
-        }
-    }
-} */
-
 
 tasks.withType(Test) {
     useJUnitPlatform()

@@ -1,38 +1,14 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Game;
 
 /**
  * Just a dummy ApplicationListener to instantiate LibGDX with.
  */
-public class TestGame implements ApplicationListener {
+public class TestGame extends Game {
     @Override
     public void create() {
         // Setup your test environment
-    }
-
-    @Override
-    public void render() {
-        // Run your tests
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        // Handle resizing if necessary
-    }
-
-    @Override
-    public void pause() {
-        // Handle pausing if necessary
-    }
-
-    @Override
-    public void resume() {
-        // Handle resuming if necessary
-    }
-
-    @Override
-    public void dispose() {
-        // Clean up resources
     }
 }
