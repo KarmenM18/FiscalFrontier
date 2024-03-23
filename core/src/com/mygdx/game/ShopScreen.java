@@ -88,6 +88,7 @@ public class ShopScreen extends GameScreen {
 
     public void showAvailableInvestments() {
 
+
     }
 
     public void checkOut() {
