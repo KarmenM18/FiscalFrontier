@@ -70,24 +70,140 @@ public class GameState implements Serializable {
                 player.addItem(new FreezeItem(skin));
             }
         }
-
+        /**
+         * base concept for better generation of map
+         * curr problem is node-node direction setup
+        int map[][] = { {1,1,2,1,1,3,1,1,0,0},
+                        {1,0,0,0,0,0,0,1,0,0},
+                        {1,0,1,1,1,1,1,1,1,2},
+                        {1,0,1,0,1,0,0,1,0,1},
+                        {1,1,1,0,1,0,0,1,0,1},
+                        {0,0,1,0,1,0,0,1,0,1},
+                        {0,0,4,1,1,0,0,1,0,3},
+                        {0,0,0,0,1,1,1,1,1,1}};
+        for(int i = 0; i < map.length; i++){
+            for(int j = 0; j < map[0].length; j++){
+                String ID = String.valueOf(i) + "," + String.valueOf(j);
+                if(map[i][j] == 1){
+                    nodeMap.put(ID, new NormalNode(i, j, false, false, false, false, nodeMap, assets));
+                }
+            }
+        }
+        */
         // Setup nodes
+        // define junctions use the x y as conditional check for auto generation of
+        //TODO add logic for direction check to avoid missed null
+        //TODO automate ID and x, y process based on initial node and for loop limit
+        //TODO look into logic for automate direction
+        int x = 0;//for const col
+        int y = 0;//for const row
         nodeMap = new HashMap<String, Node>();
-        nodeMap.put("0,0", new NormalNode(0, 0, false, false, false, true, nodeMap, assets));
-        nodeMap.put("1,0", new NormalNode(1, 0, false, false, false, true, nodeMap, assets));
-        nodeMap.put("2,0", new NormalNode(2, 0, false, true, false, true, nodeMap, assets));
-        nodeMap.put("2,2", new NormalNode(2, 2, false, false, true, false, nodeMap, assets));
-        nodeMap.put("3,0", new PenaltyNode(3, 0, false, true, false, false, nodeMap, assets));
-        nodeMap.put("4,0", new NormalNode(4, 0, true, false, false, false, nodeMap, assets));
-        nodeMap.put("4,1", new NormalNode(4, 1, true, false, false, false, nodeMap, assets));
-        nodeMap.put("3,2", new NormalNode(3, 2, false, false, false, true, nodeMap, assets));
-        nodeMap.put("4,2", new StarNode(4, 2, false, false, false, true, nodeMap, assets));
-        nodeMap.put("-1,0", new NormalNode(-1, 0, true, false, false, false, nodeMap, assets));
-        nodeMap.put("-1,1", new StarNode(-1, 1, true, false, false, false, nodeMap, assets));
-        nodeMap.put("-1,2", new NormalNode(-1, 2, false, true, false, false, nodeMap, assets));
-        nodeMap.put("0,2", new PenaltyNode(0, 2, false, true, false, false, nodeMap, assets));
-        nodeMap.put("1,2", new NormalNode(1, 2, false, true, false, false, nodeMap, assets));
-        createEventNode(2, 1, false, false, true, false);
+        nodeMap.put("0,0", new NormalNode(x, y, true, true, false, false, nodeMap, assets));
+        //0,0 top straight, shorter to J1 but has penalty
+        for(y = 1; y < 5; y++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            if(y == 3){
+                nodeMap.put(ID, new PenaltyNode(x, y, true, false, false, false, nodeMap, assets));
+            }else{
+                nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets));
+            }
+        }
+        y = 0; //back to 0,0
+        //0,0 right
+        for(x = 1; x < 2; x++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets));
+        }
+        //2,0 top straight normal nodes, longer but no penalty route;
+        for(y = 0; y < 5; y++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets));
+        }
+        //2,5 back to 0,5 (J1)
+        for(x = 2; x > 0 ; x--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
+        }
+        //junction 1 (0,5)
+        nodeMap.put("0,5", new NormalNode(x, y, true, false, false, true, nodeMap, assets));
+        //left direction J1 (0,5) to J2 (-4,5)
+        for(x = 0; x > -4; x--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
+        }
+        //junction 2 (-4,5)
+        nodeMap.put("-4,5", new StarNode(x, y, false, false, true, false, nodeMap, assets));
+        x = 0;//back to J1
+        //to top from J1
+        for(y = 6; y < 9; y++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets));
+        }
+        //left straight at the top
+        for(x = 0; x > -9; x--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            if(x == -4){
+                nodeMap.put(ID, new PenaltyNode(x, y, false, false, false, true, nodeMap, assets));
+            }else{
+                nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
+            }
+        }
+        //down straight 5
+        for(y = 9; y > 3; y--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            if(y == 9){
+                nodeMap.put(ID, new StarNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+            }else{
+                nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+            }
+        }
+        //right straight 2
+        for(x = -9; x < -6; x++) {
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
+        }
+        //junction 3
+        nodeMap.put("-6,3", new StarNode(x, y, true, false, true, false, nodeMap, assets));
+        //top path
+        for(y = 4; y < 5; y++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets)); //left down stretch
+        }
+        for(x = -6; x < -4; x++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
+        }
+        //set x back to J3
+        x = -6;
+        //down path from J3
+        for(y = 2; y > 1; y--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+        }
+        //making event node
+        nodeMap.put(String.valueOf(x) + "," + String.valueOf(y), new NormalNode(x, y, false, true, false, false, nodeMap, assets));
+        createEventNode(x, y, false, true, false, false);
+        //right to J2 down path
+        for(x = -5; x < -4; x++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
+        }
+        //junction 4
+        nodeMap.put("-4,1", new StarNode(x, y, false, false, true, false, nodeMap, assets));
+        //back to J2, down path from J2
+        for(y = 4; y > 0; y--) {
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            if(y == 2){
+                nodeMap.put(ID, new PenaltyNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+            }else{
+                nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+            }
+        }
+        //right back to 0,0
+        for(x = -4; x < 0; x++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
+        }
 
         // Set starting nodes - player cannot start on a special node, only a plain node
         // They also can't start on the same node as another player
@@ -148,8 +264,6 @@ public class GameState implements Serializable {
 
         //Updating safe-medium stocks / dividends
     }
-
-
     /**
      * End the current Player's turn, and start the next Player's turn
      */
@@ -218,7 +332,7 @@ public class GameState implements Serializable {
                 currentStar++;
             }
         }
-        System.out.println(currentStar);//for testing
+        //System.out.println(currentStar); // for testing
         int starLimit = Utility.getRandom(minStar, maxStar); //setting random number of max star every turn
         if(currentStar < starLimit){ //only add new star if currentStar is less than maxStar
             List<Node> normalNodeList = new ArrayList<Node>();
@@ -263,7 +377,7 @@ public class GameState implements Serializable {
     }
 
     public void createEventNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
-        EventNode eventNode = new EventNode(x, y, false, false, true, false, nodeMap, assetMan);
+        EventNode eventNode = new EventNode(x, y, north, east, south, west, nodeMap, assetMan);
         eventNode.addEventListener(penaltyValue -> globalEvent(penaltyValue));
         nodeMap.put(x + "," + y, eventNode);
     }
