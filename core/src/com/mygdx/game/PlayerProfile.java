@@ -10,10 +10,13 @@ import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Random;
 import com.badlogic.gdx.utils.Json;
+import com.mygdx.game.Items.Item;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,13 +30,12 @@ public class PlayerProfile {
     private String name;
     private int lifetimeScore;
     private int highScore;
-    /**
-     * TODO: remove knowledge level since level is now discrete
-     */
     private int knowledgeLevel;
     private LinkedList<String> learned = new LinkedList<>(); //Storing all the learned knowledge from a knowledge catalog
     private String spritePath; // Path of the sprite to use when rendering the Player
     private ArrayList<Integer> tips = new ArrayList<>();
+    private ArrayList<Item> playerItems = new ArrayList<>();
+    private int totalMoney;
 
 
     /**
@@ -110,14 +112,12 @@ public class PlayerProfile {
 
     /**
      * @return the Player's name
->>>>>>> 1a5b2fc623d591053c919966ce72db6367bf04c2
      */
     public String getName() {
         return name;
     }
 
     /**
-<<<<<<< HEAD
      * Purpose: sets the name of the Player
      */
     public void setName(String pName) {
@@ -142,16 +142,12 @@ public class PlayerProfile {
     /**
      * Purpose: gets the Player's lifetime score
      * @return lifetimeScore of Player
-=======
-     * @return the Player's lifetime score
->>>>>>> 1a5b2fc623d591053c919966ce72db6367bf04c2
      */
     public int getLifetimeScore() {
         return lifetimeScore;
     }
 
     /**
-<<<<<<< HEAD
      * Purpose: sets the Player's lifetime score
      */
     public void setLifetimeScore(int newScore) {
@@ -160,17 +156,13 @@ public class PlayerProfile {
 
     /**
      * Purpose: gets the Player's highest score unlocked
-     * @return highScore of PLayer
-=======
      * @return the Player's maximum score in a single game
->>>>>>> 1a5b2fc623d591053c919966ce72db6367bf04c2
      */
     public int getHighScore() {
         return highScore;
     }
 
     /**
-<<<<<<< HEAD
      * Purpose: sets the Player's new high score
      */
     public void setHighScore(int newScore) {
@@ -180,16 +172,12 @@ public class PlayerProfile {
     /**
      * Purpose: gets the Player's knowledge level
      * @return knowledgeLevel of Player
-=======
-     * @return the Player's knowledge level
->>>>>>> 1a5b2fc623d591053c919966ce72db6367bf04c2
      */
     public int getKnowledgeLevel() {
         return knowledgeLevel;
     }
 
     /**
-<<<<<<< HEAD
      * Purpose: sets the Player's knowledgeLevel
      */
     public void setKnowledgeLevel(int newLevel) {
@@ -243,4 +231,15 @@ public class PlayerProfile {
     public int getTipCount() {
         return this.learned.size();
     }
+
+    public ArrayList<Item> getPlayerItems(Player player) {
+        return this.playerItems = player.getItems();
+    }
+
+    public int viewTotalCoins(Player player) {
+        this.totalMoney = player.getMoney();
+        return totalMoney;
+    }
+
+
 }
