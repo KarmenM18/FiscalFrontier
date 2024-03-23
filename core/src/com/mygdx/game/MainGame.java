@@ -29,8 +29,12 @@ public class MainGame extends Game {
 	private MainMenuScreen mainMenuScreen;
 	private KnowledgeListScreen knowledgeListScreen;
 	private SaveScreen saveScreen;
+	private InstructorDashboardScreen instructorDashboardScreen;
+	private ManageStudentsScreen manageStudentsScreen;
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
+
+	private ProfileManager profileManager;
 
 	List<PlayerProfile> profileList; // List of player profiles
 	
@@ -55,6 +59,9 @@ public class MainGame extends Game {
 		shopScreen = new ShopScreen(batch, assets);
 		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
 		saveScreen = new SaveScreen(batch, assets);
+		profileManager = new ProfileManager("studentInformation.json");
+		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets, this.profileManager);
+		manageStudentsScreen = new ManageStudentsScreen(batch, assets, this.profileManager);
 
 		// Load players from save if possible
 		if (Utility.fileExists(config.getPlayerSavePath())) {
@@ -107,7 +114,6 @@ public class MainGame extends Game {
 			gameBoard.setGameState(newGame);
 			setScreen(gameBoard);
 		});
-
 		mainMenuScreen.addContinueGameListener(v -> {
 			GameState gs;
 			// TODO: load LAST save
@@ -118,14 +124,32 @@ public class MainGame extends Game {
 			}
 			// TODO inform the user that there is no save to continue from
 		});
+		// Set InstructorDashboardScreen observers
 		mainMenuScreen.addLoadGameListener(v -> {
 			setScreen(saveScreen);
 		});
 		mainMenuScreen.addInstructorDashboardListener(v -> {
-			// Open instructor dashboard
-			InstructorDashboard instructorDashboard = new InstructorDashboard(batch, assets);
-			setScreen(instructorDashboard);
-			// TODO: Not done implementing
+			setScreen(instructorDashboardScreen);  // Open instructor dashboard from main menu
+		});
+		instructorDashboardScreen.addMenuListener(v -> {
+			setScreen(mainMenuScreen);  // Return to main menu
+		});
+		instructorDashboardScreen.addManageStudentsListener(v -> {
+			setScreen(manageStudentsScreen);  // Enter manage students mode in instructor dashboard
+		});
+		// Set ManageStudentsScreen observers
+		manageStudentsScreen.addBackListener(v -> {
+			setScreen(instructorDashboardScreen);  // Enter manage students mode in instructor dashboard
+		});
+		manageStudentsScreen.addAddStudentListener(studentName -> {
+			try {
+				profileManager.addStudent(studentName);
+				instructorDashboardScreen.loadDashboard();  // Reload data to reflect changes
+			}
+			catch (IllegalArgumentException e) {
+				System.out.println("Unable to add student.");  // FIXME: Make this a dialog box
+			}
+
 		});
 	}
 

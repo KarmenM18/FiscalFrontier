@@ -1,13 +1,13 @@
-package com.mygdx.game;
+package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.mygdx.game.Config;
+import com.mygdx.game.Node.Node;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
-import com.mygdx.game.Observer.Observable;
+import com.mygdx.game.Player;
 
 import java.util.Map;
 
@@ -23,10 +23,14 @@ public class EventNode extends Node {
         super(mapX, mapY, north, east, south, west, map, assets);
     }
 
+
     public EventNode(int mapX, int mapY, AssetManager assets) {
         super(mapX, mapY, assets);
     }
 
+    /**
+     * necessary for serialization
+     */
     private EventNode() {}
 
     @Override
@@ -47,4 +51,14 @@ public class EventNode extends Node {
     }
     public void addEventListener(Observer<Integer> ob) {globalEvent.addObserver(ob); }
 
+    //TODO decide where the star selling should go, shop/sellnode or something else
+    public void sellStar(Player p, int starToMoney, int starsToSell){
+        if(p.getStars() <= 0){
+            //show dialogue for player has no star
+        }else{
+            int moneyGained = starToMoney * starsToSell;
+            p.setStars(p.getStars() - starsToSell);
+            p.setMoney(p.getMoney() + moneyGained);
+        }
+    }
 }

@@ -6,14 +6,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.Item;
+import com.mygdx.game.Node.Node;
 
-import javax.swing.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
-// TODO: Add a useItem() method, which uses the use() method of the item class.
-// TODO: Add polling for item use -- in GameBoard?
 
 /**
  * Represents a player in a particular game state.
@@ -73,6 +71,9 @@ public class Player implements Serializable {
     private int movesLeft;
     private int maxMoves;
     private boolean useMutliDice = false;
+    private boolean hasShield = false;
+    private int level;
+
     private ArrayList<ArrayList<String>> reachablePaths;
     /**
      * The previous tile the player was on. Used to disallow going backwards.
@@ -105,6 +106,8 @@ public class Player implements Serializable {
         this.maxRolls = 1;
         this.rollsLeft = maxRolls;
         this.useMutliDice = false;
+        this.hasShield = false;
+        this.level = 0;
         this.reachablePaths = new ArrayList<>();
         this.previousPath = new ArrayList<>();
 
@@ -270,6 +273,15 @@ public class Player implements Serializable {
     }
 
 
+    public int getLevel(){
+        return this.level;
+    }
+    public void levelUp(){
+        if(this.level < 8){
+            this.level++;
+        }
+    }
+
     /**
      * Returns the player's stars.
      *
@@ -298,6 +310,12 @@ public class Player implements Serializable {
 
     public void setUseMutliDice(boolean use){
         this.useMutliDice = use;
+    }
+    public boolean getHasShield(){
+        return hasShield;
+    }
+    public void setHasShield(boolean has){
+        this.hasShield = has;
     }
     // TODO: Confirm score formula
 

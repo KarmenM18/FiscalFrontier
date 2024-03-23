@@ -92,31 +92,31 @@ public class MainMenuScreen extends GameScreen {
         instructorPasswordDialog.getButtonTable().add(passwordConfirm);
         instructorPasswordDialog.getButtonTable().add(passwordCancel);
 
-
         passwordConfirm.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
 
-                String inputPassword = password.getText();
-                String correctPassword = "TEST";  // FIXME: Add a correct password
+            String inputPassword = password.getText();
+            String correctPassword = "TEST";  // FIXME: Add a correct password
 
-                if (inputPassword.equals(correctPassword)) {
-                    instructorDashboardEvent.notifyObservers(null);}
-                else {
+            if (inputPassword.equals(correctPassword)) {  // Correct password entered
+                instructorPasswordDialog.hide();
+                instructorDashboardEvent.notifyObservers(null);
+            }
+            else {  // Incorrect password entered
+                // Display error message
+                // FIXME: Need this to only display once
+                instructorPasswordDialog.getContentTable().row();
+                instructorPasswordDialog.text("Incorrect password. Please try again.");
 
-                    // Display error message
-                    // FIXME: Need this to only display once
-                    instructorPasswordDialog.getContentTable().row();
-                    instructorPasswordDialog.text("Incorrect password. Please try again.");
-
-                }
-
+            }
             }
         });
 
         passwordCancel.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                password.setText("");  // Reset any entered text
                 instructorPasswordDialog.hide();
             }
         });
@@ -135,7 +135,7 @@ public class MainMenuScreen extends GameScreen {
         table.add(quitButton).fillX();
 
 
-        // Add listeners
+        // Add button listeners
         quitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -172,6 +172,5 @@ public class MainMenuScreen extends GameScreen {
     void addStartGameListener(Observer<Void> ob) { startGameEvent.addObserver(ob); }
     void addContinueGameListener(Observer<Void> ob) { continueGameEvent.addObserver(ob); }
     void addInstructorDashboardListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
-
     void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
 }

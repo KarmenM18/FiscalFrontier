@@ -2,13 +2,15 @@
  * The Node class. A node is a clickable tile on the board.
  * It is linked to other nodes in four possible directions.
  */
-package com.mygdx.game;
+package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Config;
+import com.mygdx.game.Player;
 
 import java.io.Serializable;
 import java.util.*;

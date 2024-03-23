@@ -8,15 +8,24 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.Bike;
 import com.mygdx.game.Items.FreezeItem;
+import com.mygdx.game.Items.MultiDice;
+import com.mygdx.game.Items.Shield;
+import com.mygdx.game.Node.*;
+import com.mygdx.game.Node.StarNode;
+
 
 import java.io.Serializable;
-import java.lang.foreign.PaddingLayout;
 import java.util.*;
 
 public class GameState implements Serializable {
     private List<Player> playerList;
     private int currPlayerTurn;
     private int turnNumber;
+    /**
+     * TODO: check if roundNumber is 26, end game and change to score screen if so
+     * maybe add warning at round 24 25??
+     */
+    private int roundNumber;
     private HashMap<String, Node> nodeMap;
     transient private AssetManager assetMan;
     private final int maxStar = 3;
@@ -37,6 +46,7 @@ public class GameState implements Serializable {
         this.playerList = new ArrayList<Player>();
         currPlayerTurn = 0;
         turnNumber = 0;
+        roundNumber = 0;
 
         for (PlayerProfile playerProfile : profileList) {
             Player player = new Player(playerProfile, assets);
@@ -50,6 +60,7 @@ public class GameState implements Serializable {
             for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
                player.addItem(new Bike(skin));
                player.addItem(new MultiDice(skin));
+               player.addItem(new Shield(skin));
             }
             for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
                 player.addItem(new FreezeItem(skin));
@@ -115,6 +126,23 @@ public class GameState implements Serializable {
     }
 
     /**
+     * moving to next round, not affecting anything other than player level
+     * for now
+     * once 26 rounds is reached, end the game????
+     */
+    public void nextRound(){
+        if(turnNumber % playerList.size() == 0 && turnNumber != 0){
+            roundNumber++;
+        }
+        if(roundNumber > 0 && roundNumber % 2 == 0){
+            for (Player p : getPlayerList()){
+                p.levelUp();
+            }
+        }
+    }
+
+
+    /**
      * End the current Player's turn, and start the next Player's turn
      */
     public void nextTurn() {
@@ -158,7 +186,9 @@ public class GameState implements Serializable {
     public void globalEvent(int penaltyAmount){
         //TODO adjust Money penalty logic for hardmode
         for (Player p : getPlayerList()){
-            if(p.getStars() > 0){
+            if(p.getHasShield()){
+                //do nothing
+            }else if(p.getStars() > 0){
                 p.setStars(p.getStars() - 1);
             }else if(p.getMoney() > 0){
                 p.setMoney(p.getMoney() - penaltyAmount);
