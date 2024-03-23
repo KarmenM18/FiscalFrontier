@@ -1,3 +1,4 @@
+
 /*
  * TODO Documentation
  */
@@ -26,12 +27,10 @@ public class PlayerProfile {
     private String name;
     private int lifetimeScore;
     private int highScore;
-    /**
-     * TODO: remove knowledge level since level is now discrete
-     */
     private int knowledgeLevel;
     private LinkedList<String> learned = new LinkedList<>(); //Storing all the learned knowledge from a knowledge catalog
     private String spritePath; // Path of the sprite to use when rendering the Player
+    private ArrayList<Integer> tips = new ArrayList<>();
 
 
     /**
@@ -101,6 +100,10 @@ public class PlayerProfile {
         if (score > highScore) highScore = score;
     }
 
+    /**
+     * Increases the player's knowledge level and updates
+     * their learned knowledge list
+     */
     public void updateKnowledgeLevel () {
         this.knowledgeLevel++;
         updateKnowledgeBase();
@@ -108,37 +111,99 @@ public class PlayerProfile {
 
     /**
      * @return the Player's name
+>>>>>>> 1a5b2fc623d591053c919966ce72db6367bf04c2
      */
     public String getName() {
         return name;
     }
 
     /**
+<<<<<<< HEAD
+     * Purpose: sets the name of the Player
+     */
+    public void setName(String pName) {
+        this.name = pName;
+    }
+
+    /**
+     * Purpose: gets the Player's list of tips
+     * @return tips the list of tips that the player has unlocked so far
+     */
+    public ArrayList<Integer> getTips() {
+        return tips;
+    }
+
+    /**
+     * Purpose: adds a new tip to the Player's list
+     */
+    public void addTip(int tipNum) {
+        tips.add(tipNum);
+    }
+
+    /**
+     * Purpose: gets the Player's lifetime score
+     * @return lifetimeScore of Player
+=======
      * @return the Player's lifetime score
+>>>>>>> 1a5b2fc623d591053c919966ce72db6367bf04c2
      */
     public int getLifetimeScore() {
         return lifetimeScore;
     }
 
     /**
+<<<<<<< HEAD
+     * Purpose: sets the Player's lifetime score
+     */
+    public void setLifetimeScore(int newScore) {
+        this.lifetimeScore = newScore;
+    }
+
+    /**
+     * Purpose: gets the Player's highest score unlocked
+     * @return highScore of PLayer
+=======
      * @return the Player's maximum score in a single game
+>>>>>>> 1a5b2fc623d591053c919966ce72db6367bf04c2
      */
     public int getHighScore() {
         return highScore;
     }
 
     /**
+<<<<<<< HEAD
+     * Purpose: sets the Player's new high score
+     */
+    public void setHighScore(int newScore) {
+        this.highScore = newScore;
+    }
+
+    /**
+     * Purpose: gets the Player's knowledge level
+     * @return knowledgeLevel of Player
+=======
      * @return the Player's knowledge level
+>>>>>>> 1a5b2fc623d591053c919966ce72db6367bf04c2
      */
     public int getKnowledgeLevel() {
         return knowledgeLevel;
     }
 
     /**
-     * @return the file path of the Player's Sprite
+<<<<<<< HEAD
+     * Purpose: sets the Player's knowledgeLevel
+     */
+    public void setKnowledgeLevel(int newLevel) {
+        this.knowledgeLevel = newLevel;
+    }
+
+     /** @return the file path of the Player's Sprite
      */
     public String getSpritePath() { return spritePath; }
 
+    /**
+     * Updates the player's learned knowledge
+     */
     private void updateKnowledgeBase () {
 
         //Player levels up every 3 rounds for a total of 13 levels
@@ -160,6 +225,10 @@ public class PlayerProfile {
 
     }
 
+    /**
+     * Gets a random tip from all learned knowledge
+     * @return Returns a String to identify a random tip to show on the pause screen
+     */
     public String getRandomTip () {
 
         int randTip = (int) (Math.random() * this.learned.size());
@@ -172,6 +241,9 @@ public class PlayerProfile {
     }
 
 
+    /**
+     * @return LinkedList of all knowledge learned
+     */
     public LinkedList<String> getLearned () {return this.learned;}
 
 
@@ -182,5 +254,4 @@ public class PlayerProfile {
     public int getTipCount() {
         return this.learned.size();
     }
-
 }

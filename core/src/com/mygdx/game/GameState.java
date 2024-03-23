@@ -21,6 +21,10 @@ public class GameState implements Serializable {
     private List<Player> playerList;
     private int currPlayerTurn;
     private int turnNumber;
+
+    //Stocks
+    private Stock [] stocks;
+
     /**
      * TODO: check if roundNumber is 26, end game and change to score screen if so
      * maybe add warning at round 24 25??
@@ -31,6 +35,10 @@ public class GameState implements Serializable {
     private final int maxStar = 3;
     private final int minStar = 1;
     private int currentStar;
+    private final int maxPen = 5;
+    private final int minPen = 3;
+    private int currentPen;
+    private boolean gameOver = false; // Set to true when roundNumber exceeds the round maximum. Should be checked by GameBoard
 
     /**
      * Constructor
@@ -46,7 +54,7 @@ public class GameState implements Serializable {
         this.playerList = new ArrayList<Player>();
         currPlayerTurn = 0;
         turnNumber = 0;
-        roundNumber = 0;
+        roundNumber = 1;
 
         for (PlayerProfile playerProfile : profileList) {
             Player player = new Player(playerProfile, assets);
@@ -66,24 +74,138 @@ public class GameState implements Serializable {
                 player.addItem(new FreezeItem(skin));
             }
         }
-
+        /**
+         * base concept for better generation of map
+         * curr problem is node-node direction setup
+        int map[][] = { {1,1,2,1,1,3,1,1,0,0},
+                        {1,0,0,0,0,0,0,1,0,0},
+                        {1,0,1,1,1,1,1,1,1,2},
+                        {1,0,1,0,1,0,0,1,0,1},
+                        {1,1,1,0,1,0,0,1,0,1},
+                        {0,0,1,0,1,0,0,1,0,1},
+                        {0,0,4,1,1,0,0,1,0,3},
+                        {0,0,0,0,1,1,1,1,1,1}};
+        for(int i = 0; i < map.length; i++){
+            for(int j = 0; j < map[0].length; j++){
+                String ID = String.valueOf(i) + "," + String.valueOf(j);
+                if(map[i][j] == 1){
+                    nodeMap.put(ID, new NormalNode(i, j, false, false, false, false, nodeMap, assets));
+                }
+            }
+        }
+        */
         // Setup nodes
+        // define junctions use the x y as conditional check for auto generation of
+        //TODO add logic for direction check to avoid missed null
+        //TODO automate ID and x, y process based on initial node and for loop limit
+        //TODO look into logic for automate direction
+        int x = 0;//for const col
+        int y = 0;//for const row
         nodeMap = new HashMap<String, Node>();
-        nodeMap.put("0,0", new NormalNode(0, 0, false, false, false, true, nodeMap, assets));
-        nodeMap.put("1,0", new NormalNode(1, 0, false, false, false, true, nodeMap, assets));
-        nodeMap.put("2,0", new NormalNode(2, 0, false, true, false, true, nodeMap, assets));
-        nodeMap.put("2,2", new NormalNode(2, 2, false, false, true, false, nodeMap, assets));
-        nodeMap.put("3,0", new PenaltyNode(3, 0, false, true, false, false, nodeMap, assets));
-        nodeMap.put("4,0", new NormalNode(4, 0, true, false, false, false, nodeMap, assets));
-        nodeMap.put("4,1", new NormalNode(4, 1, true, false, false, false, nodeMap, assets));
-        nodeMap.put("3,2", new NormalNode(3, 2, false, false, false, true, nodeMap, assets));
-        nodeMap.put("4,2", new StarNode(4, 2, false, false, false, true, nodeMap, assets));
-        nodeMap.put("-1,0", new NormalNode(-1, 0, true, false, false, false, nodeMap, assets));
-        nodeMap.put("-1,1", new StarNode(-1, 1, true, false, false, false, nodeMap, assets));
-        nodeMap.put("-1,2", new NormalNode(-1, 2, false, true, false, false, nodeMap, assets));
-        nodeMap.put("0,2", new PenaltyNode(0, 2, false, true, false, false, nodeMap, assets));
-        nodeMap.put("1,2", new NormalNode(1, 2, false, true, false, false, nodeMap, assets));
-        createEventNode(2, 1, false, false, true, false);
+        nodeMap.put("0,0", new NormalNode(x, y, true, true, false, false, nodeMap, assets));
+        //0,0 top straight, shorter to J1 but has penalty
+        for(y = 1; y < 5; y++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            if(y == 3){
+                nodeMap.put(ID, new PenaltyNode(x, y, true, false, false, false, nodeMap, assets));
+            }else{
+                nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets));
+            }
+        }
+        y = 0; //back to 0,0
+        //0,0 right
+        for(x = 1; x < 2; x++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets));
+        }
+        //2,0 top straight normal nodes, longer but no penalty route;
+        for(y = 0; y < 5; y++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets));
+        }
+        //2,5 back to 0,5 (J1)
+        for(x = 2; x > 0 ; x--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
+        }
+        //junction 1 (0,5)
+        nodeMap.put("0,5", new NormalNode(x, y, true, false, false, true, nodeMap, assets));
+        //left direction J1 (0,5) to J2 (-4,5)
+        for(x = 0; x > -4; x--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
+        }
+        //junction 2 (-4,5)
+        nodeMap.put("-4,5", new StarNode(x, y, false, false, true, false, nodeMap, assets));
+        x = 0;//back to J1
+        //to top from J1
+        for(y = 6; y < 8; y++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets));
+        }
+        //left straight at the top
+        for(x = 0; x > -9; x--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            if(x == Utility.getRandom(-9,1)){
+                nodeMap.put(ID, new PenaltyNode(x, y, false, false, false, true, nodeMap, assets));
+            }else{
+                nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
+            }
+        }
+        //top left corner star
+        nodeMap.put(String.valueOf(x) + "," + String.valueOf(y), new StarNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+        //down straight 5
+        for(y = 8; y > 3; y--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+        }
+        //right straight 2
+        for(x = -9; x < -6; x++) {
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
+        }
+        //junction 3
+        nodeMap.put("-6,3", new StarNode(x, y, true, false, true, false, nodeMap, assets));
+        //top path
+        for(y = 4; y < 5; y++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets)); //left down stretch
+        }
+        for(x = -6; x < -4; x++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
+        }
+        //set x back to J3
+        x = -6;
+        //down path from J3
+        for(y = 2; y > 1; y--){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+        }
+        //making event node
+        nodeMap.put(String.valueOf(x) + "," + String.valueOf(y), new NormalNode(x, y, false, true, false, false, nodeMap, assets));
+        createEventNode(x, y, false, true, false, false);
+        //right to J2 down path
+        for(x = -5; x < -4; x++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
+        }
+        //junction 4
+        nodeMap.put("-4,1", new StarNode(x, y, false, false, true, false, nodeMap, assets));
+        //back to J2, down path from J2
+        for(y = 4; y > 0; y--) {
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            if(y == Utility.getRandom(0,5)){
+                nodeMap.put(ID, new PenaltyNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+            }else{
+                nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
+            }
+        }
+        //right back to 0,0
+        for(x = -4; x < 0; x++){
+            String ID = String.valueOf(x) + "," + String.valueOf(y);
+            nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
+        }
 
         // Set starting nodes - player cannot start on a special node, only a plain node
         // They also can't start on the same node as another player
@@ -98,6 +220,9 @@ public class GameState implements Serializable {
             player.setCurrentTile(nodeIDs.get(nodeIDs.size() - 1), nodeMap);
             nodeIDs.remove(nodeIDs.size() - 1);
         }
+
+        //Initializing Stocks
+        iniStocks();
     }
 
     /**
@@ -128,20 +253,30 @@ public class GameState implements Serializable {
     /**
      * moving to next round, not affecting anything other than player level
      * for now
-     * once 26 rounds is reached, end the game????
      */
     public void nextRound(){
         if(turnNumber % playerList.size() == 0 && turnNumber != 0){
             roundNumber++;
+
+            //Updating Safe and Medium Risk Stocks
+            stocks[0].updatePrice();
+            stocks[1].updatePrice();
+            stocks[3].updatePrice();
+            stocks[4].updatePrice();
+
+            //Checking for payout
+
+            // Check for game end
+            if (roundNumber > Config.getInstance().getMaxRounds()) gameOver = true;
         }
-        if(roundNumber > 0 && roundNumber % 2 == 0){
+        if(roundNumber > 0 && roundNumber % 3 == 0){
             for (Player p : getPlayerList()){
                 p.levelUp();
             }
         }
+
+        //Updating safe-medium stocks / dividends
     }
-
-
     /**
      * End the current Player's turn, and start the next Player's turn
      */
@@ -150,6 +285,7 @@ public class GameState implements Serializable {
         getCurrentPlayer().endTurn(nodeMap);
         removeStar(nodeMap);
         checkStar(nodeMap);
+        checkPenalty(nodeMap);
         currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
         if (getCurrentPlayer().isFrozen()) {
             // TODO Inform that player was frozen
@@ -160,6 +296,12 @@ public class GameState implements Serializable {
         }
         getCurrentPlayer().startTurn(nodeMap);
         turnNumber++;
+
+        //Updating high risk stocks
+        this.stocks[2].updatePrice();
+        this.stocks[5].updatePrice();
+
+        nextRound(); // Check current round;
     }
 
     /**
@@ -178,6 +320,11 @@ public class GameState implements Serializable {
      * @return Map of nodes
      */
     public Map<String, Node> getNodeMap() { return nodeMap; }
+
+    /**
+     * @return the current roundNumber
+     */
+    public int getRound() { return roundNumber; }
 
     /**
      * global event for event node, reduce all player's money
@@ -210,7 +357,7 @@ public class GameState implements Serializable {
                 currentStar++;
             }
         }
-        System.out.println(currentStar);//for testing
+        //System.out.println(currentStar); // for testing
         int starLimit = Utility.getRandom(minStar, maxStar); //setting random number of max star every turn
         if(currentStar < starLimit){ //only add new star if currentStar is less than maxStar
             List<Node> normalNodeList = new ArrayList<Node>();
@@ -255,8 +402,171 @@ public class GameState implements Serializable {
     }
 
     public void createEventNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
-        EventNode eventNode = new EventNode(x, y, false, false, true, false, nodeMap, assetMan);
+        EventNode eventNode = new EventNode(x, y, north, east, south, west, nodeMap, assetMan);
         eventNode.addEventListener(penaltyValue -> globalEvent(penaltyValue));
         nodeMap.put(x + "," + y, eventNode);
+    }
+
+    public void checkPenalty(HashMap<String, Node> nodeMap){
+        currentPen = 0;
+        for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+            if (node.getValue() instanceof PenaltyNode) {
+                currentPen++;
+            }
+        }
+        if(currentPen < Utility.getRandom(minPen, maxPen)){
+            List<Node> normalNodeList = new ArrayList<Node>();
+            for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+                Node node1 = node.getValue();
+                if (node1 instanceof NormalNode) {
+                    normalNodeList.add(node1);
+                    Utility.shuffle(normalNodeList);
+                }
+            }
+            Node randNode = normalNodeList.get(Utility.getRandom(0, normalNodeList.size() - 1));
+            String randKey = randNode.getID();
+            int x = randNode.getMapX();
+            int y = randNode.getMapY();
+            boolean north = randNode.getNorth();
+            boolean south = randNode.getSouth();
+            boolean west = randNode.getWest();
+            boolean east = randNode.getEast();
+            PenaltyNode newPen = new PenaltyNode(x, y, north, east, south, west, nodeMap, assetMan);
+            nodeMap.remove(randKey);
+            nodeMap.put(randKey, newPen);
+        }
+    }
+    /**
+     * @return all stocks in the shop
+     */
+    public Stock[] getAllStocks () {return this.stocks;}
+
+    /**
+     * Method to clean up code a bit. Initializes all 6 stock options
+     * 1.) Safe Growth Stock
+     * 2.) Medium Growth Stock
+     * 3.) High Risk Growth Stock
+     * 4.) Safe Dividend Stock
+     * 5.) Medium Dividend Stock
+     * 6.) High Risk Dividend Stock
+     */
+    private void iniStocks () {
+        this.stocks = new Stock[6];
+
+        //Temp variables
+        String tickerName;
+        String description;
+        double price;
+        double divPay;
+        double minG;
+        double minD;
+        double maxG;
+        double maxD;
+        int risk;
+        int divRisk;
+
+        //SAFE GROWTH STOCK
+        tickerName = "SGS";
+        description = "Safe Growth Stock for the risk adverse with low risk low rewards and low dividend pay\n" +
+                "Growth: 0.5% to 2% every ROUND\n" +
+                "Decline: 0.1% to 1% every ROUND\n" +
+                "Risk: 20% Chance to Decline\n" +
+                "Dividend Pay: Every 5 Rounds\n" +
+                "Dividend change: No Change. Constant 2%";
+        price = 100.00;
+        divPay = 2;
+        minG = 0.5;
+        maxG = 2;
+        minD = 0.1;
+        maxD = 1;
+        risk = 2;
+        divRisk = 0;
+        stocks[0] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //MEDIUM RISK GROWTH STOCK
+        tickerName ="MGS";
+        description = "A Stock with good growth and slightly higher risk. Dividends are payed more frequently.\n" +
+                "Growth: 2% to 10% every ROUND\n" +
+                "Decline: 1% to 3% every ROUND\n" +
+                "Risk: 40% Chance to decline\n" +
+                "Dividend Pay: Every Round\n" +
+                "Dividend change: No Change. Constant 2%";
+        price = 75.00;
+        minG = 2;
+        maxG = 10;
+        minD = 1;
+        maxD = 3;
+        risk = 4;
+        stocks[1] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //HIGH RISK GROWTH STOCK "Penny Stock"
+        tickerName ="HRGS";
+        description = "High Risk Stock. Which Changes every turn instead of every Round Not advisable in most cases\n" +
+                "Growth: 10% to 25% every TURN\n" +
+                "Decline: 15% to 20% every TURN\n" +
+                "Risk: 70% Chance to decline\n" +
+                "Dividend Pay: Every 5 Rounds\n" +
+                "Dividend Change: No Change. Constant 1%";
+        price = 1;
+        divPay = 1;
+        minG = 10;
+        maxG = 25;
+        minD = 15;
+        maxD = 20;
+        risk = 7;
+        stocks[2] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //SAFE RISK Dividend STOCK
+        tickerName ="SDS";
+        description = "Safe Consistent Dividend Stock. Low Stock Price change but more consistent income\n" +
+                "This stock focuses on income rather than stock price growth\n" +
+                "Growth: 1% to 2% every Round\n" +
+                "Decline: 0.1% to 0.5% every ROUND\n" +
+                "Risk: 20% Chance to decline in stock value\n" +
+                "Risk: 10% Chance to decline in dividend Pay\n" +
+                "Dividend payout: every ROUND\n" +
+                "Dividend decrease: 0.5% decrease in pay or 1% pay increase";
+        price = 120;
+        divPay = 2;
+        minG = 1;
+        maxG = 2;
+        minD = 0.1;
+        maxD = 0.5;
+        risk = 2;
+        divRisk = 1;
+        stocks[3] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //Medium RISK Dividend STOCK
+        tickerName ="MRDS";
+        description = "Increased payout with a higher risk for a decline in dividend pay\n" +
+                "This stock focuses on income per turn rather than stock price increase\n" +
+                "Growth: 1% to 2% every Round\n" +
+                "Decline: 0.1% to 0.5% every ROUND\n" +
+                "Risk: 20% Chance to decline in stock value\n" +
+                "Risk: 10% Chance to decline in dividend Pay\n" +
+                "Dividend payout: every ROUND\n" +
+                "Dividend decrease: 2% decrease in pay or 10% pay increase";
+        divRisk = 3;
+        stocks[4] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //HIGH RISK Dividend STOCK
+        tickerName ="MRDS";
+        description = "Highest dividend payout with extreme payout inconsistency however, dividends are paid out every turn\n" +
+                "This stock focuses on income per turn rather than stock price increase\n" +
+                "Growth: 1% to 2% every TURN\n" +
+                "Decline: 0.1% to 0.5% every TURN\n" +
+                "Risk: 20% Chance to decline in stock value\n" +
+                "Risk: 10% Chance to decline in dividend Pay\n" +
+                "Dividend payout: every TURN\n" +
+                "Dividend decrease: 50% decrease in pay or 30% pay increase";
+        divRisk = 5;
+        stocks[5] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+    }
+
+    /**
+     * @return true if the game is over, otherwise false
+     */
+    public boolean isGameOver() {
+        return gameOver;
     }
 }

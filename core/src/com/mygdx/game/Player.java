@@ -277,7 +277,7 @@ public class Player implements Serializable {
         return this.level;
     }
     public void levelUp(){
-        if(this.level < 8){
+        if(this.level <= 13){
             this.level++;
         }
     }
