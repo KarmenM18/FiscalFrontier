@@ -9,11 +9,11 @@ import java.util.ArrayList;
  */
 public class PlayerProfile {
     String name;
-    ArrayList<Integer> tips = new ArrayList<>();
-    int knowledgeLevel;
-    int xp; // are we still using XP as a metric in the game?
-    int lifetimeScore;
-    int highScore;
+    ArrayList<Integer> tips = new ArrayList<>(); // tracks the list of tips that the player has unlocked so far
+    int knowledgeLevel; // quantitative measure to assess how much a player has learned from the game
+    int xp;  // tracks xp obtained thus far
+    int lifetimeScore;  // logs the player's overall lifetime score
+    int highScore;  // keeps record of the player's highest score
 
     /**
      * Constructor for class PlayerProfile
