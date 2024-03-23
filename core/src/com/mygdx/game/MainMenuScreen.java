@@ -12,10 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Observer.Observable;
@@ -91,6 +88,10 @@ public class MainMenuScreen extends GameScreen {
         TextField password = new TextField("", skin);
         instructorPasswordDialog.getContentTable().add(password);
 
+        Label invalidPasswordText = new Label("", skin);  // Placeholder for text displayed if incorrect password is etered
+        instructorPasswordDialog.getContentTable().row();
+        instructorPasswordDialog.getContentTable().add(invalidPasswordText);
+
         TextButton passwordConfirm = new TextButton("Confirm", skin);
         TextButton passwordCancel = new TextButton("Cancel", skin);
 
@@ -109,11 +110,7 @@ public class MainMenuScreen extends GameScreen {
                 instructorDashboardEvent.notifyObservers(null);
             }
             else {  // Incorrect password entered
-                // Display error message
-                // FIXME: Need this to only display once
-                instructorPasswordDialog.getContentTable().row();
-                instructorPasswordDialog.text("Incorrect password. Please try again.");
-
+                invalidPasswordText.setText("Incorrect password. Please try again.");  // Display error message
             }
             }
         });
