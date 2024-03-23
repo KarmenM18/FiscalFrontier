@@ -26,7 +26,7 @@ public class Config {
 
     private String uiPath = "ui/flat-earth-ui.json"; // Path of UI skin file
     private String playerSavePath = "players.ser";
-    private String gameStateSavePath = "gameState";
+    private String gameStateSavePath = "gameState"; // All save game files start with this string.
     private String tilePath = "tileGemini.jpeg";
     private String starTilePath = "starTile.jpg";
     private String penaltyTilePath = "penalty-node1.png";

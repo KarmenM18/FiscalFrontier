@@ -82,7 +82,7 @@ public class MainGame extends Game {
 		knowledgeListScreen.addBackToPause(v -> setScreen(pauseScreen));
 
 		// Set PauseScreen observers
-		pauseScreen.addSaveGameListener(v -> saveGameState(gameBoard.getGameState()));
+		pauseScreen.addSaveGameListener(saveName -> saveGameState(gameBoard.getGameState(), saveName));
 		pauseScreen.addMenuListener(v -> {
 			setScreen(mainMenuScreen);
 		});
@@ -180,8 +180,8 @@ public class MainGame extends Game {
 	 *
 	 * @param gs the GameState to save
 	 */
-	public void saveGameState(GameState gs) {
-		saveSystem.saveGameState(gs, Config.getInstance().getGameStateSavePath());
+	public void saveGameState(GameState gs, String saveName) {
+		saveSystem.saveGameState(gs, Config.getInstance().getGameStateSavePath() + "_" + saveName);
 	}
 
 	/**
