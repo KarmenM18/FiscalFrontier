@@ -15,6 +15,9 @@ import com.mygdx.game.Player;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Represents a Node on the game board. 
+ */
 public abstract class Node implements Serializable {
     protected String nodeID; // ID of the node in the Node Map
     protected Sprite sprite; // Sprite to render node on the board

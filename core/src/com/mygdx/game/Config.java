@@ -8,11 +8,18 @@ public class Config {
     // Private constructor to prevent instantiation
     private Config() {}
 
+    /**
+     * Contains the static Singleton.
+     */
     private static class ConfigHolder {
         private static final Config instance = new Config();
     }
 
-    // Accessor
+    /**
+     * Accessor for the static Singleton.
+     *
+     * @return the Config object
+     */
     public static Config getInstance() {
         return ConfigHolder.instance;
     }
@@ -24,7 +31,7 @@ public class Config {
     private String starTilePath = "starTile.jpg";
     private String penaltyTilePath = "penalty-node1.png";
     private String eventTilePath = "eventNode.png";
-    private String playerPath = "player.png";
+    private String playerPath = "player-alt.png";
     private int maxPlayers = 5;
 
     public String getUiPath() {
