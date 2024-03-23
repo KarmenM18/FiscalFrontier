@@ -110,7 +110,7 @@ public class MainGame extends Game {
 
 		// Set ShopScreen observers
 		shopScreen.addBoardListener(v -> {
-			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer().getPlayerProfile());
+			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
 			setScreen(gameBoard);
 		});
 
