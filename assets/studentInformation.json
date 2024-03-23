@@ -1,8 +1,8 @@
 [
 {
 	class: com.mygdx.game.PlayerProfile
-	name: TestStudent
-	knowledgeLevel: 10
+	name: Test1
+	knowledgeLevel: 1
 	learned: [
 		Budgeting: Create a budget to track your income and expenses. It's the foundation of financial planning.
 		Emergency Fund: Build an emergency fund with at least 3-6 months' worth of living expenses to cover unexpected costs.
@@ -10,6 +10,32 @@
 		Automate Savings: Set up automatic transfers from your checking account to your savings account to ensure consistent savings.
 		Invest Early: Start investing as early as possible to take advantage of compounding returns.
 	]
-	spritePath: player.png
+	spritePath: player-alt.png
+}
+{
+	class: com.mygdx.game.PlayerProfile
+	name: TEST2
+	knowledgeLevel: 5
+	learned: [
+		Budgeting: Create a budget to track your income and expenses. It's the foundation of financial planning.
+		Emergency Fund: Build an emergency fund with at least 3-6 months' worth of living expenses to cover unexpected costs.
+		"Savings Goals: Set specific savings goals for short-term (e.g., vacation), medium-term (e.g., down payment), and long-term (e.g., retirement)."
+		Automate Savings: Set up automatic transfers from your checking account to your savings account to ensure consistent savings.
+		Invest Early: Start investing as early as possible to take advantage of compounding returns.
+	]
+	spritePath: player-alt.png
+}
+{
+	class: com.mygdx.game.PlayerProfile
+	name: Test5
+	knowledgeLevel: 4
+	learned: [
+		Budgeting: Create a budget to track your income and expenses. It's the foundation of financial planning.
+		Emergency Fund: Build an emergency fund with at least 3-6 months' worth of living expenses to cover unexpected costs.
+		"Savings Goals: Set specific savings goals for short-term (e.g., vacation), medium-term (e.g., down payment), and long-term (e.g., retirement)."
+		Automate Savings: Set up automatic transfers from your checking account to your savings account to ensure consistent savings.
+		Invest Early: Start investing as early as possible to take advantage of compounding returns.
+	]
+	spritePath: player-alt.png
 }
 ]
