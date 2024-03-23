@@ -12,7 +12,6 @@ import com.mygdx.game.Items.MultiDice;
 import com.mygdx.game.Items.Shield;
 import com.mygdx.game.Node.*;
 import com.mygdx.game.Node.StarNode;
-import sun.nio.ch.Util;
 
 
 import java.io.Serializable;
@@ -260,6 +259,15 @@ public class GameState implements Serializable {
     public void nextRound(){
         if(turnNumber % playerList.size() == 0 && turnNumber != 0){
             roundNumber++;
+
+            //Updating Safe and Medium Risk Stocks
+            stocks[0].updatePrice();
+            stocks[1].updatePrice();
+            stocks[3].updatePrice();
+            stocks[4].updatePrice();
+
+            //Checking for payout
+
             // Check for game end
             if (roundNumber > Config.getInstance().getMaxRounds()) gameOver = true;
         }
@@ -289,6 +297,10 @@ public class GameState implements Serializable {
         }
         getCurrentPlayer().startTurn(nodeMap);
         turnNumber++;
+
+        //Updating high risk stocks
+        this.stocks[2].updatePrice();
+        this.stocks[5].updatePrice();
 
         nextRound(); // Check current round;
     }
@@ -441,7 +453,7 @@ public class GameState implements Serializable {
                 "Growth: 0.5% to 2% every ROUND\n" +
                 "Decline: 0.1% to 1% every ROUND\n" +
                 "Risk: 20% Chance to Decline\n" +
-                "Dividend Pay: Every 2 Rounds\n" +
+                "Dividend Pay: Every 5 Rounds\n" +
                 "Dividend change: No Change. Constant 2%";
         price = 100.00;
         divPay = 2;
@@ -459,7 +471,7 @@ public class GameState implements Serializable {
                 "Growth: 2% to 10% every ROUND\n" +
                 "Decline: 1% to 3% every ROUND\n" +
                 "Risk: 40% Chance to decline\n" +
-                "Dividend Pay: Every 2 Rounds\n" +
+                "Dividend Pay: Every Round\n" +
                 "Dividend change: No Change. Constant 2%";
         price = 75.00;
         minG = 2;
