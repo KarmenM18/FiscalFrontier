@@ -243,5 +243,4 @@ public class PlayerProfile {
     public int getTipCount() {
         return this.learned.size();
     }
-
 }
