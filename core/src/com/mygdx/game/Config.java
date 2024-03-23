@@ -26,13 +26,14 @@ public class Config {
 
     private String uiPath = "ui/flat-earth-ui.json"; // Path of UI skin file
     private String playerSavePath = "players.ser";
-    private String gameStateSavePath = "gameState"; // All save game files start with this string.
+    private String gameStateSavePath = "GS"; // All save game files start with this string.
     private String tilePath = "tileGemini.jpeg";
     private String starTilePath = "starTile.jpg";
     private String penaltyTilePath = "penalty-node1.png";
     private String eventTilePath = "eventNode.png";
     private String playerPath = "player-alt.png";
     private int maxPlayers = 5;
+    private int maxRounds = 1; // The highest reachable round before the game ends TODO update to real value
 
     public String getUiPath() {
         return uiPath;
@@ -68,4 +69,6 @@ public class Config {
     public String getPlayerPath() {
         return playerPath;
     }
+
+    public int getMaxRounds() { return maxRounds; }
 }

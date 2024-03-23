@@ -3,6 +3,7 @@
  * At the end of a game, the players profiles should be updated with anything relevant stored here.
  */
 package com.mygdx.game;
+
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.Bike;
@@ -35,6 +36,7 @@ public class GameState implements Serializable {
     private final int maxStar = 3;
     private final int minStar = 1;
     private int currentStar;
+    private boolean gameOver = false; // Set to true when roundNumber exceeds the round maximum. Should be checked by GameBoard
 
     /**
      * Constructor
@@ -50,7 +52,7 @@ public class GameState implements Serializable {
         this.playerList = new ArrayList<Player>();
         currPlayerTurn = 0;
         turnNumber = 0;
-        roundNumber = 0;
+        roundNumber = 1;
 
         for (PlayerProfile playerProfile : profileList) {
             Player player = new Player(playerProfile, assets);
@@ -253,11 +255,12 @@ public class GameState implements Serializable {
     /**
      * moving to next round, not affecting anything other than player level
      * for now
-     * once 26 rounds is reached, end the game????
      */
     public void nextRound(){
         if(turnNumber % playerList.size() == 0 && turnNumber != 0){
             roundNumber++;
+            // Check for game end
+            if (roundNumber > Config.getInstance().getMaxRounds()) gameOver = true;
         }
         if(roundNumber > 0 && roundNumber % 3 == 0){
             for (Player p : getPlayerList()){
@@ -285,6 +288,8 @@ public class GameState implements Serializable {
         }
         getCurrentPlayer().startTurn(nodeMap);
         turnNumber++;
+
+        nextRound(); // Check current round;
     }
 
     /**
@@ -303,6 +308,11 @@ public class GameState implements Serializable {
      * @return Map of nodes
      */
     public Map<String, Node> getNodeMap() { return nodeMap; }
+
+    /**
+     * @return the current roundNumber
+     */
+    public int getRound() { return roundNumber; }
 
     /**
      * global event for event node, reduce all player's money
@@ -389,4 +399,11 @@ public class GameState implements Serializable {
      * @return all stocks in the shop
      */
     public Stock[] getAllStocks () {return this.stocks;}
+
+    /**
+     * @return true if the game is over, otherwise false
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
 }

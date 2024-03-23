@@ -26,6 +26,9 @@ public class MainGame extends Game {
 	private SaveScreen saveScreen;
 	private InstructorDashboardScreen instructorDashboardScreen;
 	private ManageStudentsScreen manageStudentsScreen;
+	private EndScreen endScreen;
+	private HighScoreScreen highScoreScreen;
+
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
 
@@ -57,6 +60,8 @@ public class MainGame extends Game {
 		profileManager = new ProfileManager("studentInformation.json");
 		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets, this.profileManager);
 		manageStudentsScreen = new ManageStudentsScreen(batch, assets, this.profileManager);
+		endScreen = new EndScreen(batch, assets);
+		highScoreScreen = new HighScoreScreen(batch, assets);
 
 		// Load players from save if possible
 		if (Utility.fileExists(config.getPlayerSavePath())) {
@@ -78,6 +83,10 @@ public class MainGame extends Game {
 			//TODO Send Current Player Info To Screen
 			setScreen(pauseScreen);
 		});
+		gameBoard.addEndListener(gameState -> {
+			endScreen.setGameState(gameState);
+			setScreen(endScreen);
+		});
 
 		knowledgeListScreen.addBackToPause(v -> setScreen(pauseScreen));
 
@@ -92,6 +101,12 @@ public class MainGame extends Game {
 			knowledgeListScreen.updateTable();
 			setScreen(knowledgeListScreen);
 		});
+
+		// Set EndScreen observers
+		endScreen.addMenuListener(v -> setScreen(mainMenuScreen));
+
+		// Set HighScoreScreen observers
+		highScoreScreen.addMenuListener(v -> setScreen(mainMenuScreen));
 
 		// Set ShopScreen observers
 		shopScreen.addBoardListener(v -> {
@@ -115,7 +130,7 @@ public class MainGame extends Game {
 		});
 		mainMenuScreen.addContinueGameListener(v -> {
 			GameState gs;
-			// TODO: load LAST save
+			// TODO: load LAST save. Should probably be stored along with the PlayerProfiles.
 			if (Utility.fileExists(config.getGameStateSavePath())) {
 				gs = loadGameState(config.getGameStateSavePath());
 				gameBoard.setGameState(gs);
@@ -126,6 +141,10 @@ public class MainGame extends Game {
 		// Set InstructorDashboardScreen observers
 		mainMenuScreen.addLoadGameListener(v -> {
 			setScreen(saveScreen);
+		});
+		mainMenuScreen.addHighScoreListener(v -> {
+			highScoreScreen.setProfileList(profileList);
+			setScreen(highScoreScreen);
 		});
 		mainMenuScreen.addInstructorDashboardListener(v -> {
 			setScreen(instructorDashboardScreen);  // Open instructor dashboard from main menu
@@ -181,7 +200,7 @@ public class MainGame extends Game {
 	 * @param gs the GameState to save
 	 */
 	public void saveGameState(GameState gs, String saveName) {
-		saveSystem.saveGameState(gs, Config.getInstance().getGameStateSavePath() + "_" + saveName);
+		saveSystem.saveGameState(gs, saveName + "_" + Config.getInstance().getGameStateSavePath());
 	}
 
 	/**

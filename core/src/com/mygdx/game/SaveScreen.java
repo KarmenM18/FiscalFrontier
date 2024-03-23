@@ -27,7 +27,6 @@ public class SaveScreen extends GameScreen {
     private ScrollPane scrollPane; // Used so we can have a scrollable list of saves
     private Table table;
     private Label title;
-    private Dialog confirmMenuDialog;
     private Button menuButton;
 
     /**
@@ -93,14 +92,14 @@ public class SaveScreen extends GameScreen {
         table.row().pad(10, 0, 10, 0);
 
         int saveNum = 1;
-        File saveFolder = new File(".");
+        File saveFolder = new File("saves");
         File[] fileList = saveFolder.listFiles();
         assert fileList != null;
         for (File file : fileList) {
             if (file.isFile()) {
                 // Match all strings starting with Save filename and ending with .json
                 Config config = Config.getInstance();
-                Pattern pattern = Pattern.compile("^" + config.getGameStateSavePath() + "_.*\\.json$");
+                Pattern pattern = Pattern.compile("^.*_" + config.getGameStateSavePath() + "_.*\\.json$");
                 Matcher matcher = pattern.matcher(file.getName());
                 if (matcher.matches()) {
                     Label saveLabel = new Label(file.getName(), skin);

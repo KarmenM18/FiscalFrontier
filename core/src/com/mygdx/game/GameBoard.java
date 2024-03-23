@@ -42,6 +42,7 @@ public class GameBoard extends GameScreen {
     // Observables are used to inform about events to subscribed Observers. The Observer Pattern
     private Observable<PlayerProfile> pauseEvent = new Observable<PlayerProfile>();
     private Observable<Void> shopEvent = new Observable<Void>();
+    private Observable<GameState> endEvent = new Observable<GameState>();
 
     private Texture background;
     private InputMultiplexer inputMultiplexer;
@@ -59,6 +60,7 @@ public class GameBoard extends GameScreen {
     private Label scoreLabel;
     private Label starsLabel;
     private Label rollLabel;
+    private Label roundLabel;
 
     transient private ArrayList<Item> playerItems; // Transient as it will be regenerated when the state is deserialized
     transient private ArrayList<TextButton> itemButtons;
@@ -189,6 +191,7 @@ public class GameBoard extends GameScreen {
         starsLabel = new Label("starsLabel", skin);
         moneyLabel = new Label("moneyLabel", skin);
         rollLabel = new Label("rollLabel", skin);
+        roundLabel = new Label("-1", skin);
         rollLabel.setVisible(false);
 
         // Initialize HUD
@@ -199,12 +202,13 @@ public class GameBoard extends GameScreen {
         hudTable.add(scoreLabel).padLeft(5).uniform();
         hudTable.add(starsLabel).padLeft(5).uniform();
         hudTable.add(moneyLabel).padLeft(5).uniform();
+        hudTable.add(roundLabel).padLeft(5).uniform();
         hudTable.add(rollButton).padLeft(5).uniform();
         hudTable.add(rollLabel).padLeft(5).uniform();
         hudTable.add(nextTurnButton).expandX().right();
         // Put the hud table into another table to align it properly with the top of the screen
         Table t = new Table();
-        t.setBounds(0, (float) (hudStage.getHeight() * .94), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));
+        t.setBounds(0, (float) (hudStage.getHeight() * .943), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));
         t.add(hudTable).width(hudStage.getWidth());
 
         hudStage.addActor(t);
@@ -223,8 +227,26 @@ public class GameBoard extends GameScreen {
                 rollButton.setVisible(true);
                 rollLabel.setVisible(false);
                 gameState.nextTurn();
-                moveCameraPlayer();
 
+                // Check for end of game
+                if (gameState.isGameOver()) {
+                    Dialog goToEnd = new Dialog("End Game", skin) {
+                        @Override
+                        protected void result(Object object) {
+                            if ((Boolean) object) {
+                                endEvent.notifyObservers(gameState);
+                            }
+                        }
+                    };
+                    goToEnd.text("Game is over.");
+                    goToEnd.button("Continue", true);
+                    goToEnd.show(hudStage);
+                    goToEnd.setScale(2f);
+
+                    return;
+                }
+
+                moveCameraPlayer();
                 // Update items to the new player
                 updateItemButtons();
             }
@@ -307,6 +329,8 @@ public class GameBoard extends GameScreen {
         scoreLabel.setText("Score: " + currPlayer.getScore());
         starsLabel.setText("Stars: " + currPlayer.getStars());
         moneyLabel.setText("Money: $" + currPlayer.getMoney());
+
+        roundLabel.setText("Round: " + gameState.getRound());
 
         hudStage.act(Gdx.graphics.getDeltaTime());
         hudStage.draw();
@@ -429,4 +453,5 @@ public class GameBoard extends GameScreen {
 
     public void addPauseListener(Observer<PlayerProfile> ob) { pauseEvent.addObserver(ob); }
     public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
+    public void addEndListener(Observer<GameState> ob) { endEvent.addObserver(ob); }
 }
