@@ -12,7 +12,7 @@ import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
 public class PauseScreen extends GameScreen {
-    private Observable<GameState> saveGameEvent = new Observable<GameState>();
+    private Observable<String> saveGameEvent = new Observable<String>();
     private Observable<Void> menuEvent = new Observable<Void>();
     private Observable<Void> boardEvent = new Observable<Void>();
     private Observable<Void> knowledgeEvent = new Observable<Void>();
@@ -20,6 +20,7 @@ public class PauseScreen extends GameScreen {
     private Table table;
     private Label title;
     private Dialog confirmMenuDialog;
+    private Dialog saveGameDialog;
     private Button menuButton;
     private Button resumeButton;
     private Button saveGameButton;
@@ -78,14 +79,30 @@ public class PauseScreen extends GameScreen {
             @Override
             protected void result(Object object) {
                 if ((Boolean) object) {
-                    saveGameEvent.notifyObservers(null); // Save the game
                     menuEvent.notifyObservers(null); // Change screen to menu
                 }
             }
         };
-        confirmMenuDialog.text("Are you sure you want to exit to menu? Game progress will be saved.");
+        confirmMenuDialog.text("Are you sure you want to exit to menu? Game progress will NOT be saved.");
         confirmMenuDialog.button("Yes", true);
         confirmMenuDialog.button("No", false);
+
+        // Setup save game box
+        TextField saveNameInput = new TextField("", skin);
+        saveGameDialog = new Dialog("Save Menu", skin) {
+            @Override
+            protected void result(Object object) {
+                if ((Boolean) object) {
+                    String filename = saveNameInput.getText();
+                    saveGameEvent.notifyObservers(filename);
+                }
+            }
+        };
+        saveGameDialog.text("Enter save name:");
+        saveGameDialog.getContentTable().row();
+        saveGameDialog.getContentTable().add(saveNameInput);
+        saveGameDialog.button("Continue", true);
+
 
         // Add button listeners
         menuButton.addListener(new ChangeListener() {
@@ -103,7 +120,7 @@ public class PauseScreen extends GameScreen {
         saveGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("Save Game Pressed");
+                saveGameDialog.show(stage);
             }
         });
         viewKnowledgeButton.addListener(new ChangeListener() {
@@ -114,7 +131,7 @@ public class PauseScreen extends GameScreen {
         });
     }
 
-    public void addSaveGameListener(Observer<GameState> ob) { saveGameEvent.addObserver(ob); }
+    public void addSaveGameListener(Observer<String> ob) { saveGameEvent.addObserver(ob); }
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
     public void addBoardListener(Observer<Void> ob) { boardEvent.addObserver(ob); }
     public void addKnowledgeEventListener(Observer<Void> ob) { knowledgeEvent.addObserver(ob);}

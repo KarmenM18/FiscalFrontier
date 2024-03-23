@@ -74,6 +74,11 @@ public class GameBoard extends GameScreen {
     private boolean cameraMoveRight = false;
     private boolean cameraMoveDown = false;
     private boolean cameraMoveLeft = false;
+    // These are used for button activation of camera zoom. They will apply a constant zoom speed when they are active
+    private boolean cameraZoomOut = false;
+    private boolean cameraZoomIn = false;
+    // This is used for scrollwheel activation of camera zoom. Zoom speed is based on scrolling speed.
+    private float zoomVel = 0f;
 
     public GameBoard(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
@@ -93,6 +98,8 @@ public class GameBoard extends GameScreen {
         stage.addListener(new InputListener() {
            @Override
            public boolean keyDown(InputEvent event, int keycode) {
+               boolean ctrl = Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT); // Is Control key pressed?
+
                if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.P) {
                    // Go to pause screen by notifying observer in MainGame, the Observer Pattern
                    pauseEvent.notifyObservers(null);
@@ -101,6 +108,8 @@ public class GameBoard extends GameScreen {
                    // Go to shop screen
                    shopEvent.notifyObservers(null);
                }
+               else if (ctrl && keycode == Input.Keys.NUMPAD_ADD) { cameraZoomIn = true; }
+               else if (ctrl && keycode == Input.Keys.NUMPAD_SUBTRACT) { cameraZoomOut = true; }
                else if (keycode == Input.Keys.W) { cameraMoveUp = true; }
                else if (keycode == Input.Keys.D) { cameraMoveRight = true; }
                else if (keycode == Input.Keys.S) { cameraMoveDown = true; }
@@ -116,13 +125,15 @@ public class GameBoard extends GameScreen {
                else if (keycode == Input.Keys.D) { cameraMoveRight = false; }
                else if (keycode == Input.Keys.S) { cameraMoveDown = false; }
                else if (keycode == Input.Keys.A) { cameraMoveLeft = false; }
+               else if (keycode == Input.Keys.NUMPAD_ADD) { cameraZoomIn = false; }
+               else if (keycode == Input.Keys.NUMPAD_SUBTRACT) { cameraZoomOut = false; }
                else return false;
 
                return true;
            }
         });
 
-        // Add node click listener
+        // Add node click listener, also used for camera zooming by scrolling
         clickListener = new InputAdapter() {
            @Override
            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -147,6 +158,13 @@ public class GameBoard extends GameScreen {
                }
 
                return false;
+           }
+
+           @Override
+           public boolean scrolled(float amountX, float amountY) {
+               zoomVel = amountY * 0.1f;
+
+               return true;
            }
         };
 
@@ -238,8 +256,8 @@ public class GameBoard extends GameScreen {
      */
     private void moveCameraPlayer() {
         Sprite currPlayerSprite = gameState.getCurrentPlayer().getSprite();
-        newCameraX = currPlayerSprite.getX();
-        newCameraY = currPlayerSprite.getY();
+        newCameraX = currPlayerSprite.getX() + currPlayerSprite.getWidth() / 2.0f;
+        newCameraY = currPlayerSprite.getY() + currPlayerSprite.getHeight() / 2.0f;
         // Get angle between current camera position and new one.
         newCameraAngle = MathUtils.atan2(newCameraY - camera.position.y, newCameraX - camera.position.x);
     }
@@ -313,12 +331,21 @@ public class GameBoard extends GameScreen {
         }
 
         // Move camera towards new position unless it's already close enough
-        if (!Utility.epsilonEqual(camera.position.x, newCameraX, 10f)) {
-            camera.translate(MathUtils.cos(newCameraAngle) * 5f, 0);
+        if (!Utility.epsilonEqual(camera.position.x, newCameraX, 16f)) {
+            camera.translate(MathUtils.cos(newCameraAngle) * 8f, 0);
         }
-        if (!Utility.epsilonEqual(camera.position.y, newCameraY, 10f)) {
-            camera.translate(0, MathUtils.sin(newCameraAngle) * 5f);
+        if (!Utility.epsilonEqual(camera.position.y, newCameraY, 16f)) {
+            camera.translate(0, MathUtils.sin(newCameraAngle) * 8);
         }
+        // Handle zoom
+        if (cameraZoomIn) camera.zoom -= 0.025f;
+        if (cameraZoomOut) camera.zoom += 0.025f;
+        camera.zoom += zoomVel;
+        zoomVel *= 0.5f;
+
+        if (camera.zoom < 0.5f) camera.zoom = 0.5f; // Max zoom in
+        else if (camera.zoom > 4f) camera.zoom = 4f; // Max zoom out
+
         camera.update();
     }
 
@@ -389,6 +416,8 @@ public class GameBoard extends GameScreen {
         // Roll button only visible if the current player has rolls left
         rollButton.setVisible(gameState.getCurrentPlayer().canRoll());
         rollLabel.setVisible(!gameState.getCurrentPlayer().canRoll());
+
+        camera.zoom = 1f; // Set to default
     }
 
     /**

@@ -100,7 +100,7 @@ public class SaveScreen extends GameScreen {
             if (file.isFile()) {
                 // Match all strings starting with Save filename and ending with .json
                 Config config = Config.getInstance();
-                Pattern pattern = Pattern.compile("^" + config.getGameStateSavePath() + ".*\\.json$");
+                Pattern pattern = Pattern.compile("^" + config.getGameStateSavePath() + "_.*\\.json$");
                 Matcher matcher = pattern.matcher(file.getName());
                 if (matcher.matches()) {
                     Label saveLabel = new Label(file.getName(), skin);
