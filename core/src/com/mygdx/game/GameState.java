@@ -222,9 +222,6 @@ public class GameState implements Serializable {
         }
 
         //Initializing Stocks
-        stocks = new Stock[6];
-
-        //Temp variables
     }
 
     /**
@@ -399,6 +396,128 @@ public class GameState implements Serializable {
      * @return all stocks in the shop
      */
     public Stock[] getAllStocks () {return this.stocks;}
+
+    /**
+     * Method to clean up code a bit. Initializes all 6 stock options
+     * 1.) Safe Growth Stock
+     * 2.) Medium Growth Stock
+     * 3.) High Risk Growth Stock
+     * 4.) Safe Dividend Stock
+     * 5.) Medium Dividend Stock
+     * 6.) High Risk Dividend Stock
+     */
+    private void iniStocks () {
+        this.stocks = new Stock[6];
+
+        //Temp variables
+        String tickerName;
+        String description;
+        double price;
+        double divPay;
+        double minG;
+        double minD;
+        double maxG;
+        double maxD;
+        int risk;
+        int divRisk;
+
+        //SAFE GROWTH STOCK
+        tickerName = "SGS";
+        description = "Safe Growth Stock for the risk adverse with low risk low rewards and low dividend pay\n" +
+                "Growth: 0.5% to 2% every ROUND\n" +
+                "Decline: 0.1% to 1% every ROUND\n" +
+                "Risk: 20% Chance to Decline\n" +
+                "Dividend Pay: Every 2 Rounds\n" +
+                "Dividend change: No Change. Constant 2%";
+        price = 100.00;
+        divPay = 2;
+        minG = 0.5;
+        maxG = 2;
+        minD = 0.1;
+        maxD = 1;
+        risk = 2;
+        divRisk = 0;
+        stocks[0] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //MEDIUM RISK GROWTH STOCK
+        tickerName ="MGS";
+        description = "A Stock with good growth and slightly higher risk. Dividends are payed more frequently.\n" +
+                "Growth: 2% to 10% every ROUND\n" +
+                "Decline: 1% to 3% every ROUND\n" +
+                "Risk: 40% Chance to decline\n" +
+                "Dividend Pay: Every 2 Rounds\n" +
+                "Dividend change: No Change. Constant 2%";
+        price = 75.00;
+        minG = 2;
+        maxG = 10;
+        minD = 1;
+        maxD = 3;
+        risk = 4;
+        stocks[1] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //HIGH RISK GROWTH STOCK "Penny Stock"
+        tickerName ="HRGS";
+        description = "High Risk Stock. Which Changes every turn instead of every Round Not advisable in most cases\n" +
+                "Growth: 10% to 25% every TURN\n" +
+                "Decline: 15% to 20% every TURN\n" +
+                "Risk: 70% Chance to decline\n" +
+                "Dividend Pay: Every 5 Rounds\n" +
+                "Dividend Change: No Change. Constant 1%";
+        price = 1;
+        divPay = 1;
+        minG = 10;
+        maxG = 25;
+        minD = 15;
+        maxD = 20;
+        risk = 7;
+        stocks[2] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //SAFE RISK Dividend STOCK
+        tickerName ="SDS";
+        description = "Safe Consistent Dividend Stock. Low Stock Price change but more consistent income\n" +
+                "This stock focuses on income rather than stock price growth\n" +
+                "Growth: 1% to 2% every Round\n" +
+                "Decline: 0.1% to 0.5% every ROUND\n" +
+                "Risk: 20% Chance to decline in stock value\n" +
+                "Risk: 10% Chance to decline in dividend Pay\n" +
+                "Dividend payout: every ROUND\n" +
+                "Dividend decrease: 0.5% decrease in pay or 1% pay increase";
+        price = 120;
+        divPay = 2;
+        minG = 1;
+        maxG = 2;
+        minD = 0.1;
+        maxD = 0.5;
+        risk = 2;
+        divRisk = 1;
+        stocks[3] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //Medium RISK Dividend STOCK
+        tickerName ="MRDS";
+        description = "Increased payout with a higher risk for a decline in dividend pay\n" +
+                "This stock focuses on income per turn rather than stock price increase\n" +
+                "Growth: 1% to 2% every Round\n" +
+                "Decline: 0.1% to 0.5% every ROUND\n" +
+                "Risk: 20% Chance to decline in stock value\n" +
+                "Risk: 10% Chance to decline in dividend Pay\n" +
+                "Dividend payout: every ROUND\n" +
+                "Dividend decrease: 2% decrease in pay or 10% pay increase";
+        divRisk = 3;
+        stocks[4] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+
+        //HIGH RISK Dividend STOCK
+        tickerName ="MRDS";
+        description = "Highest dividend payout with extreme payout inconsistency however, dividends are paid out every turn\n" +
+                "This stock focuses on income per turn rather than stock price increase\n" +
+                "Growth: 1% to 2% every TURN\n" +
+                "Decline: 0.1% to 0.5% every TURN\n" +
+                "Risk: 20% Chance to decline in stock value\n" +
+                "Risk: 10% Chance to decline in dividend Pay\n" +
+                "Dividend payout: every TURN\n" +
+                "Dividend decrease: 50% decrease in pay or 30% pay increase";
+        divRisk = 5;
+        stocks[5] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
+    }
 
     /**
      * @return true if the game is over, otherwise false
