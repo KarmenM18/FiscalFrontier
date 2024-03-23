@@ -1,8 +1,6 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
-
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,8 +10,7 @@ import java.util.ArrayList;
 /**
  * Responsible for managing student player profiles.
  * <br></br>
- * Includes methods to save and load existing student, add a new student profile.
- * TODO: Also add methods to edit/remove
+ * Includes methods to save and load student database, add a new student profile, and rename and remove student profiles,
  *
  * @author Joelene Hales
  */
@@ -28,6 +25,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Constructor loads and stores all student profiles.
+     *
      * @param filename Filename of JSON file storing student profiles.
      */
     public ProfileManager(String filename) {
@@ -36,6 +34,7 @@ public class ProfileManager implements Serializable {
         this.loadData();  // Load student profiles
 
     }
+
 
     /**
      * Private no-arg constructor for serialization
@@ -70,30 +69,53 @@ public class ProfileManager implements Serializable {
 
     /**
      * Returns an array of student profiles
+     *
      * @return Array of student profiles
      */
     public ArrayList<PlayerProfile> getStudentProfiles() {
         return this.studentInformation;
     }
 
+
     /**
      * Saves the list of student profiles to the JSON file.
      */
-    private void saveProfile() {
+    private void saveProfiles() {
 
         try {
-
             String profileString = json.prettyPrint(studentInformation);  // Serialize profile list
             Files.writeString(Paths.get(filename), profileString);  // Open file and write
-
         }
         catch (Exception e) {
             System.out.println("Error saving file!");  // TODO: Make this actually handle the errors
         }
+
     }
 
+
     /**
-     * Creates a new student profile.
+     * Finds the index of a student's profile in the list of profiles.
+     *
+     * @param name Student's name
+     * @return Index of the student in the list of profiles, or -1 if the student does not exist
+     */
+    private int findProfile(String name) {
+
+        // Search for student in the list of profiles by name
+        for (int index = 0; index < this.studentInformation.size(); index++) {  // Iterate through list of profiles
+
+            if (this.studentInformation.get(index).getName().equals(name)) {  // Profile found
+                return index;
+            }
+        }
+
+        return -1;  // Checked entire list and student not found
+    }
+
+
+    /**
+     * Creates a new student profile and saves updates to file.
+     *
      * @param name Student's name
      * @throws IllegalArgumentException If a student with the entered name already exists
      */
@@ -110,10 +132,55 @@ public class ProfileManager implements Serializable {
         PlayerProfile studentProfile = new PlayerProfile(name);
         this.studentInformation.add(studentProfile);
 
-        // Write changes to file
-        this.saveProfile();
+        this.saveProfiles();   // Write changes to file
         
     }
 
+
+    /**
+     * Deletes the profile of the student with the given name and saves updates to file.
+     *
+     * @param name Student's name
+     * @return Profile removed
+     * @throws IllegalArgumentException If a student with the entered name does not exist
+     */
+    public PlayerProfile removeStudent(String name) throws IllegalArgumentException {
+
+        PlayerProfile removedProfile;    // Stores the profile removed
+        int index = findProfile(name);   // Find the profile of the student with the given name
+
+        if (index == -1) {
+            throw new IllegalArgumentException("Student with the entered name does not exist.");
+        }
+
+        removedProfile = this.studentInformation.get(index);  // Retrieve the profile to be removed
+        this.studentInformation.remove(index);                // Remove profile from list
+
+        this.saveProfiles();  // Write changes to file
+
+        return removedProfile;
+
+    }
+
+
+    /**
+     * Renames the student with the given name and saves updates to file.
+     *
+     * @param name Student's name
+     * @param newName New name of student
+     * @throws IllegalArgumentException If a student with the entered name does not exist
+     */
+    public void renameStudent(String name, String newName) throws IllegalArgumentException {
+
+        int index = findProfile(name);  // Find the profile of the student with the given name
+
+        if (index == -1) {
+            throw new IllegalArgumentException("Student with the entered name does not exist.");
+        }
+
+        this.studentInformation.get(index).setName(newName);   // Retrieve profile and rename
+        this.saveProfiles();                                   // Write changes to file
+
+    }
 
 }
