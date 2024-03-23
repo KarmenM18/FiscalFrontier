@@ -73,4 +73,15 @@ class ItemTest {
         Item passiveItem = new Item("testPassiveItem", true, asset.get(Config.getInstance().getUiPath()));
         assertTrue(passiveItem.isPassive());
     }
+
+    @Test
+    void loadTextures() {
+        Item item = new Item("testItem", asset.get(Config.getInstance().getUiPath()));
+        Player player = Mockito.mock(Player.class);
+        GameState state = Mockito.mock(GameState.class);
+        Stage stage = Mockito.mock(Stage.class);
+
+        item.loadTextures(asset.get(Config.getInstance().getUiPath()));
+        assertNotNull(item.usedItemDialog);
+    }
 }
