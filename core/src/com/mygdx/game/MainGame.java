@@ -96,7 +96,11 @@ public class MainGame extends Game {
 		});
 
 		// Set ShopScreen observers
-		shopScreen.addBoardListener(v -> setScreen(gameBoard));
+		shopScreen.addBoardListener(v -> {
+			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer().getPlayerProfile());
+			setScreen(gameBoard);
+		});
+
 		// Set SaveScreen observers
 		saveScreen.addMenuListener(v -> setScreen(mainMenuScreen));
 		saveScreen.addLoadSaveListener(savePath -> {
