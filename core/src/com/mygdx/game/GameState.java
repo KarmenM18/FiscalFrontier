@@ -140,7 +140,7 @@ public class GameState implements Serializable {
         nodeMap.put("-4,5", new StarNode(x, y, false, false, true, false, nodeMap, assets));
         x = 0;//back to J1
         //to top from J1
-        for(y = 6; y < 9; y++){
+        for(y = 6; y < 8; y++){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets));
         }
@@ -153,14 +153,12 @@ public class GameState implements Serializable {
                 nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
             }
         }
+        //top left corner star
+        nodeMap.put(String.valueOf(x) + "," + String.valueOf(y), new StarNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
         //down straight 5
-        for(y = 9; y > 3; y--){
+        for(y = 8; y > 3; y--){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
-            if(y == 9){
-                nodeMap.put(ID, new StarNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
-            }else{
-                nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
-            }
+            nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
         }
         //right straight 2
         for(x = -9; x < -6; x++) {
