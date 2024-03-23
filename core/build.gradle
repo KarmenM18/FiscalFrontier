@@ -2,5 +2,20 @@ sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.test.java.srcDirs = [ "test/" ]
 
 eclipse.project.name = appName + "-core"
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
+    }
+}
+
+sourceSets.main.resources.srcDirs = ["../assets"]
+
+project.ext.mainClassName = "com.mygdx.game.DesktopLauncher"
+project.ext.assetsDir = new File("../assets")

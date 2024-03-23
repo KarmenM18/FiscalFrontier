@@ -178,7 +178,7 @@ public class ProfileManager implements Serializable {
             throw new IllegalArgumentException("Student with the entered name does not exist.");
         }
 
-        this.studentInformation.get(index).setName(newName);   // Retrieve profile and rename
+        //this.studentInformation.get(index).setName(newName);   // Retrieve profile and rename
         this.saveProfiles();                                   // Write changes to file
 
     }

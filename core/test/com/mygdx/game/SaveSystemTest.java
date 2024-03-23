@@ -1,15 +1,19 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.backends.headless.mock.audio.MockAudio;
 import com.badlogic.gdx.backends.headless.mock.graphics.MockGraphics;
 import com.badlogic.gdx.backends.headless.mock.input.MockInput;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 
@@ -23,9 +27,11 @@ class SaveSystemTest {
     void setUp() {
         HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
         new HeadlessApplication(new TestGame(), config);
+        Gdx.gl = Mockito.mock(GL20.class);
 
         saver = new SaveSystem();
         asset = new AssetManager();
+        asset.load(Config.getInstance().getUiPath(), Skin.class);
         asset.load(Config.getInstance().getPlayerPath(), Texture.class);
         asset.finishLoading();
     }
@@ -43,6 +49,7 @@ class SaveSystemTest {
 
     @Test
     void readGameState() {
+        assertTrue(false);
         GameState deserialized = saver.readGameState("testSave", asset);
         assertEquals(deserialized.getCurrentPlayer().getPlayerProfile().getName(), "TestUser");
     }
