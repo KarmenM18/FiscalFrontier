@@ -92,7 +92,7 @@ public class GameState implements Serializable {
         */
         // Setup nodes
         // define junctions use the x y as conditional check for auto generation of
-        //NodeID could be more automated, but would be harder to keep track of
+        //TODO add logic for direction check to avoid missed null
         //TODO automate ID and x, y process based on initial node and for loop limit
         //TODO look into logic for automate direction
         int x = 0;//for const col
@@ -142,8 +142,8 @@ public class GameState implements Serializable {
         //left straight at the top
         for(x = 0; x > -9; x--){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
-            if(x == Utility.getRandom(-8, 0)){
-                nodeMap.put(ID, new PenaltyNode(x, y, true, false, false, false, nodeMap, assets));
+            if(x == -4){
+                nodeMap.put(ID, new PenaltyNode(x, y, false, false, false, true, nodeMap, assets));
             }else{
                 nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
             }
@@ -193,7 +193,7 @@ public class GameState implements Serializable {
         //back to J2, down path from J2
         for(y = 4; y > 0; y--) {
             String ID = String.valueOf(x) + "," + String.valueOf(y);
-            if(y == Utility.getRandom(-4, 4)){
+            if(y == 2){
                 nodeMap.put(ID, new PenaltyNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
             }else{
                 nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
