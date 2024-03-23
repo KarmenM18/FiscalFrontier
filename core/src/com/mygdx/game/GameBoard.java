@@ -34,6 +34,10 @@ import com.mygdx.game.Observer.Observer;
 import java.util.*;
 import java.util.List;
 
+/**
+ * The game board screen. Handles rendering and other game board activities.
+ * Holds a GameState, which contains all the information specific to the current game being played.
+ */
 public class GameBoard extends GameScreen {
     // Observables are used to inform about events to subscribed Observers. The Observer Pattern
     private Observable<PlayerProfile> pauseEvent = new Observable<PlayerProfile>();
@@ -330,6 +334,10 @@ public class GameBoard extends GameScreen {
         hudStage.dispose();
     }
 
+    /**
+     * Creates/recreates the buttons used to activate active Items for the current Player.
+     * Call every time the current Player changes or an Item was used.
+     */
     public void updateItemButtons() {
         // Update item activation buttons TODO do we want items to be usable on the game board? What about passive items?
         for (TextButton button : itemButtons) {
@@ -383,6 +391,9 @@ public class GameBoard extends GameScreen {
         rollLabel.setVisible(!gameState.getCurrentPlayer().canRoll());
     }
 
+    /**
+     * @return the active GameState object
+     */
     public GameState getGameState() {
         return gameState;
     }

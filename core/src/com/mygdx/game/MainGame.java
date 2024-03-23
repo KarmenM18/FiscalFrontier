@@ -18,6 +18,9 @@ import com.mygdx.game.Observer.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The main class of the game. Handles interaction with the saving system and the switching of screens.
+ */
 public class MainGame extends Game {
 	SpriteBatch batch;
 	private GameBoard gameBoard;
@@ -96,7 +99,11 @@ public class MainGame extends Game {
 		});
 
 		// Set ShopScreen observers
-		shopScreen.addBoardListener(v -> setScreen(gameBoard));
+		shopScreen.addBoardListener(v -> {
+			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer().getPlayerProfile());
+			setScreen(gameBoard);
+		});
+
 		// Set SaveScreen observers
 		saveScreen.addMenuListener(v -> setScreen(mainMenuScreen));
 		saveScreen.addLoadSaveListener(savePath -> {
@@ -172,14 +179,20 @@ public class MainGame extends Game {
 		Config config = Config.getInstance();
 		Utility.saveObject(profileList, config.getPlayerSavePath());
 	}
+
 	/**
-	 * Save a GameState to file
+	 * Save a GameState to file.
+	 *
+	 * @param gs the GameState to save
 	 */
 	public void saveGameState(GameState gs) {
-		saveSystem.saveGameState(gs);
+		saveSystem.saveGameState(gs, Config.getInstance().getGameStateSavePath());
 	}
+
 	/**
 	 * Load a GameState from file
+	 *
+	 * @param path the path of where the serialized JSON is located
 	 */
 	public GameState loadGameState(String path) {
 		return saveSystem.readGameState(path, assets);

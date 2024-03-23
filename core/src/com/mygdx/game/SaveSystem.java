@@ -30,20 +30,34 @@ public class SaveSystem {
         });
     }
 
-    public void saveGameState(GameState gs) {
+    /**
+     * Serialize a GameState object to a file.
+     * We cannot properly serialize certain LibGDX classes, so those must be reconstructed when deserializing.
+     *
+     * @param gs the GameState object to serialize
+     * @param path the path to save the file. If a file with the same name exists, it will increment an ID for the save file
+     */
+    public void saveGameState(GameState gs, String path) {
         try {
             Config config = Config.getInstance();
             String JSONed = json.prettyPrint(gs);
 
             // Keep increasing the save number until we find an empty slot
             int saveNumber = 1;
-            while (Utility.fileExists(config.getGameStateSavePath() + "_" + saveNumber + ".json")) saveNumber++;
-            Files.writeString(Paths.get(config.getGameStateSavePath() + "_" + saveNumber + ".json"), JSONed);
+            while (Utility.fileExists(path + "_" + saveNumber + ".json")) saveNumber++;
+            Files.writeString(Paths.get(path + "_" + saveNumber + ".json"), JSONed);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Deserialize a GameState object from a JSON file.
+     *
+     * @param savePath the path to the JSON file
+     * @param assets an AssetManager loaded with all the assets required by the GameState and its objects
+     * @return a GameState object
+     */
     public GameState readGameState(String savePath, AssetManager assets) {
         try {
             Config config = Config.getInstance();

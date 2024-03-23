@@ -32,7 +32,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     /**
-     * Runs immediately when screen is changed to this.
+     * Runs immediately when the active screen is changed to this.
      * By default, it will just set LibGDX's InputProcessor to this screen's Stage.
      * It should be overridden by child classes if they need to perform additional functions.
      */

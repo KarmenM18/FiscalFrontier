@@ -101,10 +101,15 @@ public class GameState implements Serializable {
     }
 
     /**
-     * No-arg constructor for serialization
+     * No-arg constructor for deserialization
      */
     private GameState() {}
 
+    /**
+     * Reinitialize objects owned by the GameState which couldn't be fully serialized.
+     *
+     * @param assets an AssetManager loaded with all the assets required by the GameState
+     */
     public void loadTextures(AssetManager assets) {
         assetMan = assets;
         for (Node node : nodeMap.values()) {

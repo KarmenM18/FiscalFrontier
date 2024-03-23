@@ -12,6 +12,8 @@ import com.mygdx.game.Observer.Observer;
 public class ShopScreen extends GameScreen {
     private Observable<Void> boardEvent = new Observable<Void>();
 
+    private PlayerProfile currentPlayer;
+
     private Label title;
 
     /**
@@ -42,4 +44,5 @@ public class ShopScreen extends GameScreen {
     }
 
     public void addBoardListener(Observer<Void> ob) { boardEvent.addObserver(ob); }
+    public void setCurrentPlayer(PlayerProfile player) {this.currentPlayer = player;}
 }
