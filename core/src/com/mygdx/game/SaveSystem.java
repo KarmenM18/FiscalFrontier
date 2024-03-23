@@ -44,8 +44,8 @@ public class SaveSystem {
 
             // Keep increasing the save number until we find an empty slot
             int saveNumber = 1;
-            while (Utility.fileExists(path + "_" + saveNumber + ".json")) saveNumber++;
-            Files.writeString(Paths.get(path + "_" + saveNumber + ".json"), JSONed);
+            while (Utility.fileExists("saves/" +path + "_" + saveNumber + ".json")) saveNumber++;
+            Files.writeString(Paths.get("saves/" + path + "_" + saveNumber + ".json"), JSONed);
         } catch (Exception e) {
             e.printStackTrace();
         }

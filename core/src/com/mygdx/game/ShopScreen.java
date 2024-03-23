@@ -18,6 +18,9 @@ import java.util.ArrayList;
 
 public class ShopScreen extends GameScreen {
     private Observable<Void> boardEvent = new Observable<Void>();
+
+    private Player currentPlayer;
+
     private PlayerProfile currentPlayer;
     private Label title;
 
@@ -97,5 +100,10 @@ public class ShopScreen extends GameScreen {
 
 
     public void addBoardListener(Observer<Void> ob) { boardEvent.addObserver(ob); }
-    public void setCurrentPlayer(PlayerProfile player) {this.currentPlayer = player;}
+
+    /**
+     * Updates to the current player's information
+     * @param player PlayerProfile to access player's items, stocks and current funds
+     */
+    public void setCurrentPlayer(Player player) {this.currentPlayer = player;}
 }

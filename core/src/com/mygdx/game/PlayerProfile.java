@@ -105,6 +105,10 @@ public class PlayerProfile {
         if (score > highScore) highScore = score;
     }
 
+    /**
+     * Increases the player's knowledge level and updates
+     * their learned knowledge list
+     */
     public void updateKnowledgeLevel () {
         this.knowledgeLevel++;
         updateKnowledgeBase();
@@ -188,6 +192,9 @@ public class PlayerProfile {
      */
     public String getSpritePath() { return spritePath; }
 
+    /**
+     * Updates the player's learned knowledge
+     */
     private void updateKnowledgeBase () {
 
         //Player levels up every 3 rounds for a total of 13 levels
@@ -209,6 +216,10 @@ public class PlayerProfile {
 
     }
 
+    /**
+     * Gets a random tip from all learned knowledge
+     * @return Returns a String to identify a random tip to show on the pause screen
+     */
     public String getRandomTip () {
 
         int randTip = (int) (Math.random() * this.learned.size());
@@ -221,6 +232,9 @@ public class PlayerProfile {
     }
 
 
+    /**
+     * @return LinkedList of all knowledge learned
+     */
     public LinkedList<String> getLearned () {return this.learned;}
 
 

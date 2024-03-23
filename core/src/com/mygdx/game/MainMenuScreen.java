@@ -21,6 +21,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
+import java.util.List;
+
 /**
  * The main menu screen. Handles all related functions including loading a save game and starting a new game.
  */
@@ -29,6 +31,7 @@ public class MainMenuScreen extends GameScreen {
     private Observable<Void> continueGameEvent = new Observable<Void>();
     private Observable<Void> instructorDashboardEvent = new Observable<Void>();
     private Observable<Void> loadGameScreenEvent = new Observable<Void>();
+    private Observable<Void> highScoreScreenEvent = new Observable<Void>();
 
     private Table table;
     private TextButton quitButton;
@@ -36,6 +39,7 @@ public class MainMenuScreen extends GameScreen {
     private TextButton continueButton;
     private TextButton instructorDashboardButton;
     private TextButton loadGameButton;
+    private TextButton highScoreButton;
     private Dialog confirmQuitDialog;
 
     private Dialog instructorPasswordDialog;
@@ -59,6 +63,7 @@ public class MainMenuScreen extends GameScreen {
         playButton = new TextButton("New Game", skin);
         continueButton = new TextButton("Continue Game", skin);
         loadGameButton = new TextButton("Load Game", skin);
+        highScoreButton = new TextButton("High Scores", skin);
         instructorDashboardButton = new TextButton("Instructor Dashboard", skin);
 
         // Initialize confirm to quit dialog box
@@ -130,6 +135,8 @@ public class MainMenuScreen extends GameScreen {
         table.row().pad(10, 0, 10, 0);
         table.add(loadGameButton).fillX();
         table.row().pad(10, 0, 10, 0);
+        table.add(highScoreButton).fillX();
+        table.row().pad(10, 0, 10, 0);
         table.add(instructorDashboardButton).fillX();
         table.row().pad(10, 0, 10, 0);
         table.add(quitButton).fillX();
@@ -166,6 +173,12 @@ public class MainMenuScreen extends GameScreen {
                 instructorPasswordDialog.show(stage);
             }
         });
+        highScoreButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                highScoreScreenEvent.notifyObservers(null);
+            }
+        });
 
     }
 
@@ -173,4 +186,5 @@ public class MainMenuScreen extends GameScreen {
     void addContinueGameListener(Observer<Void> ob) { continueGameEvent.addObserver(ob); }
     void addInstructorDashboardListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
     void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
+    void addHighScoreListener(Observer<Void> ob) { highScoreScreenEvent.addObserver(ob); }
 }

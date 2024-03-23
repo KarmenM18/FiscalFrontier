@@ -42,6 +42,7 @@ public class GameBoard extends GameScreen {
     // Observables are used to inform about events to subscribed Observers. The Observer Pattern
     private Observable<PlayerProfile> pauseEvent = new Observable<PlayerProfile>();
     private Observable<Void> shopEvent = new Observable<Void>();
+    private Observable<GameState> endEvent = new Observable<GameState>();
 
     private Texture background;
     private InputMultiplexer inputMultiplexer;
@@ -59,6 +60,7 @@ public class GameBoard extends GameScreen {
     private Label scoreLabel;
     private Label starsLabel;
     private Label rollLabel;
+    private Label roundLabel;
 
     transient private ArrayList<Item> playerItems; // Transient as it will be regenerated when the state is deserialized
     transient private ArrayList<TextButton> itemButtons;
@@ -74,17 +76,22 @@ public class GameBoard extends GameScreen {
     private boolean cameraMoveRight = false;
     private boolean cameraMoveDown = false;
     private boolean cameraMoveLeft = false;
+    // These are used for button activation of camera zoom. They will apply a constant zoom speed when they are active
+    private boolean cameraZoomOut = false;
+    private boolean cameraZoomIn = false;
+    // This is used for scrollwheel activation of camera zoom. Zoom speed is based on scrolling speed.
+    private float zoomVel = 0f;
 
     public GameBoard(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
         itemButtons = new ArrayList<>();
 
-        assets.load("gameboard.png", Texture.class);
+        assets.load("background.jpg", Texture.class);
         assets.finishLoading();
 
         // Initialize background
-        background = assets.get("gameboard.png");
+        background = assets.get("background.jpg");
         Image backgroundImage = new Image(background);
         backgroundImage.setSize(width, height);
         stage.addActor(backgroundImage);
@@ -93,6 +100,8 @@ public class GameBoard extends GameScreen {
         stage.addListener(new InputListener() {
            @Override
            public boolean keyDown(InputEvent event, int keycode) {
+               boolean ctrl = Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT); // Is Control key pressed?
+
                if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.P) {
                    // Go to pause screen by notifying observer in MainGame, the Observer Pattern
                    pauseEvent.notifyObservers(null);
@@ -101,6 +110,8 @@ public class GameBoard extends GameScreen {
                    // Go to shop screen
                    shopEvent.notifyObservers(null);
                }
+               else if (ctrl && keycode == Input.Keys.NUMPAD_ADD) { cameraZoomIn = true; }
+               else if (ctrl && keycode == Input.Keys.NUMPAD_SUBTRACT) { cameraZoomOut = true; }
                else if (keycode == Input.Keys.W) { cameraMoveUp = true; }
                else if (keycode == Input.Keys.D) { cameraMoveRight = true; }
                else if (keycode == Input.Keys.S) { cameraMoveDown = true; }
@@ -116,13 +127,15 @@ public class GameBoard extends GameScreen {
                else if (keycode == Input.Keys.D) { cameraMoveRight = false; }
                else if (keycode == Input.Keys.S) { cameraMoveDown = false; }
                else if (keycode == Input.Keys.A) { cameraMoveLeft = false; }
+               else if (keycode == Input.Keys.NUMPAD_ADD) { cameraZoomIn = false; }
+               else if (keycode == Input.Keys.NUMPAD_SUBTRACT) { cameraZoomOut = false; }
                else return false;
 
                return true;
            }
         });
 
-        // Add node click listener
+        // Add node click listener, also used for camera zooming by scrolling
         clickListener = new InputAdapter() {
            @Override
            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -148,6 +161,13 @@ public class GameBoard extends GameScreen {
 
                return false;
            }
+
+           @Override
+           public boolean scrolled(float amountX, float amountY) {
+               zoomVel = amountY * 0.1f;
+
+               return true;
+           }
         };
 
         // Initialize HUD
@@ -171,6 +191,7 @@ public class GameBoard extends GameScreen {
         starsLabel = new Label("starsLabel", skin);
         moneyLabel = new Label("moneyLabel", skin);
         rollLabel = new Label("rollLabel", skin);
+        roundLabel = new Label("-1", skin);
         rollLabel.setVisible(false);
 
         // Initialize HUD
@@ -181,12 +202,13 @@ public class GameBoard extends GameScreen {
         hudTable.add(scoreLabel).padLeft(5).uniform();
         hudTable.add(starsLabel).padLeft(5).uniform();
         hudTable.add(moneyLabel).padLeft(5).uniform();
+        hudTable.add(roundLabel).padLeft(5).uniform();
         hudTable.add(rollButton).padLeft(5).uniform();
         hudTable.add(rollLabel).padLeft(5).uniform();
         hudTable.add(nextTurnButton).expandX().right();
         // Put the hud table into another table to align it properly with the top of the screen
         Table t = new Table();
-        t.setBounds(0, (float) (hudStage.getHeight() * .94), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));
+        t.setBounds(0, (float) (hudStage.getHeight() * .943), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));
         t.add(hudTable).width(hudStage.getWidth());
 
         hudStage.addActor(t);
@@ -205,8 +227,26 @@ public class GameBoard extends GameScreen {
                 rollButton.setVisible(true);
                 rollLabel.setVisible(false);
                 gameState.nextTurn();
-                moveCameraPlayer();
 
+                // Check for end of game
+                if (gameState.isGameOver()) {
+                    Dialog goToEnd = new Dialog("End Game", skin) {
+                        @Override
+                        protected void result(Object object) {
+                            if ((Boolean) object) {
+                                endEvent.notifyObservers(gameState);
+                            }
+                        }
+                    };
+                    goToEnd.text("Game is over.");
+                    goToEnd.button("Continue", true);
+                    goToEnd.show(hudStage);
+                    goToEnd.setScale(2f);
+
+                    return;
+                }
+
+                moveCameraPlayer();
                 // Update items to the new player
                 updateItemButtons();
             }
@@ -238,8 +278,8 @@ public class GameBoard extends GameScreen {
      */
     private void moveCameraPlayer() {
         Sprite currPlayerSprite = gameState.getCurrentPlayer().getSprite();
-        newCameraX = currPlayerSprite.getX();
-        newCameraY = currPlayerSprite.getY();
+        newCameraX = currPlayerSprite.getX() + currPlayerSprite.getWidth() / 2.0f;
+        newCameraY = currPlayerSprite.getY() + currPlayerSprite.getHeight() / 2.0f;
         // Get angle between current camera position and new one.
         newCameraAngle = MathUtils.atan2(newCameraY - camera.position.y, newCameraX - camera.position.x);
     }
@@ -290,6 +330,8 @@ public class GameBoard extends GameScreen {
         starsLabel.setText("Stars: " + currPlayer.getStars());
         moneyLabel.setText("Money: $" + currPlayer.getMoney());
 
+        roundLabel.setText("Round: " + gameState.getRound());
+
         hudStage.act(Gdx.graphics.getDeltaTime());
         hudStage.draw();
 
@@ -313,12 +355,21 @@ public class GameBoard extends GameScreen {
         }
 
         // Move camera towards new position unless it's already close enough
-        if (!Utility.epsilonEqual(camera.position.x, newCameraX, 10f)) {
-            camera.translate(MathUtils.cos(newCameraAngle) * 5f, 0);
+        if (!Utility.epsilonEqual(camera.position.x, newCameraX, 16f)) {
+            camera.translate(MathUtils.cos(newCameraAngle) * 8f, 0);
         }
-        if (!Utility.epsilonEqual(camera.position.y, newCameraY, 10f)) {
-            camera.translate(0, MathUtils.sin(newCameraAngle) * 5f);
+        if (!Utility.epsilonEqual(camera.position.y, newCameraY, 16f)) {
+            camera.translate(0, MathUtils.sin(newCameraAngle) * 8);
         }
+        // Handle zoom
+        if (cameraZoomIn) camera.zoom -= 0.025f;
+        if (cameraZoomOut) camera.zoom += 0.025f;
+        camera.zoom += zoomVel;
+        zoomVel *= 0.5f;
+
+        if (camera.zoom < 0.5f) camera.zoom = 0.5f; // Max zoom in
+        else if (camera.zoom > 4f) camera.zoom = 4f; // Max zoom out
+
         camera.update();
     }
 
@@ -389,6 +440,8 @@ public class GameBoard extends GameScreen {
         // Roll button only visible if the current player has rolls left
         rollButton.setVisible(gameState.getCurrentPlayer().canRoll());
         rollLabel.setVisible(!gameState.getCurrentPlayer().canRoll());
+
+        camera.zoom = 1f; // Set to default
     }
 
     /**
@@ -400,4 +453,5 @@ public class GameBoard extends GameScreen {
 
     public void addPauseListener(Observer<PlayerProfile> ob) { pauseEvent.addObserver(ob); }
     public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
+    public void addEndListener(Observer<GameState> ob) { endEvent.addObserver(ob); }
 }
