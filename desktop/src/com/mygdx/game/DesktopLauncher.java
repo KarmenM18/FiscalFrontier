@@ -9,6 +9,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("Navigating the Fiscal Frontier");
+		config.setMaximized(true);
 		new Lwjgl3Application(new MainGame(), config);
 	}
 }
