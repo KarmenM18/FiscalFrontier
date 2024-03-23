@@ -52,38 +52,22 @@ public class ManageStudentsScreen extends GameScreen {
     /** Event removes a student from the database. */
     private Observable<String> removeStudentEvent = new Observable<String>();
 
+    // TODO: Make the screen reload once anything is done
 
     public ManageStudentsScreen(SpriteBatch batch, AssetManager assets, ProfileManager profileManager) {
 
         super(batch, assets);
         this.profileManager = profileManager;
 
-        this.loadDashboard();
-
-    }
-
-    /** Add listeners for each event. Handled by the MainGame screen manager. */
-    void addBackListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
-    void addAddStudentListener(Observer<String> ob) { addStudentEvent.addObserver(ob); }
-    void addEditStudentListener(Observer<String> ob) { editStudentEvent.addObserver(ob); }
-    void addRemoveStudentListener(Observer<String> ob) { removeStudentEvent.addObserver(ob); }
-
-
-    /**
-     * Displays all students and initializes buttons.
-     */
-    public void loadDashboard() {
-
-        ArrayList<PlayerProfile> studentProfiles = this.profileManager.getStudentProfiles();
-
         // Clear any previously loaded data
-        stage.clear();
+        //stage.clear();
         this.table = new Table();
 
         // Setup GUI
         stage.addActor(table);
         table.setFillParent(true);  // Size table to stage
 
+        ArrayList<PlayerProfile> studentProfiles = this.profileManager.getStudentProfiles();
 
         // Initialize buttons
         for (PlayerProfile student : studentProfiles) {  // Create a button to select each existing student
@@ -322,10 +306,9 @@ public class ManageStudentsScreen extends GameScreen {
 
                     removeStudentConfirm.addListener(new ChangeListener() {
 
-                        // TODO: Ensure player being removed is not in a game
-
                         @Override
                         public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+
                             removeStudentEvent.notifyObservers(studentName);
                             removeSubtext.setText("Student removed successfully.");  // Display confirmation of action
                         }
@@ -335,6 +318,20 @@ public class ManageStudentsScreen extends GameScreen {
             });
 
         }
+
+    }
+
+    /** Add listeners for each event. Handled by the MainGame screen manager. */
+    void addBackListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
+    void addAddStudentListener(Observer<String> ob) { addStudentEvent.addObserver(ob); }
+    void addEditStudentListener(Observer<String> ob) { editStudentEvent.addObserver(ob); }
+    void addRemoveStudentListener(Observer<String> ob) { removeStudentEvent.addObserver(ob); }
+
+
+    /**
+     * Displays all students and initializes buttons.
+     */
+    public void loadDashboard() {
 
     }
 

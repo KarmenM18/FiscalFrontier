@@ -14,8 +14,8 @@
 }
 {
 	class: com.mygdx.game.PlayerProfile
-	name: TEST2
-	knowledgeLevel: 5
+	name: Test4
+	knowledgeLevel: 12
 	learned: [
 		Budgeting: Create a budget to track your income and expenses. It's the foundation of financial planning.
 		Emergency Fund: Build an emergency fund with at least 3-6 months' worth of living expenses to cover unexpected costs.
@@ -27,8 +27,8 @@
 }
 {
 	class: com.mygdx.game.PlayerProfile
-	name: Test5
-	knowledgeLevel: 4
+	name: Test2
+	knowledgeLevel: 9
 	learned: [
 		Budgeting: Create a budget to track your income and expenses. It's the foundation of financial planning.
 		Emergency Fund: Build an emergency fund with at least 3-6 months' worth of living expenses to cover unexpected costs.
