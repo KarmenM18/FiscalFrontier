@@ -88,7 +88,7 @@ public class PauseScreen extends GameScreen {
         confirmMenuDialog.button("No", false);
 
         // Setup save game box
-        TextField saveNameInput = new TextField("", skin);
+        TextField saveNameInput = new TextField("NewGame", skin);
         saveGameDialog = new Dialog("Save Menu", skin) {
             @Override
             protected void result(Object object) {
