@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.mygdx.game.Observer.Observer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -160,14 +161,28 @@ public class MainGame extends Game {
 			setScreen(instructorDashboardScreen);  // Enter manage students mode in instructor dashboard
 		});
 		manageStudentsScreen.addAddStudentListener(studentName -> {
-			try {
-				profileManager.addStudent(studentName);
-				instructorDashboardScreen.loadDashboard();  // Reload data to reflect changes
-			}
-			catch (IllegalArgumentException e) {
-				System.out.println("Unable to add student.");  // FIXME: Make this a dialog box
-			}
+			profileManager.addStudent(studentName);     // Add new student to database
+			instructorDashboardScreen.loadDashboard();  // Reload dashboard screen to reflect changes
+			manageStudentsScreen.loadDashboard();
+		});
+		manageStudentsScreen.addEditStudentListener(inputString -> {
 
+			// Unpack student information
+			String[] studentData = inputString.replace("[", "").replace("]", "").split(", ");
+			String currentName = studentData[0];
+			String newName = studentData[1];
+			int newKnowledgeLevel = Integer.parseInt(studentData[2]);
+
+			this.profileManager.renameStudent(currentName, newName);
+			this.profileManager.changeKnowledgeLevel(currentName, newKnowledgeLevel);
+			instructorDashboardScreen.loadDashboard();  // Reload dashboard screen to reflect changes
+			manageStudentsScreen.loadDashboard();
+
+		});
+		manageStudentsScreen.addRemoveStudentListener(studentName -> {
+			profileManager.removeStudent(studentName);
+			instructorDashboardScreen.loadDashboard();  // Reload dashboard screen to reflect changes
+			manageStudentsScreen.loadDashboard();
 		});
 	}
 
