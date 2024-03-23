@@ -287,6 +287,7 @@ public class GameState implements Serializable {
         getCurrentPlayer().endTurn(nodeMap);
         removeStar(nodeMap);
         checkStar(nodeMap);
+        checkPenalty(nodeMap);
         currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
         if (getCurrentPlayer().isFrozen()) {
             // TODO Inform that player was frozen
@@ -407,17 +408,36 @@ public class GameState implements Serializable {
         eventNode.addEventListener(penaltyValue -> globalEvent(penaltyValue));
         nodeMap.put(x + "," + y, eventNode);
     }
-    /*
-    unused for now, could be used later
-    public void shufflePenalty(HashMap<String, Node> nodeMap){
+
+    public void checkPenalty(HashMap<String, Node> nodeMap){
         currentPen = 0;
         for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
             if (node.getValue() instanceof PenaltyNode) {
                 currentPen++;
             }
         }
+        if(currentPen < Utility.getRandom(minPen, maxPen)){
+            List<Node> normalNodeList = new ArrayList<Node>();
+            for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+                Node node1 = node.getValue();
+                if (node1 instanceof NormalNode) {
+                    normalNodeList.add(node1);
+                    Utility.shuffle(normalNodeList);
+                }
+            }
+            Node randNode = normalNodeList.get(Utility.getRandom(0, normalNodeList.size() - 1));
+            String randKey = randNode.getID();
+            int x = randNode.getMapX();
+            int y = randNode.getMapY();
+            boolean north = randNode.getNorth();
+            boolean south = randNode.getSouth();
+            boolean west = randNode.getWest();
+            boolean east = randNode.getEast();
+            PenaltyNode newPen = new PenaltyNode(x, y, north, east, south, west, nodeMap, assetMan);
+            nodeMap.remove(randKey);
+            nodeMap.put(randKey, newPen);
+        }
     }
-    */
     /**
      * @return all stocks in the shop
      */
