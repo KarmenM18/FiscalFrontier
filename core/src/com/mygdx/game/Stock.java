@@ -1,4 +1,4 @@
-package com.mygdx.game.Stocks;
+package com.mygdx.game;
 
 import java.util.Random;
 
