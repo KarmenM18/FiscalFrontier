@@ -21,6 +21,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
+/**
+ * The main menu screen. Handles all related functions including loading a save game and starting a new game.
+ */
 public class MainMenuScreen extends GameScreen {
     private Observable<Void> startGameEvent = new Observable<Void>();
     private Observable<Void> continueGameEvent = new Observable<Void>();
@@ -38,6 +41,12 @@ public class MainMenuScreen extends GameScreen {
     private Dialog instructorPasswordDialog;
 
 
+    /**
+     * Constructor.
+     *
+     * @param batch the SpriteBatch used for rendering
+     * @param assets the AssetManager loaded with all necessary assets
+     */
     public MainMenuScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 

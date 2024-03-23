@@ -34,8 +34,16 @@ public class PlayerProfile {
         spritePath = config.getPlayerPath();
     }
 
+    /**
+     * No-arg constructor for deserialization purposes.
+     */
     private PlayerProfile() {}
 
+    /**
+     * Add xp to the Player.
+     *
+     * @param xp amount of xp to add
+     */
     public void addXP(int xp) {
         // TODO level curve
         while (xp >= 1000) {
@@ -44,6 +52,11 @@ public class PlayerProfile {
         }
     }
 
+    /**
+     * Add score to the Player.
+     *
+     * @param score the amount of score to add
+     */
     public void addScore(int score) {
         this.lifetimeScore += score;
         if (score > highScore) highScore = score;
@@ -54,22 +67,37 @@ public class PlayerProfile {
         updateKnowledgeBase();
     }
 
+    /**
+     * @return the Player's name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the Player's lifetime score
+     */
     public int getLifetimeScore() {
         return lifetimeScore;
     }
 
+    /**
+     * @return the Player's maximum score in a single game
+     */
     public int getHighScore() {
         return highScore;
     }
 
+    /**
+     * @return the Player's knowledge level
+     */
     public int getKnowledgeLevel() {
         return knowledgeLevel;
     }
 
+    /**
+     * @return the file path of the Player's Sprite
+     */
     public String getSpritePath() { return spritePath; }
 
     private void updateKnowledgeBase () {

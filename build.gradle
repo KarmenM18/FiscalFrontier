@@ -45,19 +45,24 @@ project(":desktop") {
 
     dependencies {
         implementation project(":core")
+        implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-        implementation 'com.google.code.gson:gson:2.10.1'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+        testImplementation 'org.mockito:mockito-core:4.2.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     }
 }
 
 project(":core") {
+
     apply plugin: "java-library"
 
+    sourceSets.test.java.srcDirs = ["test/"]
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
@@ -68,6 +73,34 @@ project(":core") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
-        implementation 'com.google.code.gson:gson:2.10.1'
+        implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
+        testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.11.0'
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
+    }
+
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'core/src'
+        }
+    }
+    test {
+        java {
+            srcDirs 'core/test'
+        }
+    }
+}
+
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
     }
 }
