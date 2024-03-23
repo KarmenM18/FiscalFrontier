@@ -77,6 +77,9 @@ public class GameState implements Serializable {
         /**
          * base concept for better generation of map
          * curr problem is node-node direction setup
+         * Idea1: use another 3D matrix to store node-node direction
+         * 2D for board, and each element is a size 4 array for direction
+         *
         int map[][] = { {1,1,2,1,1,3,1,1,0,0},
                         {1,0,0,0,0,0,0,1,0,0},
                         {1,0,1,1,1,1,1,1,1,2},
@@ -119,19 +122,19 @@ public class GameState implements Serializable {
             nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets));
         }
         //2,0 top straight normal nodes, longer but no penalty route;
-        for(y = 0; y < 5; y++){
+        for(; y < 5; y++){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets));
         }
         //2,5 back to 0,5 (J1)
-        for(x = 2; x > 0 ; x--){
+        for(; x > 0 ; x--){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
         }
         //junction 1 (0,5)
         nodeMap.put("0,5", new NormalNode(x, y, true, false, false, true, nodeMap, assets));
         //left direction J1 (0,5) to J2 (-4,5)
-        for(x = 0; x > -4; x--){
+        for(; x > -4; x--){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, false, false, false, true, nodeMap, assets));
         }
@@ -139,12 +142,12 @@ public class GameState implements Serializable {
         nodeMap.put("-4,5", new StarNode(x, y, false, false, true, false, nodeMap, assets));
         x = 0;//back to J1
         //to top from J1
-        for(y = 6; y < 8; y++){
+        for(; y < 8; y++){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets));
         }
         //left straight at the top
-        for(x = 0; x > -9; x--){
+        for(; x > -9; x--){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             if(x == Utility.getRandom(-9,1)){
                 nodeMap.put(ID, new PenaltyNode(x, y, false, false, false, true, nodeMap, assets));
@@ -155,30 +158,31 @@ public class GameState implements Serializable {
         //top left corner star
         nodeMap.put(String.valueOf(x) + "," + String.valueOf(y), new StarNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
         //down straight 5
-        for(y = 8; y > 3; y--){
+        for(; y > 3; y--){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
         }
         //right straight 2
-        for(x = -9; x < -6; x++) {
+        for(; x < -6; x++) {
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
         }
         //junction 3
         nodeMap.put("-6,3", new StarNode(x, y, true, false, true, false, nodeMap, assets));
         //top path
-        for(y = 4; y < 5; y++){
+        for(; y < 5; y++){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, true, false, false, false, nodeMap, assets)); //left down stretch
         }
-        for(x = -6; x < -4; x++){
+        for(; x < -4; x++){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
         }
         //set x back to J3
         x = -6;
+        y = 2;
         //down path from J3
-        for(y = 2; y > 1; y--){
+        for(; y > 1; y--){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
         }
@@ -186,14 +190,16 @@ public class GameState implements Serializable {
         nodeMap.put(String.valueOf(x) + "," + String.valueOf(y), new NormalNode(x, y, false, true, false, false, nodeMap, assets));
         createEventNode(x, y, false, true, false, false);
         //right to J2 down path
-        for(x = -5; x < -4; x++){
+        x = -5;
+        for(; x < -4; x++){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
         }
         //junction 4
         nodeMap.put("-4,1", new StarNode(x, y, false, false, true, false, nodeMap, assets));
         //back to J2, down path from J2
-        for(y = 4; y > 0; y--) {
+        y = 4;
+        for(; y > 0; y--) {
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             if(y == Utility.getRandom(0,5)){
                 nodeMap.put(ID, new PenaltyNode(x, y, false, false, true, false, nodeMap, assets)); //left down stretch
@@ -202,7 +208,7 @@ public class GameState implements Serializable {
             }
         }
         //right back to 0,0
-        for(x = -4; x < 0; x++){
+        for(; x < 0; x++){
             String ID = String.valueOf(x) + "," + String.valueOf(y);
             nodeMap.put(ID, new NormalNode(x, y, false, true, false, false, nodeMap, assets)); //left down stretch
         }

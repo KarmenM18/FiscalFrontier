@@ -79,6 +79,7 @@ public class Player implements Serializable {
      * The previous tile the player was on. Used to disallow going backwards.
      */
     private ArrayList<String> previousPath;
+    private ArrayList<String> investments;
 
     /**
      * Constructor creates a player with existing game data.
@@ -467,4 +468,18 @@ public class Player implements Serializable {
      */
     public void setFrozen(boolean t) { frozen = t; }
     public boolean isFrozen() { return frozen; }
+
+    /*
+    TODO: might change data type to 'investments' once that's done
+     */
+    public ArrayList<String> getCurrentInvestments() {
+        return investments;
+    }
+
+    /*
+    TODO: change parameter data type to 'investment' when done
+     */
+    public void addInvestments(String newInvestment) {
+        investments.add(newInvestment);
+    }
 }
