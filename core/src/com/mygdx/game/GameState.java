@@ -3,7 +3,6 @@
  * At the end of a game, the players profiles should be updated with anything relevant stored here.
  */
 package com.mygdx.game;
-
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.Bike;
@@ -12,6 +11,7 @@ import com.mygdx.game.Items.MultiDice;
 import com.mygdx.game.Items.Shield;
 import com.mygdx.game.Node.*;
 import com.mygdx.game.Node.StarNode;
+import com.mygdx.game.Stocks.Stock;
 
 
 import java.io.Serializable;
@@ -21,6 +21,10 @@ public class GameState implements Serializable {
     private List<Player> playerList;
     private int currPlayerTurn;
     private int turnNumber;
+
+    //Stocks
+    private Stock [] stocks;
+
     /**
      * TODO: check if roundNumber is 26, end game and change to score screen if so
      * maybe add warning at round 24 25??
@@ -98,6 +102,11 @@ public class GameState implements Serializable {
             player.setCurrentTile(nodeIDs.get(nodeIDs.size() - 1), nodeMap);
             nodeIDs.remove(nodeIDs.size() - 1);
         }
+
+        //Initializing Stocks
+        stocks = new Stock[6];
+
+        //Temp variables
     }
 
     /**
@@ -139,6 +148,8 @@ public class GameState implements Serializable {
                 p.levelUp();
             }
         }
+
+        //Updating safe-medium stocks / dividends
     }
 
 
@@ -259,4 +270,9 @@ public class GameState implements Serializable {
         eventNode.addEventListener(penaltyValue -> globalEvent(penaltyValue));
         nodeMap.put(x + "," + y, eventNode);
     }
+
+    /**
+     * @return all stocks in the shop
+     */
+    public Stock[] getAllStocks () {return this.stocks;}
 }
