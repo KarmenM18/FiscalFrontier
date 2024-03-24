@@ -154,35 +154,49 @@ public class MainGame extends Game {
 			setScreen(mainMenuScreen);  // Return to main menu
 		});
 		instructorDashboardScreen.addManageStudentsListener(v -> {
-			setScreen(manageStudentsScreen);  // Enter manage students mode in instructor dashboard
+			setScreen(manageStudentsScreen);       // Enter manage students mode in instructor dashboard
 		});
 		// Set ManageStudentsScreen observers
 		manageStudentsScreen.addBackListener(v -> {
 			setScreen(instructorDashboardScreen);  // Enter manage students mode in instructor dashboard
 		});
 		manageStudentsScreen.addAddStudentListener(studentName -> {
-			profileManager.addStudent(studentName);     // Add new student to database
-			instructorDashboardScreen.loadDashboard();  // Reload dashboard screen to reflect changes
+
+			// Add new student to database
+			profileManager.addStudent(studentName);
+
+			// Reload dashboard screens to reflect changes
+			instructorDashboardScreen.loadDashboard();
 			manageStudentsScreen.loadDashboard();
+
 		});
 		manageStudentsScreen.addEditStudentListener(inputString -> {
 
 			// Unpack student information
 			String[] studentData = inputString.replace("[", "").replace("]", "").split(", ");
+
 			String currentName = studentData[0];
 			String newName = studentData[1];
 			int newKnowledgeLevel = Integer.parseInt(studentData[2]);
 
-			this.profileManager.renameStudent(currentName, newName);
+			// Make changes to student database
 			this.profileManager.changeKnowledgeLevel(currentName, newKnowledgeLevel);
-			instructorDashboardScreen.loadDashboard();  // Reload dashboard screen to reflect changes
+			this.profileManager.renameStudent(currentName, newName);
+
+			// Reload dashboard screens to reflect changes
 			manageStudentsScreen.loadDashboard();
+			instructorDashboardScreen.loadDashboard();
 
 		});
 		manageStudentsScreen.addRemoveStudentListener(studentName -> {
+
+			// Remove student from student database
 			profileManager.removeStudent(studentName);
-			instructorDashboardScreen.loadDashboard();  // Reload dashboard screen to reflect changes
+
+			// Reload dashboard screens to reflect changes
 			manageStudentsScreen.loadDashboard();
+			instructorDashboardScreen.loadDashboard();
+
 		});
 	}
 

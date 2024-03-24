@@ -204,7 +204,7 @@ public class ProfileManager implements Serializable {
     public void renameStudent(String name, String newName) throws IllegalArgumentException {
 
         PlayerProfile profile = getProfile(name);   // Retrieve the profile of the student with the given name
-        //profile.setName(newName);   // Rename student
+        profile.setName(newName);   // Rename student
         this.saveProfiles();        // Write changes to file
 
     }
@@ -220,7 +220,7 @@ public class ProfileManager implements Serializable {
     public void changeKnowledgeLevel(String name, int newKnowledgeLevel) throws IllegalArgumentException {
 
         PlayerProfile profile = getProfile(name);   // Retrieve the profile of the student with the given name
-        //profile.setKnowledgeLevel(newKnowledgeLevel);   // Change student's knowledge level
+        profile.setKnowledgeLevel(newKnowledgeLevel);   // Change student's knowledge level
         this.saveProfiles();        // Write changes to file
 
     }

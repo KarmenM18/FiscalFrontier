@@ -42,7 +42,7 @@ public class ManageStudentsScreen extends GameScreen {
     /** Dialog prompts for confirmation to delete a student. */
     private Dialog removeStudentDialog;
     /** List of student profiles */
-    //private ArrayList<PlayerProfile> studentProfiles;
+    private ArrayList<PlayerProfile> studentProfiles;
     /** Object responsible for storing and managing student profiles. */
     private ProfileManager profileManager;
     /** Event adds a new student to the database. */
@@ -52,28 +52,48 @@ public class ManageStudentsScreen extends GameScreen {
     /** Event removes a student from the database. */
     private Observable<String> removeStudentEvent = new Observable<String>();
 
-    // TODO: Make the screen reload once anything is done
+    /** Text input field used to enter new name for an existing student. */
+    private TextField editNameInput;
+    /** Text input field used to enter new knowledge level for an existing student. */
+    private TextField editKnowledgeLevelInput;
+    /** Text displayed to confirm a student has been edited successfully or indicate invalid input has been entered. */
+    private Label editSubtext;
+    /** Text displayed to confirm a student has been removed successfully or was unable to be removed. */
+    private Label removeSubtext;
+
+    /** Button to confirm edited student information. */
+    private TextButton editStudentConfirm;
+
+    /** Button to confirm removing a student. */
+    private TextButton removeStudentConfirm;
+
 
     public ManageStudentsScreen(SpriteBatch batch, AssetManager assets, ProfileManager profileManager) {
 
         super(batch, assets);
         this.profileManager = profileManager;
 
+        this.loadDashboard();  // Display buttons
+
+    }
+
+
+    /**
+     * Displays all students and initializes buttons.
+     */
+    public void loadDashboard() {
+
         // Clear any previously loaded data
-        //stage.clear();
+        stage.clear();
         this.table = new Table();
+        this.studentButtons = new ArrayList<TextButton>();
+        this.studentProfiles = this.profileManager.getStudentProfiles();
 
         // Setup GUI
         stage.addActor(table);
         table.setFillParent(true);  // Size table to stage
 
-        ArrayList<PlayerProfile> studentProfiles = this.profileManager.getStudentProfiles();
-
         // Initialize buttons
-        for (PlayerProfile student : studentProfiles) {  // Create a button to select each existing student
-            TextButton studentButton = new TextButton(student.getName(), skin);
-            studentButtons.add(studentButton);
-        }
         addStudentButton = new TextButton("Add Student", skin);
         editStudentButton = new TextButton("Edit Student", skin);
         removeStudentButton = new TextButton("Remove Student", skin);
@@ -148,19 +168,19 @@ public class ManageStudentsScreen extends GameScreen {
         editStudentDialog.getContentTable().row();
 
         editStudentDialog.text("Name:");
-        TextField editNameInput = new TextField("", skin);
+        editNameInput = new TextField("", skin);
         editStudentDialog.getContentTable().add(editNameInput);
         editStudentDialog.getContentTable().row();
 
         editStudentDialog.text("Knowledge Level:");
-        TextField editKnowledgeLevelInput = new TextField("", skin);
+        editKnowledgeLevelInput = new TextField("", skin);
         editStudentDialog.getContentTable().add(editKnowledgeLevelInput);
         editStudentDialog.getContentTable().row();
 
-        Label editSubtext = new Label("", skin);  // Placeholder for text displayed when action completed successfully or if an invalid input is entered
+        editSubtext = new Label("", skin);  // Placeholder for text displayed when action completed successfully or if an invalid input is entered
         editStudentDialog.getContentTable().add(editSubtext);
 
-        TextButton editStudentConfirm = new TextButton("Confirm", skin);
+        editStudentConfirm = new TextButton("Confirm", skin);
         TextButton editStudentCancel = new TextButton("Back", skin);
 
         editStudentDialog.getButtonTable().add(editStudentConfirm);
@@ -180,10 +200,10 @@ public class ManageStudentsScreen extends GameScreen {
         removeStudentDialog.text("Are you sure you would like to delete this player?");  // TODO: Include the name of the player deleting
         removeStudentDialog.getContentTable().row();
 
-        Label removeSubtext = new Label("", skin);  // Placeholder for text displayed when action completed successfully or an invalid input is entered
+        removeSubtext = new Label("", skin);  // Placeholder for text displayed when action completed successfully or an invalid input is entered
         removeStudentDialog.getContentTable().add(removeSubtext);
 
-        TextButton removeStudentConfirm = new TextButton("Confirm", skin);
+        removeStudentConfirm = new TextButton("Confirm", skin);
         TextButton removeStudentCancel = new TextButton("Cancel", skin);
 
         removeStudentDialog.getButtonTable().add(removeStudentConfirm);
@@ -196,17 +216,10 @@ public class ManageStudentsScreen extends GameScreen {
             }
         });
 
-
-        // Display buttons and layout GUI
-        for (TextButton button : studentButtons) {
-            table.add(button).fillX();
-            table.row().pad(10, 0, 10, 0);
+        // Create a button to select each existing student to edit or remove
+        for (PlayerProfile student : studentProfiles) {
+            this.newStudentButton(student);
         }
-        table.add(addStudentButton).pad(10, 10, 10, 10);
-        table.add(editStudentButton).pad(10, 10, 10, 10);
-        table.add(removeStudentButton).pad(10, 10, 10, 10);
-        table.add(backButton).pad(10, 10, 10, 10);
-
 
         // Add button listeners
         addStudentButton.addListener(new ChangeListener() {
@@ -234,90 +247,15 @@ public class ManageStudentsScreen extends GameScreen {
             }
         });
 
-
+        // Display buttons
         for (TextButton button : studentButtons) {
-
-            // Retrieve selected student's information
-            PlayerProfile student = this.profileManager.getProfile(button.getText().toString());
-            String studentName = student.getName();
-            int knowledgeLevel = student.getKnowledgeLevel();
-
-            button.addListener(new ChangeListener() {
-
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-
-                    // Allow edit and remove buttons to be clicked once student is selected
-                    editStudentButton.setTouchable(Touchable.enabled);
-                    removeStudentButton.setTouchable(Touchable.enabled);
-
-                    // Fill edit information fields with student's current name and knowledge level
-                    editNameInput.setText(studentName);
-                    editKnowledgeLevelInput.setText(Integer.toString(knowledgeLevel));
-
-                    // Link edit and remove buttons to the selected student
-                    editStudentConfirm.addListener(new ChangeListener() {
-
-                        @Override
-                        public void changed(ChangeEvent event, Actor actor) {
-
-                            // Unpack input
-                            String newName = editNameInput.getText();
-                            String newKnowledgeLevel = editKnowledgeLevelInput.getText();
-
-                            // Handle empty inputs
-                            if (newName.isEmpty()) {
-                                newName = studentName;
-                            }
-                            if (newKnowledgeLevel.isEmpty()) {
-                                newKnowledgeLevel = Integer.toString(knowledgeLevel);
-                            }
-
-                            try {
-
-                                // Ensure an integer was entered for knowledge level
-                                int inputCheck = Integer.parseInt(newKnowledgeLevel);
-
-                                // Ensure a different student with the same name does not already exist
-                                if (!(newName.equals(studentName))) {
-                                    for (PlayerProfile student : studentProfiles) {
-                                        if (student.getName().equals(newName)) {
-                                            throw new IllegalArgumentException("Student with this name already exists.");
-                                        }
-                                    }
-                                }
-
-                                String[] studentData = {studentName, newName, newKnowledgeLevel};
-                                System.out.println(Arrays.toString(studentData));
-                                editStudentEvent.notifyObservers(Arrays.toString(studentData));
-
-                                editSubtext.setText("Student edited successfully.");  // Display confirmation of action
-
-                            }
-                            catch (NumberFormatException e) {
-                                editSubtext.setText("Invalid knowledge level.");  // Display error message
-                            }
-                            catch (IllegalArgumentException e) {
-                                editSubtext.setText(e.getMessage());  // Display error message
-                            }
-
-                        }
-                    });
-
-                    removeStudentConfirm.addListener(new ChangeListener() {
-
-                        @Override
-                        public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-
-                            removeStudentEvent.notifyObservers(studentName);
-                            removeSubtext.setText("Student removed successfully.");  // Display confirmation of action
-                        }
-                    });
-                }
-
-            });
-
+            table.add(button).fillX();
+            table.row().pad(10, 0, 10, 0);
         }
+        table.add(addStudentButton).pad(10, 10, 10, 10);
+        table.add(editStudentButton).pad(10, 10, 10, 10);
+        table.add(removeStudentButton).pad(10, 10, 10, 10);
+        table.add(backButton).pad(10, 10, 10, 10);
 
     }
 
@@ -329,9 +267,104 @@ public class ManageStudentsScreen extends GameScreen {
 
 
     /**
-     * Displays all students and initializes buttons.
+     * Create a button on the dashboard linked to a student. Used to select each student to edit or remove.
+     *
+     * @param student Student's profile
      */
-    public void loadDashboard() {
+    private void newStudentButton(PlayerProfile student) {
+
+        // Create button for the student
+        TextButton button = new TextButton(student.getName(), skin);
+        studentButtons.add(button);  // Add button to list of buttons
+
+        // Link edit and remove buttons to the student when selected
+        button.addListener(new ChangeListener() {
+
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+
+                // Retrieve student's current information
+                String studentName = student.getName();
+                int knowledgeLevel = student.getKnowledgeLevel();
+
+                // Allow edit and remove buttons to be clicked once student is selected
+                editStudentButton.setTouchable(Touchable.enabled);
+                removeStudentButton.setTouchable(Touchable.enabled);
+
+                // Fill edit information fields with student's current name and knowledge level
+                editNameInput.setText(studentName);
+                editKnowledgeLevelInput.setText(Integer.toString(knowledgeLevel));
+
+                // Link edit and remove buttons to the selected student
+                editStudentConfirm.addListener(new ChangeListener() {
+
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+
+                        // Unpack input
+                        String newName = editNameInput.getText();
+                        String newKnowledgeLevel = editKnowledgeLevelInput.getText();
+
+                        // Handle empty inputs
+                        if (newName.isEmpty()) {
+                            newName = studentName;
+                        }
+                        if (newKnowledgeLevel.isEmpty()) {
+                            newKnowledgeLevel = Integer.toString(knowledgeLevel);
+                        }
+
+                        try {
+
+                            // Ensure an integer was entered for knowledge level
+                            int inputCheck = Integer.parseInt(newKnowledgeLevel);
+
+                            // Ensure a different student with the same name does not already exist
+                            if (!(newName.equals(studentName))) {
+                                for (PlayerProfile student : studentProfiles) {
+                                    if (student.getName().equals(newName)) {
+                                        throw new IllegalArgumentException("Student with this name already exists.");
+                                    }
+                                }
+                            }
+
+                            // Update button to display new name
+                            int index =  studentButtons.indexOf(button);
+                            studentButtons.get(index).setText(newName);
+
+                            // Update student database
+                            String[] studentData = {studentName, newName, newKnowledgeLevel};
+                            editStudentEvent.notifyObservers(Arrays.toString(studentData));
+
+                            editSubtext.setText("Student edited successfully.");  // Display confirmation of action
+
+                        }
+                        catch (NumberFormatException e) {
+                            editSubtext.setText("Invalid knowledge level.");  // Display error message
+                        }
+                        catch (IllegalArgumentException e) {
+                            editSubtext.setText(e.getMessage());  // Display error message
+                        }
+
+                    }
+                });
+
+                removeStudentConfirm.addListener(new ChangeListener() {
+
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+
+                        // Remove button from dashboard
+                        studentButtons.remove(button);
+
+                        // Remove student from database
+                        removeStudentEvent.notifyObservers(studentName);
+                        removeSubtext.setText("Student removed successfully.");  // Display confirmation of action
+
+                    }
+                });
+            }
+
+        });
 
     }
 
