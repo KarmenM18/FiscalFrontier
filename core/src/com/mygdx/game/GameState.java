@@ -97,6 +97,7 @@ public class GameState implements Serializable {
             }
         }
         */
+
         // Setup nodes
         // define junctions use the x y as conditional check for auto generation of
         //TODO add logic for direction check to avoid missed null

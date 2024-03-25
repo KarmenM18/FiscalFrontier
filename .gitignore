@@ -114,4 +114,5 @@ Thumbs.db
 /ios/IOSLauncher.app.dSYM
 
 ## Save files
-gameState*.json
+/assets/*.json
+/assets/saves/*.json

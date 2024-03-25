@@ -70,7 +70,7 @@ public class Player implements Serializable {
     private int maxRolls;
     private int movesLeft;
     private int maxMoves;
-    private boolean useMutliDice = false;
+    private boolean useMultiDice;
     private boolean hasShield = false;
     private int level;
 
@@ -106,7 +106,7 @@ public class Player implements Serializable {
         this.movesLeft = maxMoves;
         this.maxRolls = 1;
         this.rollsLeft = maxRolls;
-        this.useMutliDice = false;
+        this.useMultiDice = false;
         this.hasShield = false;
         this.level = 0;
         this.reachablePaths = new ArrayList<>();
@@ -175,8 +175,9 @@ public class Player implements Serializable {
 
     public int rollDie(Map<String, Node> nodeMap) {
         dieRoll = Utility.getRandom(1, 4);
-        if(useMutliDice){
+        if(useMultiDice){
             dieRoll += Utility.getRandom(1, 4);
+            useMultiDice = false;
         }
 
         // Get previous node if a previous path exists or just use null
@@ -310,7 +311,7 @@ public class Player implements Serializable {
     }
 
     public void setUseMutliDice(boolean use){
-        this.useMutliDice = use;
+        this.useMultiDice = use;
     }
     public boolean getHasShield(){
         return hasShield;

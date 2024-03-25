@@ -60,10 +60,7 @@ public class PauseScreen extends GameScreen {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE) {
-                    menuEvent.notifyObservers(null);
-                }
-                else if (keycode == Input.Keys.P) {
+                if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.P) {
                     boardEvent.notifyObservers(null);
                 }
                 else {
