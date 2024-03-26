@@ -152,7 +152,7 @@ public class ShopScreen extends GameScreen {
 
         back = new Table();
         back.setFillParent(true);
-        back.add(scroller).fill().left().fillY();
+        back.add(scroller).left().fillY().expandX();
         this.stage.addActor(back);
     }
 
