@@ -1,11 +1,15 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.utils.Json;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Responsible for managing student player profiles.
@@ -15,26 +19,42 @@ import java.util.ArrayList;
  * @author Joelene Hales
  */
 public class ProfileManager implements Serializable {
-    /** Stores all student profiles while the application runs. */
+    /** All student profiles. */
     private ArrayList<PlayerProfile> studentInformation = new ArrayList<PlayerProfile>();
+    /** Top 5 students with the highest achieved individual game scores. */
+    private ArrayList<PlayerProfile> highScoreList = new ArrayList<PlayerProfile>();
+    /** Top 5 students with the highest overall lifetime scores. */
+    private ArrayList<PlayerProfile> lifetimeHighScoreList = new ArrayList<PlayerProfile>();
     /** Filename of JSON file storing all student profiles. */
-    private String filename;
+    private String studentInformationFilename;
+    /** Filename of JSON file storing the students with the highest achieved individual game scores. */
+    private String highScoreFilename;
+    /** Filename of JSON file storing the students with the highest overall lifetime scores. */
+    private String lifetimeScoreFilename;
     /** Object reads and writes profile data to file. */
-    private Json json = new Json();
+    private final Json json = new Json();
 
 
     /**
      * Constructor loads and stores all student profiles.
      *
-     * @param filename Filename of JSON file storing student profiles.
+     * @param studentInformationFilename Filename of JSON file storing student profiles.
+     * @param highScoreFilename Filename of JSON file storing the students with the highest achieved individual game scores.
+     * @param lifetimeScoreFilename Filename of JSON file storing the students with the highest overall lifetime scores.
      */
-    public ProfileManager(String filename) {
+    public ProfileManager(String studentInformationFilename, String highScoreFilename, String lifetimeScoreFilename) {
 
-        this.filename = filename;
-        this.loadData();  // Load student profiles
+        // Store filenames
+        this.studentInformationFilename = studentInformationFilename;
+        this.highScoreFilename = highScoreFilename;
+        this.lifetimeScoreFilename = lifetimeScoreFilename;
+
+        // Load student profiles
+        this.studentInformation = this.loadProfiles(this.studentInformationFilename);  // All student profiles
+        this.highScoreList = this.loadProfiles(this.highScoreFilename);                // Top 5 students with highest achieved individual game socres
+        this.lifetimeHighScoreList = this.loadProfiles(this.lifetimeScoreFilename);    // Top 5 students with the highest overall lifetime scores
 
     }
-
 
     /**
      * Private no-arg constructor for serialization
@@ -44,25 +64,32 @@ public class ProfileManager implements Serializable {
 
     /**
      * Loads student profiles from file.
+     *
+     * @param filename Filename of JSON file containing student profiles.
+     * @return Array of student profiles loaded.
      */
-    public void loadData() {
+    public ArrayList<PlayerProfile> loadProfiles(String filename) {
+
+        ArrayList<PlayerProfile> profiles;  // Stores player profiles read from file
 
         try {
 
-            // Open file
-            String inputString = Files.readString(Path.of(this.filename));
+            // Open file and read data
+            String inputString = Files.readString(Path.of(filename));
 
             if (inputString.isEmpty()) {  // Prevent error if file is empty
                 inputString = "[]";
             }
 
-            // Load student profiles
-            this.studentInformation = json.fromJson(ArrayList.class, PlayerProfile.class, inputString);
+            // Create student profiles from read data
+            profiles = json.fromJson(ArrayList.class, PlayerProfile.class, inputString);
 
         }
-        catch (Exception e) {
-            System.out.println("Error loading player information!");  // TODO: Make this actually handle the errors
+        catch (IOException e) {  // Error opening file
+            profiles = new ArrayList<PlayerProfile>();  // Initialize an empty list
         }
+
+        return profiles;
 
     }
 
@@ -78,15 +105,18 @@ public class ProfileManager implements Serializable {
 
 
     /**
-     * Saves the list of student profiles to the JSON file.
+     * Saves a list of profiles to a JSON file.
+     *
+     * @param profiles List of student profiles to save
+     * @param filename Filename of JSON file
      */
-    private void saveProfiles() {
+    private void saveProfiles(ArrayList<PlayerProfile> profiles, String filename) {
 
         try {
-            String profileString = json.prettyPrint(studentInformation);  // Serialize profile list
+            String profileString = json.prettyPrint(profiles);  // Serialize profile list
             Files.writeString(Paths.get(filename), profileString);  // Open file and write
         }
-        catch (Exception e) {
+        catch (IOException e) {
             System.out.println("Error saving file.");  // TODO: Make this actually handle the errors
         }
 
@@ -171,7 +201,8 @@ public class ProfileManager implements Serializable {
         PlayerProfile studentProfile = new PlayerProfile(name);
         this.studentInformation.add(studentProfile);
 
-        this.saveProfiles();   // Write changes to file
+        this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
+        this.updateHighScores();  // Update high score tables
         
     }
 
@@ -187,7 +218,9 @@ public class ProfileManager implements Serializable {
 
         PlayerProfile removedProfile = getProfile(name);  // Retrieve the profile to be removed
         this.studentInformation.remove(removedProfile);   // Remove profile from list
-        this.saveProfiles();  // Write changes to file
+
+        this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
+        this.updateHighScores();  // Update high score tables
 
         return removedProfile;
 
@@ -205,7 +238,9 @@ public class ProfileManager implements Serializable {
 
         PlayerProfile profile = getProfile(name);   // Retrieve the profile of the student with the given name
         profile.setName(newName);   // Rename student
-        this.saveProfiles();        // Write changes to file
+
+        this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
+        this.updateHighScores();  // Update high score tables
 
     }
 
@@ -221,8 +256,131 @@ public class ProfileManager implements Serializable {
 
         PlayerProfile profile = getProfile(name);   // Retrieve the profile of the student with the given name
         profile.setKnowledgeLevel(newKnowledgeLevel);   // Change student's knowledge level
-        this.saveProfiles();        // Write changes to file
+
+        this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
+        this.updateHighScores();  // Update high score tables
 
     }
+
+
+    /**
+     * Creates a copy of the list of student profiles.
+     * The list itself is a deep copy. Each student profile within the list is a shallow copy.
+     * @return Copy of the student profile list
+     */
+    private ArrayList<PlayerProfile> copyProfileList() {
+
+        ArrayList<PlayerProfile> listCopy = new ArrayList<PlayerProfile>(this.studentInformation.size());  // Create a new empty list with the same size
+        listCopy.addAll(this.studentInformation);   // Add each student profile to the list copy
+
+        return listCopy;
+
+    }
+
+    /**
+     * Create a comparator used to sort student profiles on highest achieved individual game score, in descending order.
+     */
+    private static final Comparator<PlayerProfile> highScoreComparator = new Comparator<PlayerProfile>() {
+
+        @Override
+        public int compare(PlayerProfile p1, PlayerProfile p2) {
+
+            Integer score1 = p1.getHighScore();
+            Integer score2 = p2.getHighScore();
+
+            return score2.compareTo(score1);  // Return in descending order
+
+        }
+    };
+
+
+    /**
+     * Create a comparator used to sort student profiles on overall lifetime score, in descending order.
+     */
+    private static final Comparator<PlayerProfile> lifetimeScoreComparator = new Comparator<PlayerProfile>() {
+
+        @Override
+        public int compare(PlayerProfile p1, PlayerProfile p2) {
+
+            Integer score1 = p1.getLifetimeScore();
+            Integer score2 = p2.getLifetimeScore();
+
+            return score2.compareTo(score1);  // Return in descending order
+
+        }
+    };
+
+
+    /**
+     * Sorts the student profiles on highest achieved individual game score, in descending order.
+     *
+     * @return Copy of the student profile list sorted on highest achieved individual game score, in descending order.
+     */
+    private ArrayList<PlayerProfile> sortHighScore() {
+
+        ArrayList<PlayerProfile> sortedCopy = copyProfileList();  // Copy list of student profiles
+        sortedCopy.sort(highScoreComparator);  // Sort on highest achieved individual game score, in descending order
+
+        return sortedCopy;
+
+    }
+
+
+    /**
+     * Sorts the student profiles on overall lifetime score, in descending order.
+     *
+     * @return Copy of the student profile list sorted on overall lifetime score, in descending order.
+     */
+    private ArrayList<PlayerProfile> sortLifetimeScore() {
+
+        ArrayList<PlayerProfile> sortedCopy = copyProfileList();  // Copy list of student profiles
+        sortedCopy.sort(lifetimeScoreComparator);  // Sort on overall lifetime score, in descending order
+
+        return sortedCopy;
+
+    }
+
+
+    /**
+     * Updates the individual game and lifetime high score tables.
+     */
+    public void updateHighScores() {
+
+        // Find top 5 students with the highest achieved game scores and lifetime scores
+        this.highScoreList = this.sortHighScore();
+        this.lifetimeHighScoreList = this.sortLifetimeScore();
+
+        if (this.studentInformation.size() > 5) {  // More than 5 students in the database
+            this.highScoreList =  (ArrayList<PlayerProfile>) this.highScoreList.subList(0, 5);  // Take only the top 5 students
+            this.lifetimeHighScoreList =  (ArrayList<PlayerProfile>) this.lifetimeHighScoreList.subList(0, 5);
+        }
+
+        // Save high score tables to file
+        this.saveProfiles(highScoreList, this.highScoreFilename);
+        this.saveProfiles(lifetimeHighScoreList, this.lifetimeScoreFilename);
+
+    }
+
+
+    /**
+     * Returns the top 5 students with the highest achieved individual game scores.
+     * Sorted from highest score to lowest score.
+     *
+     * @return Students with the highest achieved individual game scores.
+     */
+    public ArrayList<PlayerProfile> getHighScoreList() {
+        return this.highScoreList;
+    }
+
+
+    /**
+     * Returns the top 5 students with the highest overall lifetime scores, in order from highest score to lowest score.
+     *
+     * @return Students with the highest overall lifetime scores.
+     */
+    public ArrayList<PlayerProfile> getLifetimeHighScoreList() {
+        return this.lifetimeHighScoreList;
+    }
+
 
 }

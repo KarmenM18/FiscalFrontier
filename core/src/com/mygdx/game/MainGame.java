@@ -58,11 +58,11 @@ public class MainGame extends Game {
 		shopScreen = new ShopScreen(batch, assets);
 		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
 		saveScreen = new SaveScreen(batch, assets);
-		profileManager = new ProfileManager("studentInformation.json");
+		profileManager = new ProfileManager("studentInformation.json", "highScoreTable.json", "lifetimeScoreTable.json");
 		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets, this.profileManager);
 		manageStudentsScreen = new ManageStudentsScreen(batch, assets, this.profileManager);
 		endScreen = new EndScreen(batch, assets);
-		highScoreScreen = new HighScoreScreen(batch, assets);
+		highScoreScreen = new HighScoreScreen(batch, assets, this.profileManager);
 
 		// Load players from save if possible
 		if (Utility.fileExists(config.getPlayerSavePath())) {
@@ -78,7 +78,7 @@ public class MainGame extends Game {
 		// Set starting screen
 		setScreen(mainMenuScreen);
 
-		// Set gameBoard observers
+		// Set GameBoard observers
 		gameBoard.addShopListener(v -> setScreen(shopScreen));
 		gameBoard.addPauseListener(currentPlayer -> {
 			//TODO Send Current Player Info To Screen
@@ -122,6 +122,7 @@ public class MainGame extends Game {
 			gameBoard.setGameState(gs);
 			setScreen(gameBoard);
 		});
+
 		// Set MainMenuScreen observers
 		mainMenuScreen.addStartGameListener(v -> {
 			// Create new game with all players in it TODO player selection
@@ -139,12 +140,12 @@ public class MainGame extends Game {
 			}
 			// TODO inform the user that there is no save to continue from
 		});
+
 		// Set InstructorDashboardScreen observers
 		mainMenuScreen.addLoadGameListener(v -> {
 			setScreen(saveScreen);
 		});
 		mainMenuScreen.addHighScoreListener(v -> {
-			highScoreScreen.setProfileList(profileList);
 			setScreen(highScoreScreen);
 		});
 		mainMenuScreen.addInstructorDashboardListener(v -> {
@@ -156,6 +157,7 @@ public class MainGame extends Game {
 		instructorDashboardScreen.addManageStudentsListener(v -> {
 			setScreen(manageStudentsScreen);       // Enter manage students mode in instructor dashboard
 		});
+
 		// Set ManageStudentsScreen observers
 		manageStudentsScreen.addBackListener(v -> {
 			setScreen(instructorDashboardScreen);  // Enter manage students mode in instructor dashboard
@@ -180,7 +182,7 @@ public class MainGame extends Game {
 			int newKnowledgeLevel = Integer.parseInt(studentData[2]);
 
 			// Make changes to student database
-			this.profileManager.changeKnowledgeLevel(currentName, newKnowledgeLevel);
+			this.profileManager.changeKnowledgeLevel(currentName, newKnowledgeLevel);  // FIXME: Since players stored as references, may be better to just use the getProfile() and PlayerProfile getters/setters directly?
 			this.profileManager.renameStudent(currentName, newName);
 
 			// Reload dashboard screens to reflect changes
