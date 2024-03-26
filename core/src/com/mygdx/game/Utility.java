@@ -1,5 +1,9 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import java.io.File;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
@@ -93,5 +97,19 @@ public final class Utility {
      */
     public static Boolean epsilonEqual(float a, float b, float epsilon) {
         return abs(a - b) <= epsilon;
+    }
+
+    /**
+     * Displays an error dialog box on the specified stage.
+     *
+     * @param text the error message to write
+     * @param stage the Stage to show the box on
+     * @param skin Skin used to generate the dialog box
+     */
+    public static void showErrorDialog(String text, Stage stage, Skin skin) {
+        Dialog errorDialog = new Dialog("Error", skin);
+        errorDialog.text(text);
+        errorDialog.button("Continue", true);
+        errorDialog.show(stage);
     }
 }

@@ -41,6 +41,11 @@ public class Stock {
     }
 
     /**
+     * Private no-arg constructor for serialization.
+     */
+    private Stock() {}
+
+    /**
      * @return dividen payout every 5 rounds
      */
     public double dividenPay() {return this.price * (this.divPay/100);}

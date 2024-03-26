@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class GameState implements Serializable {
+    private int id; // The id used to differentiate game saves. Should be unique for each different game.
     private List<Player> playerList;
     private int currPlayerTurn;
     private int turnNumber;
@@ -39,15 +40,18 @@ public class GameState implements Serializable {
     private final int minPen = 3;
     private int currentPen;
     private boolean gameOver = false; // Set to true when roundNumber exceeds the round maximum. Should be checked by GameBoard
-
+    private boolean hardMode = false; // Hard mode changes the game mechanics to be less forgiving.
     /**
      * Constructor
      * Will throw error if the profileList is null or empty
      *
      * @param profileList The profile list of players in the game
      */
-    public GameState(List<PlayerProfile> profileList, AssetManager assets) {
+    public GameState(List<PlayerProfile> profileList, AssetManager assets, int id, boolean hardMode) {
         assetMan = assets;
+        this.hardMode = hardMode;
+        this.id = id;
+
         if (profileList == null || profileList.isEmpty()) {
             throw new IllegalArgumentException("Player list cannot be empty");
         }
@@ -545,5 +549,12 @@ public class GameState implements Serializable {
      */
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    /**
+     * @return integer GameState's ID
+     */
+    public int getID() {
+        return id;
     }
 }

@@ -14,9 +14,12 @@ import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -78,14 +81,85 @@ public class SaveScreen extends GameScreen {
 
     @Override
     public void show() {
-        findSaves();
+        try {
+            findSaves();
+        } catch (FileNotFoundException e) {
+            Utility.showErrorDialog("Error; saves folder not found", stage, skin);
+        }
         Gdx.input.setInputProcessor(stage);
+    }
+
+    /**
+     * Used to get an unused ID number when creating new GameStates.
+     *
+     * @param sSystem a SaveSystem to deserialize JSONs with
+     * @return unique integer ID
+     */
+    public int getUniqueID(SaveSystem sSystem) throws FileNotFoundException {
+        File saveFolder = new File("saves");
+        File[] fileList = saveFolder.listFiles();
+        if (fileList == null) throw new FileNotFoundException();
+
+        HashSet<Integer> foundIDs = new HashSet<>();
+        for (File file : fileList) {
+            if (file.isFile()) {
+                // Match all strings starting with a valid save filename and ending with .json
+                Config config = Config.getInstance();
+                Pattern pattern = Pattern.compile("^.*_" + config.getGameStateSavePath() + "_.*\\.json$");
+                Matcher matcher = pattern.matcher(file.getName());
+                if (matcher.matches()) {
+                    // Get ID
+                    GameState gs = sSystem.readGameState(file.getName(), assets);
+                    foundIDs.add(gs.getID());
+                }
+            }
+        }
+
+        // Generate random ID until it's unique
+        int randID;
+        do {
+            randID = Utility.getRandom(0, Integer.MAX_VALUE - 1);
+        } while (foundIDs.contains(randID));
+
+        return randID;
+    }
+
+    /**
+     * Remove all GameStates with a given ID. Used when the game ends.
+     * @param id the ID value to match
+     * @param sSystem the SaveSystem to use to get GameStates.
+     */
+    public void deleteByID(int id, SaveSystem sSystem) throws FileNotFoundException {
+        File saveFolder = new File("saves");
+        File[] fileList = saveFolder.listFiles();
+        if (fileList == null) throw new FileNotFoundException();
+
+        for (File file : fileList) {
+            if (file.isFile()) {
+                // Match all strings starting with a valid save filename and ending with .json
+                Config config = Config.getInstance();
+                Pattern pattern = Pattern.compile("^.*_" + config.getGameStateSavePath() + "_.*\\.json$");
+                Matcher matcher = pattern.matcher(file.getName());
+                if (matcher.matches()) {
+                    // Get ID
+                    GameState gs = sSystem.readGameState(file.getName(), assets);
+                    // Delete if we find a match
+                    if (gs.getID() == id) {
+                        try {
+                            Files.delete(Path.of(file.getPath()));
+                        } catch (IOException e) {
+                            Utility.showErrorDialog("Error; failed to delete a save associated with this game.", stage, skin);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
      * Find new saves in the saves folder
      */
-    private void findSaves() {
+    private void findSaves() throws FileNotFoundException {
         // Remove old buttons and create new ones as needed
         table.clear();
         table.add(menuButton);
@@ -94,10 +168,11 @@ public class SaveScreen extends GameScreen {
         int saveNum = 1;
         File saveFolder = new File("saves");
         File[] fileList = saveFolder.listFiles();
-        assert fileList != null;
+        if (fileList == null) throw new FileNotFoundException();
+
         for (File file : fileList) {
             if (file.isFile()) {
-                // Match all strings starting with Save filename and ending with .json
+                // Match all strings starting with a valid save filename and ending with .json
                 Config config = Config.getInstance();
                 Pattern pattern = Pattern.compile("^.*_" + config.getGameStateSavePath() + "_.*\\.json$");
                 Matcher matcher = pattern.matcher(file.getName());
@@ -119,7 +194,11 @@ public class SaveScreen extends GameScreen {
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
-                            findSaves();
+                            try {
+                                findSaves();
+                            } catch (FileNotFoundException e) {
+                                Utility.showErrorDialog("Error; saves folder not found", stage, skin);
+                            }
                         }
                     });
 

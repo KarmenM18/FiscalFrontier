@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.mygdx.game.Observer.Observer;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -105,6 +106,13 @@ public class MainGame extends Game {
 
 		// Set EndScreen observers
 		endScreen.addMenuListener(v -> setScreen(mainMenuScreen));
+		endScreen.addDeleteSavesListener(id -> {
+            try {
+                saveScreen.deleteByID(id, saveSystem);
+            } catch (FileNotFoundException e) {
+                Utility.showErrorDialog("Error; failed to open saves folder.", endScreen.stage, endScreen.skin);
+            }
+        });
 
 		// Set HighScoreScreen observers
 		highScoreScreen.addMenuListener(v -> setScreen(mainMenuScreen));
@@ -126,8 +134,14 @@ public class MainGame extends Game {
 		// Set MainMenuScreen observers
 		mainMenuScreen.addStartGameListener(v -> {
 			// Create new game with all players in it TODO player selection
-			GameState newGame = new GameState(profileList, assets);
-			gameBoard.setGameState(newGame);
+            GameState newGame = null;
+            try {
+                newGame = new GameState(profileList, assets, saveScreen.getUniqueID(saveSystem), false);
+            } catch (FileNotFoundException e) {
+				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
+				return;
+			}
+            gameBoard.setGameState(newGame);
 			setScreen(gameBoard);
 		});
 		mainMenuScreen.addContinueGameListener(v -> {
@@ -238,7 +252,7 @@ public class MainGame extends Game {
 	/**
 	 * Load a GameState from file
 	 *
-	 * @param path the path of where the serialized JSON is located
+	 * @param path the path where the serialized JSON is located
 	 */
 	public GameState loadGameState(String path) {
 		return saveSystem.readGameState(path, assets);

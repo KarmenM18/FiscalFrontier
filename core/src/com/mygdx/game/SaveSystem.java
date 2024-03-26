@@ -17,7 +17,7 @@ public class SaveSystem {
     Json json = new Json();
 
     public SaveSystem() {
-        // Textures don't support serialization. We must not write textures, and then reconstruct them after loading
+        // Textures don't support serialization. We skip textures and reconstruct them after loading
         json.setSerializer(Texture.class, new Json.Serializer<Texture>() {
             @Override
             public void write(Json json, Texture object, Class knownType) {
@@ -44,7 +44,7 @@ public class SaveSystem {
 
             // Keep increasing the save number until we find an empty slot
             int saveNumber = 1;
-            while (Utility.fileExists("saves/" +path + "_" + saveNumber + ".json")) saveNumber++;
+            while (Utility.fileExists("saves/" + path + "_" + saveNumber + ".json")) saveNumber++;
             Files.writeString(Paths.get("saves/" + path + "_" + saveNumber + ".json"), JSONed);
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,7 +61,7 @@ public class SaveSystem {
     public GameState readGameState(String savePath, AssetManager assets) {
         try {
             Config config = Config.getInstance();
-            String gsString = Files.readString(Path.of(savePath));
+            String gsString = Files.readString(Path.of("saves/" + savePath));
             GameState gs = json.fromJson(GameState.class, gsString);
             gs.loadTextures(assets);
             return gs;

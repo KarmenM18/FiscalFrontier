@@ -10,15 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
-import com.sun.jdi.connect.IllegalConnectorArgumentsException;
-
-import java.util.Collections;
 
 /**
  * Screen displayed at the end of a game.
  */
 public class EndScreen extends GameScreen {
-    private Observable<Void> menuEvent = new Observable<Void>();
+    private Observable<Void> menuEvent = new Observable<>();
+    private Observable<Integer> deleteSavesEvent = new Observable<>();
 
     private Table table;
     private Label title;
@@ -117,7 +115,11 @@ public class EndScreen extends GameScreen {
             profile.setLifetimeScore(profile.getLifetimeScore() + player.getScore());
             if (profile.getHighScore() < player.getScore()) profile.setHighScore(player.getScore());
         }
+
+        // Delete all saves for the game by matching the ID
+        deleteSavesEvent.notifyObservers(finalGameState.getID());
     }
 
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
+    public void addDeleteSavesListener(Observer<Integer> ob) { deleteSavesEvent.addObserver(ob); }
 }
