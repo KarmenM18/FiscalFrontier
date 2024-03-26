@@ -205,7 +205,7 @@ public class GameBoard extends GameScreen {
         hudTable.add(roundLabel).padLeft(5).uniform();
         hudTable.add(rollButton).padLeft(5).uniform();
         hudTable.add(rollLabel).padLeft(5).uniform();
-        hudTable.add(nextTurnButton).expandX().right();
+        hudTable.add(nextTurnButton).padLeft(5).expandX();
         // Put the hud table into another table to align it properly with the top of the screen
         Table t = new Table();
         t.setBounds(0, (float) (hudStage.getHeight() * .943), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));

@@ -96,7 +96,9 @@ public class SaveScreen extends GameScreen {
      * @return unique integer ID
      */
     public int getUniqueID(SaveSystem sSystem) throws FileNotFoundException {
-        File saveFolder = new File("saves");
+        //TODO check
+        ClassLoader CL = getClass().getClassLoader();
+        File saveFolder = new File(CL.getResource("saves").getFile());
         File[] fileList = saveFolder.listFiles();
         if (fileList == null) throw new FileNotFoundException();
 
@@ -130,7 +132,8 @@ public class SaveScreen extends GameScreen {
      * @param sSystem the SaveSystem to use to get GameStates.
      */
     public void deleteByID(int id, SaveSystem sSystem) throws FileNotFoundException {
-        File saveFolder = new File("saves");
+        ClassLoader CL = getClass().getClassLoader();
+        File saveFolder = new File(CL.getResource("saves").getFile());
         File[] fileList = saveFolder.listFiles();
         if (fileList == null) throw new FileNotFoundException();
 
@@ -166,7 +169,8 @@ public class SaveScreen extends GameScreen {
         table.row().pad(10, 0, 10, 0);
 
         int saveNum = 1;
-        File saveFolder = new File("saves");
+        ClassLoader CL = getClass().getClassLoader();
+        File saveFolder = new File(CL.getResource("saves").getFile());
         File[] fileList = saveFolder.listFiles();
         if (fileList == null) throw new FileNotFoundException();
 

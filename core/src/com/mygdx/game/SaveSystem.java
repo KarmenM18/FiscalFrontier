@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,8 +45,10 @@ public class SaveSystem {
 
             // Keep increasing the save number until we find an empty slot
             int saveNumber = 1;
-            while (Utility.fileExists("saves/" + path + "_" + saveNumber + ".json")) saveNumber++;
-            Files.writeString(Paths.get("saves/" + path + "_" + saveNumber + ".json"), JSONed);
+            ClassLoader CL = getClass().getClassLoader();
+            File saveFolder = new File(CL.getResource("saves").getFile());
+            while (Utility.fileExists(saveFolder+File.separator + path + "_" + saveNumber + ".json")) saveNumber++;
+            Files.writeString(Paths.get(saveFolder+File.separator + path + "_" + saveNumber + ".json"), JSONed);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,7 +64,9 @@ public class SaveSystem {
     public GameState readGameState(String savePath, AssetManager assets) {
         try {
             Config config = Config.getInstance();
-            String gsString = Files.readString(Path.of("saves/" + savePath));
+            ClassLoader CL = getClass().getClassLoader();
+            File saveFolder = new File(CL.getResource("saves").getFile());
+            String gsString = Files.readString(Path.of(saveFolder+File.separator + savePath));
             GameState gs = json.fromJson(GameState.class, gsString);
             gs.loadTextures(assets);
             return gs;
