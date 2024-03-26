@@ -146,6 +146,7 @@ public class MainGame extends Game {
 			setScreen(saveScreen);
 		});
 		mainMenuScreen.addHighScoreListener(v -> {
+			highScoreScreen.loadTables();  // Update high score tables to display most current information
 			setScreen(highScoreScreen);
 		});
 		mainMenuScreen.addInstructorDashboardListener(v -> {

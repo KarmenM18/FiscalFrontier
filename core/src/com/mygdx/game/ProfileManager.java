@@ -171,7 +171,7 @@ public class ProfileManager implements Serializable {
      * @return Student's profile
      * @throws IllegalArgumentException If a student with the entered name does not exist
      */
-    public PlayerProfile getProfile(String name) throws IllegalArgumentException {
+    private PlayerProfile getProfile(String name) throws IllegalArgumentException {
 
         int index = findProfileIndex(name);  // Find the profile's index in the list of profiles
 
@@ -246,7 +246,7 @@ public class ProfileManager implements Serializable {
 
 
     /**
-     * Changes the knowledge level of the student with the given name and saves updates to file.
+     * Changes the knowledge level of a student and writes updates to file.
      *
      * @param name Student's name
      * @param newKnowledgeLevel New knowledge level of student
@@ -256,6 +256,41 @@ public class ProfileManager implements Serializable {
 
         PlayerProfile profile = getProfile(name);   // Retrieve the profile of the student with the given name
         profile.setKnowledgeLevel(newKnowledgeLevel);   // Change student's knowledge level
+
+        this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
+        this.updateHighScores();  // Update high score tables
+
+    }
+
+
+    /**
+     * Updates the high score of a student and writes updates to file.
+     *
+     * @param name Student's name
+     * @param newHighScore Student's new high score
+     * @throws IllegalArgumentException If a student with the entered name does not exist
+     */
+    public void updateHighScore(String name, int newHighScore) throws IllegalArgumentException {
+
+        PlayerProfile profile = getProfile(name);   // Retrieve the profile of the student with the given name
+        profile.setHighScore(newHighScore);         // Update student's high score
+
+        this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
+        this.updateHighScores();  // Update high score tables
+
+    }
+
+    /**
+     * Updates the lifetime score of a student and writes updates to file.
+     *
+     * @param name Student's name
+     * @param newLifetimeScore Student's new lifetime score
+     * @throws IllegalArgumentException If a student with the entered name does not exist
+     */
+    public void updateLifetimeScore(String name, int newLifetimeScore) throws IllegalArgumentException {
+
+        PlayerProfile profile = getProfile(name);    // Retrieve the profile of the student with the given name
+        profile.setLifetimeScore(newLifetimeScore);  // Update student's lifetime score
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
         this.updateHighScores();  // Update high score tables
