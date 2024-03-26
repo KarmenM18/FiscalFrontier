@@ -243,7 +243,12 @@ public class GameState implements Serializable {
             //Checking for payout
 
             // Check for game end
-            if (roundNumber > Config.getInstance().getMaxRounds()) gameOver = true;
+            if (roundNumber > Config.getInstance().getMaxRounds()) {
+                for (Player p : getPlayerList()) {
+                    p.calculateScore(); // Calculate the score for each player
+                }
+                gameOver = true;
+            }
         }
         if(roundNumber > 0 && roundNumber % 3 == 0){
             for (Player p : getPlayerList()){

@@ -49,7 +49,7 @@ class SaveSystemTest {
     @Test
     void saveAndReadGameState() {
         PlayerProfile testProfile = new PlayerProfile("TestUser");
-        GameState gs = new GameState(Collections.singletonList(testProfile), asset);
+        GameState gs = new GameState(Collections.singletonList(testProfile), asset, 0, false);
         saver.saveGameState(gs, "testSave");
         // TODO update file name when we implement naming saves
         Path saveFile = Paths.get("testSave_1.json");
