@@ -396,11 +396,32 @@ public class GameBoard extends GameScreen {
         }
         itemButtons.clear();
 
+        // TODO: we might want to enable buttons even if the player can move
+        if (!gameState.getCurrentPlayer().canMove()) {
+            return;
+        }
+
+        // To prevent excess item buttons, we allow stacking of items. This map is used to search for duplicates
+        HashMap<String, Map.Entry<TextButton, Integer>> buttonMap = new HashMap<>();
+
         float x = 0;
         for (Item item : gameState.getCurrentPlayer().getItems()) {
             if (item.isPassive()) continue; // Skip passive items
 
-            TextButton button = new TextButton("Use " + item.getName(), skin);
+            // Check if it already exists in the map. If so, just increment the existing button label
+            if (buttonMap.containsKey(item.getName())) {
+                Map.Entry<TextButton, Integer> entry = buttonMap.get(item.getName());
+                TextButton button = entry.getKey();
+                Integer count = entry.getValue();
+                count++;
+                button.setText("Use " + item.getName() + " (" + count + ")");
+
+                buttonMap.put(item.getName(), new AbstractMap.SimpleEntry<TextButton, Integer>(button, count));
+
+                continue;
+            }
+
+            TextButton button = new TextButton("Use " + item.getName() + " (1)", skin);
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -414,6 +435,8 @@ public class GameBoard extends GameScreen {
             x += button.getWidth();
             itemButtons.add(button);
             hudStage.addActor(button);
+
+            buttonMap.put(item.getName(), new AbstractMap.SimpleEntry<TextButton, Integer>(button, 1));
         }
     }
 

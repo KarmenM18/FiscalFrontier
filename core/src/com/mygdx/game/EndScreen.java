@@ -83,9 +83,9 @@ public class EndScreen extends GameScreen {
         scoreTable.clear();
 
         // Add column headers to the table
-        scoreTable.add(new Label("Name", skin)).pad(10);
-        scoreTable.add(new Label("Score", skin)).pad(10);
-        scoreTable.add(new Label("Stars", skin)).pad(10);
+        scoreTable.add(new Label("Name", skin)).padLeft(50).padRight(50);
+        scoreTable.add(new Label("Score", skin)).padRight(25);
+        scoreTable.add(new Label("Stars", skin)).pad(25);
         scoreTable.row();
 
         // Add players to table and get the winner - we sort the table by score
@@ -94,19 +94,19 @@ public class EndScreen extends GameScreen {
         finalGameState.getPlayerList().sort((o1, o2) -> o1.getScore() - o2.getScore());
         Player winner = finalGameState.getPlayerList().get(0);
         for (Player player : finalGameState.getPlayerList()) {
-            scoreTable.add(new Label(player.getPlayerProfile().getName(), skin)).pad(10);
-            scoreTable.add(new Label(String.valueOf(player.getScore()), skin)).pad(10);
-            scoreTable.add(new Label(String.valueOf(player.getStars()), skin)).pad(10);
+            scoreTable.add(new Label(player.getPlayerProfile().getName(), skin)).padLeft(50).padRight(50);
+            scoreTable.add(new Label(String.valueOf(player.getScore()), skin)).padRight(10);
+            scoreTable.add(new Label(String.valueOf(player.getStars()), skin)).padRight(10);
             scoreTable.row();
         }
 
         // Layout GUI
         table.clear();
-        table.add(new Label("Game over! " + winner.getPlayerProfile().getName() + " won with " + winner.getScore() + " total score!", skin));
-        table.row();
-        table.add(scoreTable);
-        table.row();
-        table.add(menuButton).fillX();
+        table.add(new Label("Game over! " + winner.getPlayerProfile().getName() + " won with " + winner.getScore() + " total score!", skin)).center().top();
+        table.row().uniform();
+        table.add(scoreTable).center().expand();
+        table.row().uniform();
+        table.add(menuButton);
 
         // Update Player Profiles
         // TODO: We need to test if player profiles are syncing properly between the Players and the Profiles in the Main Menu.
