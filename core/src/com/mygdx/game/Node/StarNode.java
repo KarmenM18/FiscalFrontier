@@ -54,8 +54,15 @@ public class StarNode extends Node {
 
     }
 
+    /**
+     * activate the star purchase dialog,
+     * TODO add a delay to move cam until player confirms action
+     * @param player
+     * @param batch
+     * @param stage
+     * @param skin
+     */
     public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin) {
-        System.out.println("Star");
         if(hasStar){
             if(player.getMoney() >= starCost){
                 buyStarDialog = new Dialog("Buying Star", skin) {
