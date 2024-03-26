@@ -1,13 +1,11 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.ai.steer.behaviors.Alignment;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -15,23 +13,28 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
-
 import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Screen to display the high score list in the menu
+ * High score table displays the top player scores achieved in the game.
+ * <br><br>
+ * The high score table includes two high score leaderboards; the highest achieved scores in an individual game, and the
+ * highest overall lifetime scores (the cumulative score of all played games). Each leaderboard displays entries for the
+ * top 5 student scores achieved in their respective category. Each entry includes the student's name, the score achieved,
+ * and their ranking among other players in the category.
  *
  * @author Joelene Hales
  */
 public class HighScoreScreen extends GameScreen {
-    private Observable<Void> menuEvent = new Observable<Void>();
 
+    /** Event returns to main menu. */
+    private Observable<Void> menuEvent = new Observable<Void>();
+    /** Object responsible for storing and managing student profiles and high scores. */
     private ProfileManager profileManager;
 
 
     /**
-     * Constructor.
+     * Constructor initializes the high score screen's assets.
      *
      * @param batch  SpriteBatch to initialize the Stage with
      * @param assets AssetManager to load assets with
@@ -41,14 +44,11 @@ public class HighScoreScreen extends GameScreen {
         super(batch, assets);
         this.profileManager = profileManager;
 
-        // Load and display high score tables
-        this.loadTables();
-
     }
 
     
     /**
-     * Updates and displays the high score tables.
+     * Loads student high score data and displays the high score tables.
      */
     public void loadTables() {
 
@@ -92,8 +92,7 @@ public class HighScoreScreen extends GameScreen {
         lifetimeHighScoreTable.add(new Label("Score", skin));
         lifetimeHighScoreTable.row();
 
-
-        // Get high score lists
+        // Load high score lists
         ArrayList<PlayerProfile> highScoreList = this.profileManager.getHighScoreList();
         ArrayList<PlayerProfile> lifetimeHighScoreList = this.profileManager.getLifetimeHighScoreList();
 
@@ -165,5 +164,10 @@ public class HighScoreScreen extends GameScreen {
 
     }
 
+
+    /**
+     * Assigns an observer to listen for the event to return to main menu.
+     * @param ob Observer
+     */
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
 }
