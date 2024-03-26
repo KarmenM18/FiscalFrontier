@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Items.Item;
 import com.mygdx.game.Node.Node;
+import com.mygdx.game.Node.StarNode;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
@@ -153,8 +154,9 @@ public class GameBoard extends GameScreen {
                    if (sprite.getBoundingRectangle().contains(touchPoint.x, touchPoint.y)) {
                        // Player selected a reachable node, we update their position and activate the node
                        currPlayer.move(nodeID, nodeMap, batch);
+                       gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin);
+                       turnChange();
                        moveCameraPlayer();
-
                        return true;
                    }
                }
@@ -221,36 +223,8 @@ public class GameBoard extends GameScreen {
             }
         });
         //TODO change to automatic next turn
-        nextTurnButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                rollButton.setVisible(true);
-                rollLabel.setVisible(false);
-                gameState.nextTurn();
+        //change listener to when user move
 
-                // Check for end of game
-                if (gameState.isGameOver()) {
-                    Dialog goToEnd = new Dialog("End Game", skin) {
-                        @Override
-                        protected void result(Object object) {
-                            if ((Boolean) object) {
-                                endEvent.notifyObservers(gameState);
-                            }
-                        }
-                    };
-                    goToEnd.text("Game is over.");
-                    goToEnd.button("Continue", true);
-                    goToEnd.show(hudStage);
-                    goToEnd.setScale(2f);
-
-                    return;
-                }
-
-                moveCameraPlayer();
-                // Update items to the new player
-                updateItemButtons();
-            }
-        });
         rollButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -466,6 +440,37 @@ public class GameBoard extends GameScreen {
 
         camera.zoom = 1f; // Set to default
     }
+
+    private void turnChange() {
+        rollButton.setVisible(true);
+        rollLabel.setVisible(false);
+        gameState.nextTurn();
+
+        // Check for end of game
+        if (gameState.isGameOver()) {
+                Dialog goToEnd = new Dialog("End Game", skin) {
+                    @Override
+                    protected void result(Object object) {
+                        if ((Boolean) object) {
+                            endEvent.notifyObservers(gameState);
+                        }
+                    }
+                };
+                goToEnd.text("Game is over.");
+                goToEnd.button("Continue", true);
+                goToEnd.show(hudStage);
+                goToEnd.setScale(2f);
+
+                return;
+            }
+
+            moveCameraPlayer();
+            // Update items to the new player
+            updateItemButtons();
+    }
+
+
+
 
     /**
      * @return the active GameState object

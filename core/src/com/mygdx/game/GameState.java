@@ -5,6 +5,8 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.Bike;
 import com.mygdx.game.Items.FreezeItem;
@@ -78,7 +80,7 @@ public class GameState implements Serializable {
                 player.addItem(new FreezeItem(skin));
             }
         }
-        int map[][] = {{1,1,2,1,1,3,1,1,0,0},
+        int map[][] = { {1,1,2,1,1,3,1,1,0,0},
                         {1,0,0,0,0,0,0,1,0,0},
                         {1,0,1,1,1,1,1,1,1,2},
                         {1,0,1,0,1,0,0,1,0,1},
@@ -113,14 +115,7 @@ public class GameState implements Serializable {
         24 = E/W
         34 = S/W
         */
-
-        // Setup nodes
-        // define junctions use the x y as conditional check for auto generation of
-        //TODO add logic for direction check to avoid missed null
-        //TODO automate ID and x, y process based on initial node and for loop limit
-        //TODO look into logic for automate direction
-        int x = 0;//for const col
-        int y = 0;//for const row
+        //TODO direction matrix to 3D, innermost store array of 3 directions
         nodeMap = new HashMap<String, Node>();
         for(int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
@@ -364,6 +359,11 @@ public class GameState implements Serializable {
             nodeMap.put(randKey, newStar);
         }
     }
+
+    /**
+     * make taken star node back to normal node
+     * @param nodeMap
+     */
     public void removeStar(HashMap<String, Node> nodeMap){
         Node currentNode = nodeMap.get(getCurrentPlayer().getCurrentTile());
         if(currentNode instanceof StarNode){
@@ -388,6 +388,10 @@ public class GameState implements Serializable {
         nodeMap.put(x + "," + y, eventNode);
     }
 
+    /**
+     * check number of penalty nodes on the board
+     * @param nodeMap
+     */
     public void checkPenalty(HashMap<String, Node> nodeMap){
         currentPen = 0;
         for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
@@ -556,5 +560,11 @@ public class GameState implements Serializable {
      */
     public int getID() {
         return id;
+    }
+    public static void starDialog(String text, Stage stage, Skin skin) {
+        Dialog errorDialog = new Dialog("Star", skin);
+        errorDialog.text(text);
+        errorDialog.button("Buy Star", true);
+        errorDialog.show(stage);
     }
 }
