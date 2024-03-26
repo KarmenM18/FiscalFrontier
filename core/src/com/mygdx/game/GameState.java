@@ -437,7 +437,7 @@ public class GameState implements Serializable {
         //Temp variables
         String tickerName;
         String description;
-        double price;
+        int price;
         double divPay;
         double minG;
         double minD;
@@ -454,7 +454,7 @@ public class GameState implements Serializable {
                 "Risk: 20% Chance to Decline\n" +
                 "Dividend Pay: Every 5 Rounds\n" +
                 "Dividend change: No Change. Constant 2%";
-        price = 100.00;
+        price = 100;
         divPay = 2;
         minG = 0.5;
         maxG = 2;
@@ -472,7 +472,7 @@ public class GameState implements Serializable {
                 "Risk: 40% Chance to decline\n" +
                 "Dividend Pay: Every Round\n" +
                 "Dividend change: No Change. Constant 2%";
-        price = 75.00;
+        price = 75;
         minG = 2;
         maxG = 10;
         minD = 1;

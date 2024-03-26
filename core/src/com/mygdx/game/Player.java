@@ -42,10 +42,21 @@ public class Player implements Serializable {
      * Player's money.
      */
     private int money;
+
+    /**
+     * Player's "Investment account"
+     */
+    private int investments;
+
     /**
      * Player's item inventory.
      */
     private ArrayList<Item> items;
+
+    /**
+     * Player's stocks owned
+     */
+    private ArrayList<ArrayList<Stock>> stocks;
 
     /**
      * Player's frozen state. When they are frozen, they skip their next turn.
@@ -79,7 +90,6 @@ public class Player implements Serializable {
      * The previous tile the player was on. Used to disallow going backwards.
      */
     private ArrayList<String> previousPath;
-    private ArrayList<String> investments;
 
     /**
      * Constructor creates a player with existing game data.
@@ -97,6 +107,7 @@ public class Player implements Serializable {
         this.profile = profile;
         this.stars = stars;
         this.money = money;
+        this.investments = 0;
         this.score = score;
         this.items = items;
         this.frozen = false;
@@ -111,6 +122,12 @@ public class Player implements Serializable {
         this.level = 0;
         this.reachablePaths = new ArrayList<>();
         this.previousPath = new ArrayList<>();
+
+        //For initializing with the 6 available stocks
+        this.stocks = new ArrayList<>();
+        for (int i = 0; i < 6; i++)
+            stocks.add(new ArrayList<>());
+
 
         Config config = Config.getInstance();
         sprite = new Sprite((Texture) assets.get(profile.getSpritePath()));
@@ -470,17 +487,53 @@ public class Player implements Serializable {
     public void setFrozen(boolean t) { frozen = t; }
     public boolean isFrozen() { return frozen; }
 
-    /*
-    TODO: might change data type to 'investments' once that's done
+    /**
+     * @return all stocks that the player has invested in
      */
-    public ArrayList<String> getCurrentInvestments() {
-        return investments;
+    public ArrayList<ArrayList<Stock>> getCurrentInvestments() {
+        return this.stocks;
     }
 
-    /*
-    TODO: change parameter data type to 'investment' when done
+    /**
+     * Adds a new stock to the investment account also updates the investment
+     * account as well as their money account
+     * @param newInvestment The new Stock to add to the list
+     * @param stockNum What stock type from the 6 available stocks to pick from
      */
-    public void addInvestments(String newInvestment) {
-        investments.add(newInvestment);
+    public void addInvestments(Stock newInvestment, int stockNum) {
+        this.stocks.get(stockNum).add(newInvestment);
+        this.investments += newInvestment.getPrice();
+        this.money -= newInvestment.getPrice();
     }
+
+    /**
+     * Similar to adding a stock, this function removes a stock from the player's list
+     * @param stock The current price of the stock to remove
+     * @param stockNum what type of stock
+     */
+    public void removeInvestment(Stock stock, int stockNum) {
+        //Checking to make sure that the player has at least one stock of selected stock type
+        if (!this.stocks.get(stockNum).isEmpty()) {
+            this.stocks.get(stockNum).remove(0);
+            this.investments -= stock.getPrice();
+            this.money += stock.getPrice();
+        }
+    }
+
+    /**
+     * @param updatedStocks updated list of stocks. Used to simulate stock market dynamics
+     */
+    public void updateInvestment(ArrayList<Stock> updatedStocks) {
+        this.investments = 0;
+
+        //Multiplies the current stock price with quantity of that the player owns for the given stock price
+        for (int i = 0; i < this.stocks.size(); i++) {
+            this.investments += updatedStocks.get(i).getPrice() * this.stocks.get(i).size();
+        }
+    }
+
+    /**
+     * @return total value of investment account
+     */
+    public int getInvestments() {return this.investments;}
 }

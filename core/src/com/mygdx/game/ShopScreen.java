@@ -34,7 +34,9 @@ public class ShopScreen extends GameScreen {
 
     //For GUI
     private Table investments;
-    private Table back;
+    private Table investmentsList;
+    private Table background;
+    private Table playerInfo;
     private ScrollPane scroller;
 
     /**
@@ -54,9 +56,11 @@ public class ShopScreen extends GameScreen {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.S) {
+                    playerInfo.remove();
                     investments.remove();
+                    investmentsList.remove();
                     scroller.remove();
-                    back.remove();
+                    background.remove();
 
                     boardEvent.notifyObservers(null);
                 }
@@ -100,6 +104,11 @@ public class ShopScreen extends GameScreen {
 
     public void updateScreen() {
         showAvailableInvestments();
+
+        background = new Table();
+        background.setFillParent(true);
+        background.add(investmentsList).fill();
+        this.stage.addActor(background);
     }
 
     /**
@@ -150,10 +159,12 @@ public class ShopScreen extends GameScreen {
         scroller.setScrollBarPositions(false,true);
         scroller.setScrollbarsVisible(true);
 
-        back = new Table();
-        back.setFillParent(true);
-        back.add(scroller).left().fillY().expandX();
-        this.stage.addActor(back);
+        investmentsList = new Table();
+        investmentsList.add(scroller).left().fillY().expandX();
+    }
+
+    private void showPlayerInfo() {
+        playerInfo = new Table();
     }
 
     /**
