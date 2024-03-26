@@ -6,21 +6,36 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Items.Item;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class ShopScreen extends GameScreen {
     private Observable<Void> boardEvent = new Observable<Void>();
 
     private Player currentPlayer;
     private Label title;
+    private double shoppingKart;
+    private Stock [] stocksAvailable;
+
+    //For GUI
+    private Table investments;
+    private Table back;
+    private ScrollPane scroller;
 
     /**
      * Constructor.
@@ -34,10 +49,15 @@ public class ShopScreen extends GameScreen {
         title = new Label("ShopScreen", skin);
         stage.addActor(title);
 
+
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.S) {
+                    investments.remove();
+                    scroller.remove();
+                    back.remove();
+
                     boardEvent.notifyObservers(null);
                 }
                 else {
@@ -71,11 +91,6 @@ public class ShopScreen extends GameScreen {
         return currentPlayer.viewTotalCoins(player);
     }*/
 
-    /**
-     * PURPOSE: display the items that the Player has unlocked so far
-     * @param player who's currently accessing the ShopScreen
-     * @return list of items that the Player owns
-     */
     /*public ArrayList<Item> showCurrentOwnedItems(Player player) {
        for (int i = 0; i < player.getItems().size(); i++) {
            System.out.println("Item " + (i + 1) + ": " + player.getItems().get(i).getName());
@@ -83,19 +98,71 @@ public class ShopScreen extends GameScreen {
        return currentPlayer.getPlayerItems(player);
     }*/
 
-    public void showInvestmentsMade() {
-
+    public void updateScreen() {
+        showAvailableInvestments();
     }
 
-    public void showAvailableInvestments() {
+    /**
+     * Method to show the current information of stocks that are available to buy
+     * to the user.
+     */
+    private void showAvailableInvestments() {
+        System.out.println("Entered Investments");
+        investments = new Table();
+
+        //UI implementation for all stocks
+        for (int i = 0; i < 6; i++) {
+            Label ticker = new Label("Ticker Name: " + stocksAvailable[i].getTickerName(), skin);
+            Label stockDescription = new Label(this.stocksAvailable[i].getDescription(), skin);
+            Label stockPrice = new Label("Stock Price: " + this.stocksAvailable[i].getPrice(), skin);
+            Label stockPriceChange = new Label("Stock Price Change Since Last Update: " + this.stocksAvailable[i].getPriceChange() + "%", skin);
+            Label stockDivPayChange = new Label("Dividend Pay Change Since Last Update: " + this.stocksAvailable[i].getDivPayChange() + "%", skin);
+
+            ticker.setFontScale(3);
+
+            ticker.setWrap(true);
+            stockDescription.setWrap(true);
+            stockPrice.setWrap(true);
+            stockPriceChange.setWrap(true);
+            stockDivPayChange.setWrap(true);
+
+            ticker.setAlignment(Align.center);
+            stockDescription.setAlignment(Align.left);
+            stockPrice.setAlignment(Align.left);
+            stockPriceChange.setAlignment(Align.left);
+            stockDivPayChange.setAlignment(Align.left);
 
 
+            investments.add(ticker).width(500).height(50).left();
+            investments.row();
+            investments.add(stockPrice).width(500).height(30).left();
+            investments.row();
+            investments.add(stockPriceChange).width(500).height(30).left();
+            investments.row();
+            investments.add(stockDivPayChange).width(500).height(30).left();
+            investments.row();
+            investments.add(stockDescription).width(500).height(300).left();
+            investments.row();
+        }
+
+        scroller = new ScrollPane(investments, skin);
+        scroller.layout();
+        scroller.setScrollBarPositions(false,true);
+        scroller.setScrollbarsVisible(true);
+
+        back = new Table();
+        back.setFillParent(true);
+        back.add(scroller).fill().left().fillY();
+        this.stage.addActor(back);
     }
 
+    /**
+     * Method to move to check out screen to verify if the player would like
+     * to purchase a break-down of selected items
+     */
     public void checkOut() {
 
     }
-
 
     public void addBoardListener(Observer<Void> ob) { boardEvent.addObserver(ob); }
 
@@ -104,4 +171,6 @@ public class ShopScreen extends GameScreen {
      * @param player PlayerProfile to access player's items, stocks and current funds
      */
     public void setCurrentPlayer(Player player) {this.currentPlayer = player;}
+
+    public void setStocksAvailable (Stock [] stocksAvailable) {this.stocksAvailable = stocksAvailable;}
 }

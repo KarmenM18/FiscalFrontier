@@ -418,9 +418,9 @@ public class GameState implements Serializable {
         }
     }
     /**
-     * @return all stocks in the shop
+     * @return all stocks available to purchase
      */
-    public Stock[] getAllStocks () {return this.stocks;}
+    public Stock [] getAllStocks () {return this.stocks;}
 
     /**
      * Method to clean up code a bit. Initializes all 6 stock options

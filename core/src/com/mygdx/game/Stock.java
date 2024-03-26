@@ -66,6 +66,18 @@ public class Stock {
     public String getTickerName(){return this.tickerName;}
 
     /**
+     * @return Returns the price change as a % since last update
+     * Capital gain or loss
+     */
+    public double getPriceChange(){return this.priceChange;}
+
+    /**
+     * @return Returns the dividend pay change as a % since
+     * last update
+     */
+    public double getDivPayChange(){return this.divPayChange;}
+
+    /**
      * Updates the stock price every round
      * risk is determined from a number from 1 to 9;
      * with 1 representing a 10% risk for stock to decline

@@ -80,11 +80,13 @@ public class MainGame extends Game {
 		setScreen(mainMenuScreen);
 
 		// Set GameBoard observers
-		gameBoard.addShopListener(v -> setScreen(shopScreen));
-		gameBoard.addPauseListener(currentPlayer -> {
-			//TODO Send Current Player Info To Screen
-			setScreen(pauseScreen);
+		gameBoard.addShopListener(v -> {
+			shopScreen.setStocksAvailable(gameBoard.getGameState().getAllStocks());
+			shopScreen.updateScreen();
+			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
+			setScreen(shopScreen);
 		});
+		gameBoard.addPauseListener(currentPlayer -> setScreen(pauseScreen));
 		gameBoard.addEndListener(gameState -> {
 			endScreen.setGameState(gameState);
 			setScreen(endScreen);
@@ -119,7 +121,6 @@ public class MainGame extends Game {
 
 		// Set ShopScreen observers
 		shopScreen.addBoardListener(v -> {
-			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
 			setScreen(gameBoard);
 		});
 
