@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Responsible for managing the database of student player profiles.
@@ -72,20 +73,13 @@ public class ProfileManager implements Serializable {
      * @return Array of student profiles loaded.
      */
     public ArrayList<PlayerProfile> loadProfiles(String filename) {
-        //FIXME sus but works
+
         ArrayList<PlayerProfile> profiles;  // Stores player profiles read from file
-        ClassLoader CL = getClass().getClassLoader();
-        URI temp = null;
-        try {
-            temp = CL.getResource(filename).toURI();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        String main = Paths.get(temp).toString();
+
         try {
 
             // Open file and read data
-            String inputString = Files.readString(Path.of(main));
+            String inputString = Files.readString(Path.of(filename));
 
             if (inputString.isEmpty()) {  // Prevent error if file is empty
                 inputString = "[]";

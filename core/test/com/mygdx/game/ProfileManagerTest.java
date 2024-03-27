@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,16 +29,17 @@ class ProfileManagerTest {
     static String lifetimeScoreDatabase;
 
 
-
     @BeforeAll
     static void setUpClass() {
+
+        String test = System.getProperty("user.dir");
 
         try {
 
             // Define filepaths to each database
-            studentFile = "TestingDatabases/studentDatabase1.json";
-            highScoreFile = "TestingDatabases/highScoreDatabase1.json";
-            lifetimeScoreFile = "TestingDatabases/lifetimeScoreDatabase1.json";
+            studentFile = test + "/TestingDatabases/studentDatabase1.json";
+            highScoreFile = test + "/TestingDatabases/highScoreDatabase1.json";
+            lifetimeScoreFile = test + "/TestingDatabases/lifetimeScoreDatabase1.json";
 
             // Store database contents to be restored after each test
             studentDatabase = Files.readString(Path.of(studentFile));
