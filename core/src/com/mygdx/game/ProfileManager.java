@@ -9,12 +9,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 /**
- * Responsible for managing student player profiles.
- * <br></br>
+ * Responsible for managing the database of student player profiles.
+ * <br><br>
  * Includes methods to save and load student database, add a new student profile, and rename and remove student profiles,
+ * Includes maintaining the database of high scores.
  *
  * @author Joelene Hales
  */
@@ -68,7 +68,7 @@ public class ProfileManager implements Serializable {
      * @param filename Filename of JSON file containing student profiles.
      * @return Array of student profiles loaded.
      */
-    public ArrayList<PlayerProfile> loadProfiles(String filename) {
+    private ArrayList<PlayerProfile> loadProfiles(String filename) {
 
         ArrayList<PlayerProfile> profiles;  // Stores player profiles read from file
 
