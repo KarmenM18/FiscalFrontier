@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.Json;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,13 +71,20 @@ public class ProfileManager implements Serializable {
      * @return Array of student profiles loaded.
      */
     public ArrayList<PlayerProfile> loadProfiles(String filename) {
-
+        //FIXME sus but works
         ArrayList<PlayerProfile> profiles;  // Stores player profiles read from file
-
+        ClassLoader CL = getClass().getClassLoader();
+        URI temp = null;
+        try {
+            temp = CL.getResource(filename).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        String main = Paths.get(temp).toString();
         try {
 
             // Open file and read data
-            String inputString = Files.readString(Path.of(filename));
+            String inputString = Files.readString(Path.of(main));
 
             if (inputString.isEmpty()) {  // Prevent error if file is empty
                 inputString = "[]";

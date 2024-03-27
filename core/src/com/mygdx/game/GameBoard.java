@@ -146,7 +146,7 @@ public class GameBoard extends GameScreen {
                // Get position of the click
                Vector3 touchPoint = new Vector3(screenX, screenY, 0);
                camera.unproject(touchPoint);
-
+            //TODO add spacebar shortcut as roll
                Map<String, Node> nodeMap = gameState.getNodeMap();
                for (ArrayList<String> path : currPlayer.getReachablePaths()) {
                    String nodeID = path.get(path.size() - 1);
@@ -184,6 +184,7 @@ public class GameBoard extends GameScreen {
      * Load and layout HUD elements
      */
     private void initializeHUD() {
+        hudStage.setDebugAll(false);
         // Initialize buttons and labels
         pauseButton = new TextButton("Pause", skin);
         nextTurnButton = new TextButton("Next Turn", skin);
@@ -222,8 +223,7 @@ public class GameBoard extends GameScreen {
                 pauseEvent.notifyObservers(null);
             }
         });
-        //TODO change to automatic next turn
-        //change listener to when user move
+
 
         rollButton.addListener(new ChangeListener() {
             @Override
@@ -330,10 +330,10 @@ public class GameBoard extends GameScreen {
 
         // Move camera towards new position unless it's already close enough
         if (!Utility.epsilonEqual(camera.position.x, newCameraX, 16f)) {
-            camera.translate(MathUtils.cos(newCameraAngle) * 8f, 0);
+            camera.translate(MathUtils.cos(newCameraAngle) * 15f, 0);
         }
         if (!Utility.epsilonEqual(camera.position.y, newCameraY, 16f)) {
-            camera.translate(0, MathUtils.sin(newCameraAngle) * 8);
+            camera.translate(0, MathUtils.sin(newCameraAngle) * 15f);
         }
         // Handle zoom
         if (cameraZoomIn) camera.zoom -= 0.025f;

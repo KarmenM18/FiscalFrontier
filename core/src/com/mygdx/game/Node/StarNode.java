@@ -75,6 +75,7 @@ public class StarNode extends Node {
                         }
                     }
                 };
+                //TODO add Y/N keyboard shortcut for purchase confirmation
                 buyStarDialog.text("Do you want to buy the star?");
                 buyStarDialog.button("Yes", true);
                 buyStarDialog.button("No", false);
