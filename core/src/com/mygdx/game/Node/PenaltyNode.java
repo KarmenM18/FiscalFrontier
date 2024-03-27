@@ -36,7 +36,8 @@ public class PenaltyNode extends Node {
 
 
     /**
-     * TODO need to discuss easy/hard mode difference 
+     * TODO hardmode lose star and go negative
+     * easy mode no lose star and no negative
      * @param player
      * @param batch
      */
