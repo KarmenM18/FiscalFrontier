@@ -41,7 +41,7 @@ public class PenaltyNode extends Node {
      * @param batch
      */
     @Override
-    public void activate(Player player, SpriteBatch batch) {
+    public void activate(Player player, SpriteBatch batch, boolean hardmode) {
         if(player.getHasShield()){
             //do nothing
         }else if(player.getMoney() >= penaltyAmount){

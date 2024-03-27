@@ -24,7 +24,7 @@ public class NormalNode extends Node {
     private NormalNode() {}
 
     @Override
-    public void activate(Player player, SpriteBatch batch) {
+    public void activate(Player player, SpriteBatch batch, boolean hardmode) {
         //maybe add logic for showing the adding money graphic??
         player.setMoney(player.getMoney() + baseMoney);
     }

@@ -50,7 +50,7 @@ public class StarNode extends Node {
     }
 
     @Override
-    public void activate(Player player, SpriteBatch batch) {
+    public void activate(Player player, SpriteBatch batch, boolean hardmode) {
 
     }
 
@@ -62,16 +62,16 @@ public class StarNode extends Node {
      * @param stage
      * @param skin
      */
-    public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin) {
+    public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin, boolean hardmode) {
         if(hasStar){
             if(player.getMoney() >= starCost){
                 buyStarDialog = new Dialog("Buying Star", skin) {
                     @Override
                     protected void result(Object object) {
                         if ((Boolean) object) {
-                            starMod(player, true);
+                            starMod(player, true, hardmode);
                         }else{
-                            starMod(player, false);
+                            starMod(player, false, hardmode);
                         }
                     }
                 };
@@ -96,7 +96,17 @@ public class StarNode extends Node {
             }
         }
     }
-    private void starMod(Player player, boolean buy){
+
+    /**
+     * hardmode higher price
+     * @param player
+     * @param buy
+     * @param hardmode
+     */
+    private void starMod(Player player, boolean buy, boolean hardmode){
+        if(hardmode){
+
+        }
         if(buy){
             this.hasStar = false;
             player.addStar();

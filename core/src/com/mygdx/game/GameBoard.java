@@ -153,8 +153,8 @@ public class GameBoard extends GameScreen {
                    Sprite sprite = nodeMap.get(nodeID).getSprite();
                    if (sprite.getBoundingRectangle().contains(touchPoint.x, touchPoint.y)) {
                        // Player selected a reachable node, we update their position and activate the node
-                       currPlayer.move(nodeID, nodeMap, batch);
-                       gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin);
+                       currPlayer.move(nodeID, nodeMap, batch, gameState.getHardMode());
+                       gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin, gameState.getHardMode());
                        turnChange();
                        moveCameraPlayer();
                        return true;

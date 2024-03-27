@@ -284,7 +284,9 @@ public class GameState implements Serializable {
 
         nextRound(); // Check current round;
     }
-
+    public boolean getHardMode(){
+        return this.hardMode;
+    }
     /**
      * Get current Player. Based on the current turn.
      *
