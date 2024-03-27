@@ -67,7 +67,6 @@ public class ShopScreen extends GameScreen {
                 else {
                     return false;
                 }
-
                 return true;
             }
         });
