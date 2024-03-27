@@ -72,7 +72,7 @@ public class ProfileManager implements Serializable {
      * @return Array of student profiles loaded.
      */
     public ArrayList<PlayerProfile> loadProfiles(String filename) {
-        //FIXME sus but works
+
         ArrayList<PlayerProfile> profiles;  // Stores player profiles read from file
         try {
             // Open file and read data
@@ -409,8 +409,8 @@ public class ProfileManager implements Serializable {
         this.lifetimeHighScoreList = this.sortLifetimeScore();
 
         if (this.studentInformation.size() > 5) {  // More than 5 students in the database
-            this.highScoreList =  (ArrayList<PlayerProfile>) this.highScoreList.subList(0, 5);  // Take only the top 5 students
-            this.lifetimeHighScoreList =  (ArrayList<PlayerProfile>) this.lifetimeHighScoreList.subList(0, 5);
+            this.highScoreList =  new ArrayList<PlayerProfile>(this.highScoreList.subList(0, 5));  // Take only the top 5 students
+            this.lifetimeHighScoreList =  new ArrayList<PlayerProfile>(this.lifetimeHighScoreList.subList(0, 5));
         }
 
         // Save high score tables to file

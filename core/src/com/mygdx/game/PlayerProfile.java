@@ -193,7 +193,12 @@ public class PlayerProfile {
 
         //Reading from file
         try {
-            Scanner catalog = new Scanner(new File("external/knowledge catalog.txt"));
+
+            // Define path to assets directory, where knolwedge catalog is stored
+            String directory = System.getProperty("user.dir");
+            directory = directory.substring(0, directory.length()-4) + "assets";
+
+            Scanner catalog = new Scanner(new File(directory + "/external/knowledge catalog.txt"));
             for (int i = 0; i < line; i++) { //Getting all knowledge up to line
                 if (!catalog.hasNextLine()) break; //No more lines to read
 
