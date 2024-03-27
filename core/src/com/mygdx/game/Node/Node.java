@@ -79,9 +79,9 @@ public abstract class Node implements Serializable {
     /**
      * Runs when the Node is landed on.
      */
-    public void activate(Player player, SpriteBatch batch) {
+    public void activate(Player player, SpriteBatch batch, boolean hardmode) {
     }
-    public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin) {
+    public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin, boolean hardmode) {
         //System.out.println("this is working");
     }
     /**

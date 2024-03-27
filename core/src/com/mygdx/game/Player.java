@@ -221,7 +221,7 @@ public class Player implements Serializable {
      * @param batch SpriteBatch for rendering operations
      * @throws IllegalArgumentException if the nodeID doesn't exist in nodeMap
      */
-    public void move(String tileID, Map<String, Node> nodeMap, SpriteBatch batch) {
+    public void move(String tileID, Map<String, Node> nodeMap, SpriteBatch batch, boolean hardmode) {
         // Check if a path exists to the given tileID
         ArrayList<String> validPath = null;
         for (ArrayList<String> path : reachablePaths) {
@@ -255,7 +255,7 @@ public class Player implements Serializable {
         setCurrentTile(tileID, nodeMap);
         
         // Call the node's activation function
-        nodeMap.get(tileID).activate(this, batch);
+        nodeMap.get(tileID).activate(this, batch, hardmode);
 
         reachablePaths.clear();
         dieRoll = 0;

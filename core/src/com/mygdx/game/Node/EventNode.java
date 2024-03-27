@@ -46,12 +46,13 @@ public class EventNode extends Node {
      * @param batch
      */
     @Override
-    public void activate(Player player, SpriteBatch batch) {
+    public void activate(Player player, SpriteBatch batch, boolean hardmode) {
         globalEvent.notifyObservers(penaltyAmount);
     }
     public void addEventListener(Observer<Integer> ob) {globalEvent.addObserver(ob); }
 
     //TODO decide where the star selling should go, shop/sellnode or something else
+    //Hardmode everyone lose star if they have money
     public void sellStar(Player p, int starToMoney, int starsToSell){
         if(p.getStars() <= 0){
             //show dialogue for player has no star
