@@ -95,18 +95,17 @@ public class Player implements Serializable {
      * Constructor creates a player with existing game data.
      *
      * @param profile     Player's profile. Links the player to their persistent, out-of-game profile.
-     * @param money       Player's money
      * @param stars       Player's stars
      * @param score       Player's score
      * @param items       Player's item inventory
      * @param currentTile Player's current tile ID
      */
-    public Player(PlayerProfile profile, AssetManager assets, int money, int stars, int score, ArrayList<Item> items, String currentTile) {
+    public Player(PlayerProfile profile, AssetManager assets, int stars, int score, ArrayList<Item> items, String currentTile) {
 
         // Initialize all player attributes
         this.profile = profile;
         this.stars = stars;
-        this.money = money;
+        this.money = 20;
         this.investments = 0;
         this.score = score;
         this.items = items;
@@ -143,7 +142,7 @@ public class Player implements Serializable {
      * @param profile Player profile. Links the in-game player with their out-of-game profile
      */
     public Player(PlayerProfile profile, AssetManager assets) {
-        this(profile, assets, 0, 0, 0, new ArrayList<Item>(), null);
+        this(profile, assets, 0, 0, new ArrayList<Item>(), null);
     }
 
     /**
