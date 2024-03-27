@@ -64,15 +64,7 @@ public class PlayerProfile {
      *
      * @param name Student's name
      */
-    public PlayerProfile(String name) {
-
-        this(name, 0, 0, 1);
-
-        // Generate random knowledge level TODO: Is this intended?
-        Random rn = new Random();
-        this.knowledgeLevel = rn.nextInt(13)+1;
-
-    }
+    public PlayerProfile(String name) {this(name, 0, 0, 1);}
 
     /**
      * Private no-arg constructor for serialization

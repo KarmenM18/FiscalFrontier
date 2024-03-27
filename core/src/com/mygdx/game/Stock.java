@@ -23,7 +23,7 @@ public class Stock {
     private int divRisk;
 
     /**
-     * Constructor with preset stock price of $50.00
+     * Constructor for preset stocks
      */
     public Stock(String name, int price, String description,
                  double mincg, double mincd, double maxchg, double maxcd, double divPay, int risk, int divRisk) {
@@ -46,9 +46,9 @@ public class Stock {
     private Stock() {}
 
     /**
-     * @return dividen payout every 5 rounds
+     * @return dividend payout every 5 rounds. Also rounds the number up
      */
-    public int dividenPay() {return (int) (this.price * (this.divPay/100));}
+    public int dividendPay() {return (int) Math.ceil(this.price * (this.divPay/100));}
 
     /**
      * @return the stock's current price

@@ -250,7 +250,7 @@ public class GameState implements Serializable {
                 gameOver = true;
             }
         }
-        if(roundNumber > 0 && roundNumber % 3 == 0){
+        if(roundNumber > 0 && roundNumber % 2 == 0){ //Play level increases every other round
             for (Player p : getPlayerList()){
                 p.levelUp();
             }
@@ -279,7 +279,10 @@ public class GameState implements Serializable {
         turnNumber++;
 
         //Paying dividends from high risk stocks
+        //Only dividend stocks will be paid out
+        for (int i = 3; i < 6; i++) {
 
+        }
 
         //Updating high risk stocks
         this.stocks[2].updatePrice();
@@ -573,9 +576,7 @@ public class GameState implements Serializable {
     /**
      * @return true if the game is over, otherwise false
      */
-    public boolean isGameOver() {
-        return gameOver;
-    }
+    public boolean isGameOver() {return gameOver;}
 
     /**
      * @return integer GameState's ID
