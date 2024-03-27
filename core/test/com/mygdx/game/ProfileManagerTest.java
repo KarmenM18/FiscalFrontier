@@ -28,6 +28,8 @@ class ProfileManagerTest {
 
     static String lifetimeScoreDatabase;
 
+    static int numStudents;
+
 
     @BeforeAll
     static void setUpClass() {
@@ -45,6 +47,9 @@ class ProfileManagerTest {
             studentDatabase = Files.readString(Path.of(studentFile));
             highScoreDatabase = Files.readString(Path.of(highScoreFile));
             lifetimeScoreDatabase = Files.readString(Path.of(lifetimeScoreFile));
+
+            // Define expected values in all tests
+            numStudents = 8;
 
         }
         catch (IOException e) {
@@ -91,7 +96,7 @@ class ProfileManagerTest {
         ArrayList<PlayerProfile> studentProfiles = profileManager.getStudentProfiles();
 
         // Verify correct number of students were returned
-        assertEquals(studentProfiles.size(), 8);
+        assertEquals(studentProfiles.size(), numStudents);
 
     }
 
@@ -129,22 +134,102 @@ class ProfileManagerTest {
         profileManager.addStudent("NewStudent");  // Add a new student to the database
 
         // Confirm student was added to the list of profiles
-        PlayerProfile lastStudent = profileManager.getStudentProfiles().get(-1);
+        assertEquals(numStudents + 1, profileManager.getStudentProfiles().size());
+        PlayerProfile lastStudent = profileManager.getStudentProfiles().get(numStudents);
         assertEquals("NewStudent", lastStudent.getName());
 
-        // Load the database with another instance to confirm changes were written to file
+        // Load the database with another profile manager instance to confirm changes were written to file
         ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
-        PlayerProfile fileLastStudent = secondManager.getStudentProfiles().get(-1);
+        PlayerProfile fileLastStudent = secondManager.getStudentProfiles().get(numStudents);
         assertEquals("NewStudent", fileLastStudent.getName());
 
     }
 
     @Test
-    void removeStudent() {
+    void removeFakeStudent() {
+        // Attempt to remove a student that does not exist
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.removeStudent("FakeStudent");});
     }
 
     @Test
-    void renameStudent() {
+    void removeStudentListUpdates() {
+
+        // Remove an existing student from the database
+        String studentName = "Student3";  // Name of student to remove
+        PlayerProfile removed = profileManager.removeStudent(studentName);
+
+        // Confirm student was removed from the list of profiles
+        assertEquals(removed.getName(), studentName);                                        // Confirm correct student was found and returned
+        assertEquals(numStudents - 1, profileManager.getStudentProfiles().size());  // Confirm that a student was removed from the list
+        assertNotEquals(studentName, profileManager.getStudentProfiles().get(2).getName());  // Confirm a different student is now in the removed student's place
+
+        // Confirm high score lists were updated
+        assertNotEquals(studentName, profileManager.getHighScoreList().get(4).getName());  // Confirm a different student is now in the removed student's place
+        assertEquals(5, profileManager.getHighScoreList().size());                // Confirm that another student was added to fill the list
+
+        assertNotEquals(studentName, profileManager.getHighScoreList().get(3).getName());  // Confirm a different student is now in the removed student's place
+        assertEquals(5, profileManager.getHighScoreList().size());                // Confirm that another student was added to fill the list
+
+    }
+
+    @Test
+    void removeStudentFileUpdates() {
+
+        // Remove an existing student from the database
+        String studentName = "Student3";  // Name of student to remove
+        profileManager.removeStudent(studentName);
+
+        // Load the database with another profile manager instance to confirm changes were written to file
+        ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
+
+        // Confirm student database file was written to
+        assertNotEquals(studentName, secondManager.getStudentProfiles().get(2).getName());  // Confirm a different student is now in the removed student's place
+
+        // Confirm high score databases were updated
+        assertNotEquals(studentName, secondManager.getHighScoreList().get(4).getName());  // Confirm a different student is now in the removed student's place
+        assertEquals(5, secondManager.getHighScoreList().size());                // Confirm that another student was added to fill the list
+
+        assertNotEquals(studentName, secondManager.getHighScoreList().get(3).getName());  // Confirm a different student is now in the removed student's place
+        assertEquals(5, secondManager.getHighScoreList().size());                // Confirm that another student was added to fill the list
+
+    }
+
+    @Test
+    void renameFakeStudent() {
+        // Attempt to rename a student that does not exist
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.renameStudent("FakeStudent", "NewName");});
+    }
+
+    @Test
+    void renameStudentListUpdates() {
+
+        // Rename an existing student from the database
+        String newName = "NewName";  // Name of student to remove
+        profileManager.renameStudent("Student4", newName);
+
+        // Confirm student was renamed in each list
+        assertEquals(profileManager.getStudentProfiles().get(3).getName(), newName);        // Renamed in list of all student profiles
+        assertEquals(profileManager.getHighScoreList().get(0).getName(), newName);          // Renamed in high score list
+        assertEquals(profileManager.getLifetimeHighScoreList().get(2).getName(), newName);  // Renamed in lifetime high score list
+
+    }
+
+
+    @Test
+    void renameStudentFileUpdates() {
+
+        // Rename an existing student from the database
+        String newName = "NewName";  // Name of student to remove
+        profileManager.renameStudent("Student4", newName);
+
+        // Load the database with another instance to confirm changes were written to file
+        ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
+
+        // Confirm each database file was written
+        assertEquals(secondManager.getStudentProfiles().get(3).getName(), newName);        // Renamed in student profiles database
+        assertEquals(secondManager.getHighScoreList().get(0).getName(), newName);          // Renamed in high score database
+        assertEquals(secondManager.getLifetimeHighScoreList().get(2).getName(), newName);  // Renamed in lifetime high score database
+
     }
 
     @Test
