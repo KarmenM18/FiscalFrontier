@@ -282,7 +282,12 @@ public class ProfileManager implements Serializable {
     public void updateHighScore(String name, int newHighScore) throws IllegalArgumentException {
 
         PlayerProfile profile = getProfile(name);   // Retrieve the profile of the student with the given name
-        profile.setHighScore(newHighScore);         // Update student's high score
+
+        // Only update the score if it's higher
+        if (profile.getHighScore() > newHighScore) return;
+        else {
+            profile.setHighScore(newHighScore);     // Update student's high score
+        }
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
         this.updateHighScores();  // Update high score tables
@@ -300,6 +305,23 @@ public class ProfileManager implements Serializable {
 
         PlayerProfile profile = getProfile(name);    // Retrieve the profile of the student with the given name
         profile.setLifetimeScore(newLifetimeScore);  // Update student's lifetime score
+
+        this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
+        this.updateHighScores();  // Update high score tables
+
+    }
+
+    /**
+     * Adds to the student's lifetime score and writes updates to file.
+     *
+     * @param name Student's name
+     * @param newScore Student's new score
+     * @throws IllegalArgumentException If a student with the entered name does not exist
+     */
+    public void addLifetimeScore(String name, int newScore) throws IllegalArgumentException {
+
+        PlayerProfile profile = getProfile(name);    // Retrieve the profile of the student with the given name
+        profile.setLifetimeScore(profile.getLifetimeScore() + newScore);  // Update student's lifetime score
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
         this.updateHighScores();  // Update high score tables

@@ -119,7 +119,7 @@ public class HighScoreScreen extends GameScreen {
 
             Label rankingLabel = new Label(Integer.toString(lifetimeScoreRanking), skin);
             Label studentNameLabel = new Label(studentProfile.getName(), skin);
-            Label highScoreLabel = new Label(Integer.toString(studentProfile.getHighScore()), skin);
+            Label highScoreLabel = new Label(Integer.toString(studentProfile.getLifetimeScore()), skin);
 
             lifetimeHighScoreTable.add(rankingLabel);
             lifetimeHighScoreTable.add(studentNameLabel);
