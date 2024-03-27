@@ -48,7 +48,7 @@ public class MainGame extends Game {
 		assets.load(config.getEventTilePath(), Texture.class);
 		assets.load(config.getPenaltyTilePath(), Texture.class);
 		assets.load(config.getPlayerPath(), Texture.class);
-		assets.load("background.jpeg", Texture.class);
+		assets.load("background2.jpg", Texture.class);
 		assets.finishLoading(); // Make sure assets are loaded before continuing;
 
 		// Load screens

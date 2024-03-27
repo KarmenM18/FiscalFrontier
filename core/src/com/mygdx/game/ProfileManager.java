@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Responsible for managing the database of student player profiles.
@@ -75,9 +74,7 @@ public class ProfileManager implements Serializable {
     public ArrayList<PlayerProfile> loadProfiles(String filename) {
 
         ArrayList<PlayerProfile> profiles;  // Stores player profiles read from file
-
         try {
-
             // Open file and read data
             String inputString = Files.readString(Path.of(filename));
 

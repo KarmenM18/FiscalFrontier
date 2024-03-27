@@ -43,13 +43,20 @@ public class PenaltyNode extends Node {
      */
     @Override
     public void activate(Player player, SpriteBatch batch, boolean hardmode) {
-        if(player.getHasShield()){
-            //do nothing
-        }else if(player.getMoney() >= penaltyAmount){
-            //maybe add logic on the penalty graphic
-            player.setMoney(player.getMoney() - penaltyAmount);
-        }else if(player.getStars() > 0){
-            player.setStars(player.getStars() - 1);
+        if(!hardmode){
+            if (player.getHasShield()) {
+                //do nothing
+            } else if (player.getMoney() >= penaltyAmount) {
+                player.setMoney(player.getMoney() - penaltyAmount);
+            }
+        }else {
+            if (player.getHasShield()) {
+                //do nothing
+            } else if (player.getStars() > 0) {
+                player.setStars(player.getStars() - 1);
+            } else {
+                player.setMoney(player.getMoney() - penaltyAmount);
+            }
         }
     }
 }
