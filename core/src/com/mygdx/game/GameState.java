@@ -463,7 +463,9 @@ public class GameState implements Serializable {
         //SAFE GROWTH STOCK
         tickerName = "SGS";
         description = "Safe Growth Stock for the risk adverse with low risk low rewards and low dividend pay\n" +
-                "Growth: 0.5% to 2% every ROUND\n" +
+                "                 \n" +
+                "KEY INFROMATION: \n" +
+                "Growth: 0.5% to 2% every ROUND \n" +
                 "Decline: 0.1% to 1% every ROUND\n" +
                 "Risk: 20% Chance to Decline\n" +
                 "Dividend Pay: Every 5 Rounds\n" +
@@ -481,6 +483,8 @@ public class GameState implements Serializable {
         //MEDIUM RISK GROWTH STOCK
         tickerName ="MGS";
         description = "A Stock with good growth and slightly higher risk. Dividends are payed more frequently.\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "Growth: 2% to 10% every ROUND\n" +
                 "Decline: 1% to 3% every ROUND\n" +
                 "Risk: 40% Chance to decline\n" +
@@ -497,12 +501,14 @@ public class GameState implements Serializable {
         //HIGH RISK GROWTH STOCK "Penny Stock"
         tickerName ="HRGS";
         description = "High Risk Stock. Which Changes every turn instead of every Round Not advisable in most cases\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "Growth: 10% to 25% every TURN\n" +
                 "Decline: 15% to 20% every TURN\n" +
                 "Risk: 70% Chance to decline\n" +
                 "Dividend Pay: Every 5 Rounds\n" +
                 "Dividend Change: No Change. Constant 1%";
-        price = 1;
+        price = 20;
         divPay = 1;
         minG = 10;
         maxG = 25;
@@ -514,6 +520,8 @@ public class GameState implements Serializable {
         //SAFE RISK Dividend STOCK
         tickerName ="SDS";
         description = "Safe Consistent Dividend Stock. Low Stock Price change but more consistent income\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "This stock focuses on income rather than stock price growth\n" +
                 "Growth: 1% to 2% every Round\n" +
                 "Decline: 0.1% to 0.5% every ROUND\n" +
@@ -533,8 +541,10 @@ public class GameState implements Serializable {
 
         //Medium RISK Dividend STOCK
         tickerName ="MRDS";
-        description = "Increased payout with a higher risk for a decline in dividend pay\n" +
+        description = "Increased payout with a higher risk for a decline in dividend pay " +
                 "This stock focuses on income per turn rather than stock price increase\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "Growth: 1% to 2% every Round\n" +
                 "Decline: 0.1% to 0.5% every ROUND\n" +
                 "Risk: 20% Chance to decline in stock value\n" +
@@ -546,8 +556,10 @@ public class GameState implements Serializable {
 
         //HIGH RISK Dividend STOCK
         tickerName ="HRDS";
-        description = "Highest dividend payout with extreme payout inconsistency however, dividends are paid out every turn\n" +
+        description = "Highest dividend payout with extreme payout inconsistency however, dividends are paid out every turn. " +
                 "This stock focuses on income per turn rather than stock price increase\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "Growth: 1% to 2% every TURN\n" +
                 "Decline: 0.1% to 0.5% every TURN\n" +
                 "Risk: 20% Chance to decline in stock value\n" +

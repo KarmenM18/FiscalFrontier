@@ -4,31 +4,23 @@ TODO: Documentation
 
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.game.Items.Item;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.text.DecimalFormat;
 
 public class ShopScreen extends GameScreen {
     private Observable<Void> boardEvent = new Observable<Void>();
 
     private Player currentPlayer;
-    private Label title;
     private Stock [] stocksAvailable;
 
     //For GUI
@@ -39,19 +31,18 @@ public class ShopScreen extends GameScreen {
     private ScrollPane scroller;
     private Button buyButtons[];
     private Button sellButtons[];
+    private final DecimalFormat decformat;
 
     /**
-     * Constructor.
-     *
+     * Constructor
      * @param batch  SpriteBatch to initialize the Stage with
      * @param assets AssetManager to load assets with
      */
     public ShopScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
-        title = new Label("ShopScreen", skin);
-        stage.addActor(title);
 
+        this.decformat = new DecimalFormat("0.00");
         this.buyButtons = new Button[6];
         this.sellButtons = new Button[6];
 
@@ -118,7 +109,8 @@ public class ShopScreen extends GameScreen {
 
         background = new Table();
         background.setFillParent(true);
-        background.add(investmentsList).left();
+        background.add(investmentsList).top().center();
+        background.row();
         background.add(playerInfo).right();
         this.stage.addActor(background);
     }
@@ -136,11 +128,12 @@ public class ShopScreen extends GameScreen {
             Label ticker = new Label("Ticker Name: " + stocksAvailable[i].getTickerName(), skin);
             Label stockDescription = new Label("Description of stock: \n" + this.stocksAvailable[i].getDescription(), skin);
             Label stockPrice = new Label("Stock Price: " + this.stocksAvailable[i].getPrice(), skin);
-            Label stockPriceChange = new Label("Stock Price Change Since Last Update: " + this.stocksAvailable[i].getPriceChange() + "%", skin);
-            Label stockDivPayChange = new Label("Dividend Pay Change Since Last Update: " + this.stocksAvailable[i].getDivPayChange() + "%", skin);
-            Label lineBreak = new Label("---------------------------------------------------------------------------------------------------------", skin);
+            Label stockPriceChange = new Label("Stock Price Change: " + this.decformat.format(this.stocksAvailable[i].getPriceChange()) + "%", skin);
+            Label stockDivPayChange = new Label("Dividend Pay Change: " + this.decformat.format(this.stocksAvailable[i].getDivPayChange()) + "%", skin);
+            Label lineBreak = new Label("-------------------------------------------------------------------------------------------------------------------", skin);
+            Label space = new Label("     ", skin);
 
-            ticker.setFontScale(3);
+            ticker.setFontScale(2);
 
             ticker.setWrap(true);
             stockDescription.setWrap(true);
@@ -153,13 +146,18 @@ public class ShopScreen extends GameScreen {
             stockPrice.setAlignment(Align.left);
             stockPriceChange.setAlignment(Align.left);
             stockDivPayChange.setAlignment(Align.left);
+            space.setAlignment(Align.left);
 
 
-            investments.add(ticker).width(500).height(50).left();
-            investments.add(buyButtons[i]).width(150).height(50).left();
-            investments.add(sellButtons[i]).width(150).height(50).left();
+            investments.add(ticker).width(500).height(80).left();
+            investments.add(buyButtons[i]).width(180).height(80).left();
+            investments.add(sellButtons[i]).width(180).height(80).left();
             investments.row();
-            investments.add(stockDescription).width(500).height(300).left();
+            investments.add(space).width(600).height(30).left();
+            investments.row();
+            investments.add(stockDescription).width(600).left();
+            investments.row();
+            investments.add(space).width(600).height(30).left();
             investments.row();
             investments.add(stockPrice).width(500).height(30).left();
             investments.row();
@@ -167,7 +165,7 @@ public class ShopScreen extends GameScreen {
             investments.row();
             investments.add(stockDivPayChange).width(500).height(30).left();
             investments.row();
-            investments.add(lineBreak).width(500).height(30);
+            investments.add(lineBreak).width(500).height(30).left();
             investments.row();
         }
 
@@ -192,14 +190,10 @@ public class ShopScreen extends GameScreen {
         playerMoney.setWrap(true);
         playerInvestment.setWrap(true);
 
-        playerName.setFontScale(2);
-        playerMoney.setFontScale(2);
-        playerInvestment.setFontScale(2);
-
         //Adding to table
-        playerInfo.add(playerName).width(200).height(30);
-        playerInfo.add(playerMoney).width(400).height(30).left();
-        playerInfo.add(playerInvestment).width(200).height(30);
+        playerInfo.add(playerName).width(400).height(30).center();
+        playerInfo.add(playerMoney).width(600).height(30).left();
+        playerInfo.add(playerInvestment).width(400).height(30).left();
     }
 
     /**
@@ -235,6 +229,9 @@ public class ShopScreen extends GameScreen {
         updateScreen();
     }
 
+    /**
+     * Sets the button listeners in the shop screen
+     */
     private void setListeners () {
 
         //Adding listeners for Safe Growth Stock
