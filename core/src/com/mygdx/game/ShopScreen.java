@@ -133,14 +133,16 @@ public class ShopScreen extends GameScreen {
             Label lineBreak = new Label("-------------------------------------------------------------------------------------------------------------------", skin);
             Label space = new Label("     ", skin);
 
-            ticker.setFontScale(2);
+            ticker.setFontScale(2); //Making name of stock larger acting as the header
 
+            //Setting if the text can wraparound
             ticker.setWrap(true);
             stockDescription.setWrap(true);
             stockPrice.setWrap(true);
             stockPriceChange.setWrap(true);
             stockDivPayChange.setWrap(true);
 
+            //Setting Alignment per cell
             ticker.setAlignment(Align.center);
             stockDescription.setAlignment(Align.left);
             stockPrice.setAlignment(Align.left);
@@ -148,8 +150,8 @@ public class ShopScreen extends GameScreen {
             stockDivPayChange.setAlignment(Align.left);
             space.setAlignment(Align.left);
 
-
-            investments.add(ticker).width(500).height(80).left();
+            //Adding each element to a table and formatting
+            investments.add(ticker).width(600).height(80).left();
             investments.add(buyButtons[i]).width(180).height(80).left();
             investments.add(sellButtons[i]).width(180).height(80).left();
             investments.row();
