@@ -212,8 +212,7 @@ public class SaveScreen extends GameScreen {
      * @throws FileNotFoundException if the save folder wasn't found. It will not throw if the folder is just empty
      */
     private File[] getFileList() throws FileNotFoundException {
-        ClassLoader CL = getClass().getClassLoader();
-        File saveFolder = new File(CL.getResource(Config.getInstance().getSaveFolder()).getFile());
+        File saveFolder = new File("saves");
         File[] fileList = saveFolder.listFiles();
         if (fileList == null) throw new FileNotFoundException();
 

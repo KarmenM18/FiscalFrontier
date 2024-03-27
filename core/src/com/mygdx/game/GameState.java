@@ -175,7 +175,7 @@ public class GameState implements Serializable {
                         nodeMap.put(ID, new PenaltyNode(j, map.length - i, north, east, south, west, nodeMap, assets));
                         break;
                     case 4:
-                        nodeMap.put(ID, new EventNode(j, map.length - i, north, east, south, west, nodeMap, assets));
+                        createEventNode(j, map.length - i, north, east, south, west);
                         break;
                     default:
                         break;

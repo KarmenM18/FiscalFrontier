@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 public class StarNode extends Node {
-    int starCost = 10;
+    int starCost;
     public boolean hasStar = true;
     private Observable<Void> starEvent = new Observable<Void>();
     private Dialog buyStarDialog;
@@ -63,6 +63,11 @@ public class StarNode extends Node {
      * @param skin
      */
     public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin, boolean hardmode) {
+        if(!hardmode){
+            starCost = 10;
+        }else {
+            starCost = 20;
+        }
         if(hasStar){
             if(player.getMoney() >= starCost){
                 buyStarDialog = new Dialog("Buying Star", skin) {
@@ -127,8 +132,5 @@ public class StarNode extends Node {
         else {
             sprite.setTexture(tileTexture);
         }
-    }
-    public int getStarCost(){
-        return starCost;
     }
 }
