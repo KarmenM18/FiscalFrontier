@@ -501,9 +501,12 @@ public class Player implements Serializable {
      * @param stockNum What stock type from the 6 available stocks to pick from
      */
     public void addInvestments(Stock newInvestment, int stockNum) {
-        this.stocks.get(stockNum).add(newInvestment);
-        this.investments += newInvestment.getPrice();
-        this.money -= newInvestment.getPrice();
+        //Making sure that the user can afford the stock
+        if (this.money >= newInvestment.getPrice()) {
+            this.stocks.get(stockNum).add(newInvestment);
+            this.investments += newInvestment.getPrice();
+            this.money -= newInvestment.getPrice();
+        }
     }
 
     /**

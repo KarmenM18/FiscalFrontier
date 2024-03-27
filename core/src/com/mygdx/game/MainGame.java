@@ -81,9 +81,9 @@ public class MainGame extends Game {
 
 		// Set GameBoard observers
 		gameBoard.addShopListener(v -> {
+			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
 			shopScreen.setStocksAvailable(gameBoard.getGameState().getAllStocks());
 			shopScreen.updateScreen();
-			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
 			setScreen(shopScreen);
 		});
 		gameBoard.addPauseListener(currentPlayer -> setScreen(pauseScreen));

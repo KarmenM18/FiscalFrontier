@@ -540,7 +540,7 @@ public class GameState implements Serializable {
         stocks[4] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
 
         //HIGH RISK Dividend STOCK
-        tickerName ="MRDS";
+        tickerName ="HRDS";
         description = "Highest dividend payout with extreme payout inconsistency however, dividends are paid out every turn\n" +
                 "This stock focuses on income per turn rather than stock price increase\n" +
                 "Growth: 1% to 2% every TURN\n" +
