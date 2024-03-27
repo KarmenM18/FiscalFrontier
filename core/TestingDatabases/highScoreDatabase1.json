@@ -1,0 +1,47 @@
+[
+  {
+    class: com.mygdx.game.PlayerProfile
+    name: Student4
+    knowledgeLevel: 8,
+    highScore: 37
+    lifetimeScore: 98
+    learned: []
+    spritePath: player-alt.png
+  }
+  {
+    class: com.mygdx.game.PlayerProfile
+    name: Student2
+    knowledgeLevel: 3,
+    highScore: 22
+    lifetimeScore: 173
+    learned: []
+    spritePath: player-alt.png
+  }
+  {
+    class: com.mygdx.game.PlayerProfile
+    name: Student1
+    knowledgeLevel: 5
+    highScore: 16
+    lifetimeScore: 132
+    learned: []
+    spritePath: player-alt.png
+  }
+  {
+    class: com.mygdx.game.PlayerProfile
+    name: Student5
+    knowledgeLevel: 12,
+    highScore: 13
+    lifetimeScore: 46
+    learned: []
+    spritePath: player-alt.png
+  }
+  {
+    class: com.mygdx.game.PlayerProfile
+    name: Student3
+    knowledgeLevel: 7,
+    highScore: 4
+    lifetimeScore: 60
+    learned: []
+    spritePath: player-alt.png
+  }
+]

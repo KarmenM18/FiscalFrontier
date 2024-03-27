@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +50,7 @@ class SaveSystemTest {
     @Test
     void saveAndReadGameState() {
         PlayerProfile testProfile = new PlayerProfile("TestUser");
-        GameState gs = new GameState(Collections.singletonList(testProfile), asset);
+        GameState gs = new GameState(Collections.singletonList(testProfile), asset, 1, false);
         saver.saveGameState(gs, "testSave");
         // TODO update file name when we implement naming saves
         Path saveFile = Paths.get("testSave_1.json");
