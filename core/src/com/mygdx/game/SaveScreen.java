@@ -96,11 +96,7 @@ public class SaveScreen extends GameScreen {
      * @return unique integer ID
      */
     public int getUniqueID(SaveSystem sSystem) throws FileNotFoundException {
-        //TODO check
-        ClassLoader CL = getClass().getClassLoader();
-        File saveFolder = new File(CL.getResource("saves").getFile());
-        File[] fileList = saveFolder.listFiles();
-        if (fileList == null) throw new FileNotFoundException();
+        File[] fileList = getFileList();
 
         HashSet<Integer> foundIDs = new HashSet<>();
         for (File file : fileList) {
@@ -132,10 +128,7 @@ public class SaveScreen extends GameScreen {
      * @param sSystem the SaveSystem to use to get GameStates.
      */
     public void deleteByID(int id, SaveSystem sSystem) throws FileNotFoundException {
-        ClassLoader CL = getClass().getClassLoader();
-        File saveFolder = new File(CL.getResource("saves").getFile());
-        File[] fileList = saveFolder.listFiles();
-        if (fileList == null) throw new FileNotFoundException();
+        File[] fileList = getFileList();
 
         for (File file : fileList) {
             if (file.isFile()) {
@@ -169,10 +162,7 @@ public class SaveScreen extends GameScreen {
         table.row().pad(10, 0, 10, 0);
 
         int saveNum = 1;
-        ClassLoader CL = getClass().getClassLoader();
-        File saveFolder = new File(CL.getResource("saves").getFile());
-        File[] fileList = saveFolder.listFiles();
-        if (fileList == null) throw new FileNotFoundException();
+        File[] fileList = getFileList();
 
         for (File file : fileList) {
             if (file.isFile()) {
@@ -213,6 +203,21 @@ public class SaveScreen extends GameScreen {
                 }
             }
         }
+    }
+
+    /**
+     * Get the list of saves in the save folder.
+     *
+     * @return an array of Files
+     * @throws FileNotFoundException if the save folder wasn't found. It will not throw if the folder is just empty
+     */
+    private File[] getFileList() throws FileNotFoundException {
+        ClassLoader CL = getClass().getClassLoader();
+        File saveFolder = new File(CL.getResource(Config.getInstance().getSaveFolder()).getFile());
+        File[] fileList = saveFolder.listFiles();
+        if (fileList == null) throw new FileNotFoundException();
+
+        return fileList;
     }
 
     public void addLoadSaveListener(Observer<String> ob) { loadSaveEvent.addObserver(ob); }

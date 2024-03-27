@@ -25,12 +25,14 @@ public class Config {
     }
 
     //private String uiPath = "ui/flat-earth-ui.json"; // Path of UI skin file
+    //private String uiPath = "ui/jigsaw/tile-jigsaw-ui.json"; // Path of UI skin file
     private String uiPath = "ui/8bit/uiskin.json"; // Path of UI skin file
     private String tilePath = "tileGemini.jpeg";
     private String starTilePath = "starTile.jpg";
     private String penaltyTilePath = "penalty-node1.png";
     private String eventTilePath = "eventNode.png";
     private String playerPath = "player-alt.png";
+    private String saveFolder = "saves";
     private int maxPlayers = 5;
     private int minPlayers = 2;
     private int maxRounds = 1; // The highest reachable round before the game ends TODO update to real value
@@ -63,5 +65,9 @@ public class Config {
     public int getMaxPlayers() { return maxPlayers; }
     public int getMinPlayers() {
         return minPlayers;
+    }
+
+    public String getSaveFolder() {
+        return saveFolder;
     }
 }
