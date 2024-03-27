@@ -8,7 +8,7 @@ import java.util.Random;
 public class Stock {
 
     private String tickerName;  //Name of the stock
-    private double price;       //Stock Buy Price per QTY
+    private int price;       //Stock Buy Price per QTY
     private String description; //Description outlining the risks and reward
     private double priceChange; //Price Change since last round as a %
     private double divPayChange;//Dividend Pay Change as a %
@@ -25,7 +25,7 @@ public class Stock {
     /**
      * Constructor with preset stock price of $50.00
      */
-    public Stock(String name, double price, String description,
+    public Stock(String name, int price, String description,
                  double mincg, double mincd, double maxchg, double maxcd, double divPay, int risk, int divRisk) {
         this.tickerName = name;
         this.price = price;
@@ -48,12 +48,12 @@ public class Stock {
     /**
      * @return dividen payout every 5 rounds
      */
-    public double dividenPay() {return this.price * (this.divPay/100);}
+    public int dividenPay() {return (int) (this.price * (this.divPay/100));}
 
     /**
      * @return the stock's current price
      */
-    public double getPrice(){return this.price;}
+    public int getPrice(){return this.price;}
 
     /**
      * @return Description about the stock

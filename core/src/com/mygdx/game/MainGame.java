@@ -30,6 +30,7 @@ public class MainGame extends Game {
 	private ManageStudentsScreen manageStudentsScreen;
 	private EndScreen endScreen;
 	private HighScoreScreen highScoreScreen;
+	private NewGameScreen newGameScreen;
 
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
@@ -59,31 +60,30 @@ public class MainGame extends Game {
 		shopScreen = new ShopScreen(batch, assets);
 		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
 		saveScreen = new SaveScreen(batch, assets);
+
+		ClassLoader CL = getClass().getClassLoader();
 		profileManager = new ProfileManager("studentInformation.json", "highScoreTable.json", "lifetimeScoreTable.json");
 		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets, this.profileManager);
 		manageStudentsScreen = new ManageStudentsScreen(batch, assets, this.profileManager);
 		endScreen = new EndScreen(batch, assets);
 		highScoreScreen = new HighScoreScreen(batch, assets, this.profileManager);
+		newGameScreen = new NewGameScreen(batch, assets, profileManager);
 
 		// Load players from save if possible
-		if (Utility.fileExists(config.getPlayerSavePath())) {
-			profileList = (List<PlayerProfile>)Utility.loadObject(config.getPlayerSavePath());
-		} else {
-			profileList = new ArrayList<PlayerProfile>();
-			profileList.add(new PlayerProfile("Player 1"));
-			profileList.add(new PlayerProfile("Player 2"));
-			profileList.add(new PlayerProfile("Player 3"));
-			profileList.add(new PlayerProfile("Player 4"));
-		}
+		profileList = new ArrayList<PlayerProfile>();
+		profileList.add(new PlayerProfile("Player 1"));
+		profileList.add(new PlayerProfile("Player 2"));
+		profileList.add(new PlayerProfile("Player 3"));
+		profileList.add(new PlayerProfile("Player 4"));
 
 		// Set starting screen
 		setScreen(mainMenuScreen);
 
 		// Set GameBoard observers
 		gameBoard.addShopListener(v -> {
+			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
 			shopScreen.setStocksAvailable(gameBoard.getGameState().getAllStocks());
 			shopScreen.updateScreen();
-			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
 			setScreen(shopScreen);
 		});
 		gameBoard.addPauseListener(currentPlayer -> setScreen(pauseScreen));
@@ -119,6 +119,20 @@ public class MainGame extends Game {
 		// Set HighScoreScreen observers
 		highScoreScreen.addMenuListener(v -> setScreen(mainMenuScreen));
 
+		// Set NewGameScreen observers
+		newGameScreen.addMenuListener(v -> setScreen(mainMenuScreen));
+		newGameScreen.addCreateGameStateListener(profileBoolPair -> {
+			GameState newGame;
+			try {
+				newGame = new GameState(profileBoolPair.getKey(), assets, saveScreen.getUniqueID(saveSystem), profileBoolPair.getValue());
+			} catch (FileNotFoundException e) {
+				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
+				return;
+			}
+			gameBoard.setGameState(newGame);
+			setScreen(gameBoard);
+		});
+
 		// Set ShopScreen observers
 		shopScreen.addBoardListener(v -> {
 			setScreen(gameBoard);
@@ -133,18 +147,7 @@ public class MainGame extends Game {
 		});
 
 		// Set MainMenuScreen observers
-		mainMenuScreen.addStartGameListener(v -> {
-			// Create new game with all players in it TODO player selection
-            GameState newGame = null;
-            try {
-                newGame = new GameState(profileList, assets, saveScreen.getUniqueID(saveSystem), false);
-            } catch (FileNotFoundException e) {
-				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
-				return;
-			}
-            gameBoard.setGameState(newGame);
-			setScreen(gameBoard);
-		});
+		mainMenuScreen.addStartGameListener(v -> setScreen(newGameScreen));
 		mainMenuScreen.addContinueGameListener(v -> {
 			GameState gs;
 			// TODO: load LAST save. Should probably be stored along with the PlayerProfiles.
@@ -230,15 +233,6 @@ public class MainGame extends Game {
 		batch.dispose();
 		assets.dispose();
 		super.dispose();
-	}
-
-	// Saving stuff TODO: Save manager
-	/**
-	 * Save player profile list to file
-	 */
-	public void saveProfiles() {
-		Config config = Config.getInstance();
-		Utility.saveObject(profileList, config.getPlayerSavePath());
 	}
 
 	/**

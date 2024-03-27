@@ -9,8 +9,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Config;
 import com.mygdx.game.Player;
+
 
 import java.io.Serializable;
 import java.util.*;
@@ -30,6 +33,7 @@ public abstract class Node implements Serializable {
     protected boolean east = false;
     protected boolean south = false;
     protected boolean west = false;
+
 
     /**
      * Constructor for Node
@@ -77,7 +81,9 @@ public abstract class Node implements Serializable {
      */
     public void activate(Player player, SpriteBatch batch) {
     }
-
+    public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin) {
+        //System.out.println("this is working");
+    }
     /**
      * Get all Nodes reachable from this Node, exactly {@code distance} nodes away from it.
      * Returns the whole path from the current node to the reachable node.
