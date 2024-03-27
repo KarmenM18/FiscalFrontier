@@ -67,7 +67,7 @@ public class MainGame extends Game {
 		highScoreScreen = new HighScoreScreen(batch, assets, this.profileManager);
 		newGameScreen = new NewGameScreen(batch, assets, profileManager);
 
-		// Set starting screen
+		//Set starting screen
 		setScreen(mainMenuScreen);
 
 		// Set GameBoard observers

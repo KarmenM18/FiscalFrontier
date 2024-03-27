@@ -35,7 +35,7 @@ public class Config {
     private String saveFolder = "saves";
     private int maxPlayers = 5;
     private int minPlayers = 2;
-    private int maxRounds = 1; // The highest reachable round before the game ends TODO update to real value
+    private int maxRounds = 26; // The highest reachable round before the game ends
 
     public String getUiPath() {
         return uiPath;
