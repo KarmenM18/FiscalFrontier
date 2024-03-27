@@ -278,6 +278,9 @@ public class GameState implements Serializable {
         getCurrentPlayer().startTurn(nodeMap);
         turnNumber++;
 
+        //Paying dividends from high risk stocks
+
+
         //Updating high risk stocks
         this.stocks[2].updatePrice();
         this.stocks[5].updatePrice();

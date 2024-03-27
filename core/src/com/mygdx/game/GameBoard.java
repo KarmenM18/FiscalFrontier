@@ -55,7 +55,6 @@ public class GameBoard extends GameScreen {
     private TextButton pauseButton;
     private TextButton rollButton;
     private TextButton nextTurnButton;
-    private TextButton shopButton;
     private Label currPlayerLabel;
     private Label moneyLabel;
     private Label scoreLabel;
@@ -225,7 +224,6 @@ public class GameBoard extends GameScreen {
                 pauseEvent.notifyObservers(null);
             }
         });
-
 
         rollButton.addListener(new ChangeListener() {
             @Override
