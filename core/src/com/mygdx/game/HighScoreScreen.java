@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class HighScoreScreen extends GameScreen {
 
     /** Event returns to main menu. */
-    private Observable<Void> menuEvent = new Observable<Void>();
+    private final Observable<Void> menuEvent = new Observable<Void>();
     /** Object responsible for storing and managing student profiles and high scores. */
     private ProfileManager profileManager;
 
@@ -38,17 +38,20 @@ public class HighScoreScreen extends GameScreen {
      *
      * @param batch  SpriteBatch to initialize the Stage with
      * @param assets AssetManager to load assets with
+     * @param profileManager ProfileManager responsible for storing and managing student profiles and high scores
      */
     public HighScoreScreen(SpriteBatch batch, AssetManager assets, ProfileManager profileManager) {
 
         super(batch, assets);
         this.profileManager = profileManager;
 
+        this.loadTables();  // Load high scores and initialize buttons
+
     }
 
     
     /**
-     * Loads student high score data and displays the high score tables.
+     * Loads student high score data, initializes the GUI, and displays the high score tables.
      */
     public void loadTables() {
 
@@ -136,8 +139,8 @@ public class HighScoreScreen extends GameScreen {
         table.row();
 
         // Create and display buttons
-        TextButton menuButton = new TextButton("Back", skin);
-        table.add(menuButton);
+        TextButton menuButton = new TextButton("Return to Main Menu", skin);
+        table.add(menuButton).colspan(2);
 
         // Set shortcuts
         stage.addListener(new InputListener() {

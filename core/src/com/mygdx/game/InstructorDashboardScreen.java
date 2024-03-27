@@ -1,86 +1,86 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
-
 import java.util.ArrayList;
 
 /**
- * Initial screen loaded when entering instructor dashboard. Displays student metrics.
+ * Instructor dashboard screen displays metrics to track student progress.
+ * <br><br>
+ * Metrics include the student's highest achieved individual game score, overall lifetime score (the cumulative score
+ * from all played games), their knowledge level, and the number of tips they have unlocked. From this dashboard,
+ * instructors can enter Manage Students mode to add, edit, and remove student profiles.
+ * @see ManageStudentsScreen
+ * @see PlayerProfile
  *
  * @author Joelene Hales
  */
 public class InstructorDashboardScreen extends GameScreen{
 
-    /** Table storing all GUI buttons. */
-    private Table table;
-    /** Button to enter manage students mode. */
-    private TextButton manageStudentsButton;
-    /** Button to return to the main menu screen. */
-    private TextButton returnButton;
     /** Event returns to main menu. */
-    private Observable<Void> menuEvent = new Observable<Void>();
+    private final Observable<Void> menuEvent = new Observable<Void>();
     /** Event enters manage students mode. */
-    private Observable<Void> manageStudentsEvent = new Observable<Void>();
-
+    private final Observable<Void> manageStudentsEvent = new Observable<Void>();
+    /** Object responsible for storing and managing student profiles. */
     private ProfileManager profileManager;
 
 
+    /**
+     * Constructor initializes the instructor dashboard's assets.
+     *
+     * @param batch  SpriteBatch to initialize the Stage with
+     * @param assets AssetManager to load assets with
+     * @param profileManager ProfileManager responsible for storing and managing student profiles and high scores
+     */
     public InstructorDashboardScreen(SpriteBatch batch, AssetManager assets, ProfileManager profileManager) {
 
         super(batch, assets);
         this.profileManager = profileManager;
 
-        this.loadDashboard();   // Display student information and initialize buttons
+        this.loadDashboard();   // Load student information and initialize buttons
 
     }
 
     /**
-     * Displays all student information and initializes buttons.
+     * Initializes the dashboard GUI and displays all student information.
      */
     public void loadDashboard() {
 
         // Clear any previously loaded data
         stage.clear();
-        this.table = new Table();
+        Table table = new Table();         // Create new table storing all GUI elements
+        Table buttonTable = new Table();   // Table containing buttons only, for nicer formatting
 
         // Setup GUI
         stage.addActor(table);
         table.setFillParent(true);  // Size table to stage
+        table.defaults().pad(10);
+        buttonTable.defaults().pad(10);
 
-        // Initialize buttons
-        manageStudentsButton = new TextButton("Manage Students", skin);
-        returnButton = new TextButton("Return to Main Menu", skin);
+        // Add screen title
+        Label title = new Label("Instructor Dashboard", skin);
+        title.setAlignment(Align.center);
+        table.add(title).colspan(5).fillX();
+        table.row();
 
         // Add header to student information table
-        Label header = new Label("Instructor Dashboard", skin);
-        Label studentNameHeader = new Label("Student Name", skin);
-        Label highScoreHeader = new Label("High Score", skin);
-        Label lifetimeScoreHeader = new Label("Lifetime Score", skin);
-        Label knowledgeLevelHeader = new Label("Knowledge Level", skin);
-        Label tipsUnlockedHeader = new Label("Tips Unlocked", skin);
+        table.add(new Label("Student Name", skin));
+        table.add(new Label("High Score", skin));
+        table.add(new Label("Lifetime Score", skin));
+        table.add(new Label("Knowledge Level", skin));
+        table.add(new Label("Tips Unlocked", skin));
+        table.row();
 
-        table.add(header).pad(0, 0, 20, 0).uniform();
-        table.row().pad(20, 0, 20, 0);
-
-        table.add(studentNameHeader).pad(0, 0, 0, 10).uniform();
-        table.add(highScoreHeader).pad(0, 10, 0, 10).uniform();
-        table.add(lifetimeScoreHeader).pad(0, 10, 0, 10).uniform();
-        table.add(knowledgeLevelHeader).pad(0, 10, 0, 10).uniform();
-        table.add(tipsUnlockedHeader).pad(0, 10, 0, 10).uniform();
-        table.row().pad(20, 0, 20, 0);
+        // Load student information
+        ArrayList<PlayerProfile> studentProfiles = this.profileManager.getStudentProfiles();
 
         // Display student information
-        ArrayList<PlayerProfile> studentProfiles = this.profileManager.getStudentProfiles();
         for (PlayerProfile studentProfile : studentProfiles) {
 
             // Create text for each field
@@ -91,19 +91,23 @@ public class InstructorDashboardScreen extends GameScreen{
             Label tipsUnlocked = new Label(Integer.toString(studentProfile.getTipCount()), skin);
 
             // Display each field
-            table.add(studentName).pad(0, 0, 0, 10).uniform();
-            table.add(highScore).pad(0, 10, 0, 10).uniform();
-            table.add(lifetimeScore).pad(0, 10, 0, 10).uniform();
-            table.add(knowledgeLevel).pad(0, 10, 0, 10).uniform();
-            table.add(tipsUnlocked).pad(0, 10, 0, 10).uniform();
-            table.row().pad(20, 0, 20, 0);  // Add an extra line
+            table.add(studentName);
+            table.add(highScore);
+            table.add(lifetimeScore);
+            table.add(knowledgeLevel);
+            table.add(tipsUnlocked);
+            table.row();
 
         }
 
+        // Initialize buttons
+        TextButton manageStudentsButton = new TextButton("Manage Students", skin);  // Enter manage students mode
+        TextButton returnButton = new TextButton("Return to Main Menu", skin);      // Return to the main menu screen
+
         // Display buttons
-        table.row().pad(100, 0, 0, 0);
-        table.add(manageStudentsButton).padRight(10);
-        table.add(returnButton);
+        buttonTable.add(manageStudentsButton);
+        buttonTable.add(returnButton);
+        table.add(buttonTable).colspan(5).fillX();
 
         // Add button listeners
         manageStudentsButton.addListener(new ChangeListener() {
@@ -121,8 +125,17 @@ public class InstructorDashboardScreen extends GameScreen{
 
     }
 
-    /** Add listeners for each event handled by the MainGame screen manager. */
+
+    /**
+     * Assigns an observer to listen for the event to return to main menu.
+     * @param ob Observer
+     */
     void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to enter manage students mode.
+     * @param ob Observer
+     */
     void addManageStudentsListener(Observer<Void> ob) { manageStudentsEvent.addObserver(ob); }
 
 }
