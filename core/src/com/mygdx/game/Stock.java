@@ -92,15 +92,13 @@ public class Stock {
         Random rand = new Random();
         int prob = rand.nextInt(10) + 1; //Picks a number from 1 to 10 for stock price growth
         int div = rand.nextInt(10) + 1; //Picks a number from 1 to 10 for dividend decline
-
         //For Stock Price change
         if (prob > this.risk) { //Growth
             this.priceChange = rand.nextDouble(this.maxChangeGrowth) + this.minChangeGrowth;
-            this.price += this.price * (this.priceChange/100);
         } else { //Decreasing
-            this.priceChange = -rand.nextDouble(this.maxChangeDecline) + this.minChangeDecline;
-            this.price += this.price *(this.priceChange/100);
+            this.priceChange = -(rand.nextDouble(this.maxChangeDecline) + this.minChangeDecline);
         }
+        this.price += (int) (this.price * (this.priceChange/100));
 
         if (this.price <= 0) this.price = 0; //Price of stock can't dip below 0
 
@@ -111,7 +109,7 @@ public class Stock {
                 case 3 : this.divPay += this.divPay*0.1; this.divPayChange = 10; break;
                 case 5 : this.divPay += this.divPay*0.3; this.divPayChange = 30; break;
             }
-        } else { //Decreasing dividend pay
+        } else if (this.divRisk != 0){ //Decreasing dividend pay
             switch (this.divRisk) {
                 case 1 : this.divPay -= this.divPay*0.005; this.divPayChange = -0.5; break;
                 case 3 : this.divPay -= this.divPay*0.02; this.divPayChange = -2; break;

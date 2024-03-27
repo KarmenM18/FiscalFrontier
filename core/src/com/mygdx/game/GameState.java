@@ -262,6 +262,7 @@ public class GameState implements Serializable {
      * End the current Player's turn, and start the next Player's turn
      */
     public void nextTurn() {
+
         // Wipe Player's calculated turn values
         getCurrentPlayer().endTurn(nodeMap);
         removeStar(nodeMap);
@@ -287,6 +288,9 @@ public class GameState implements Serializable {
         //Updating high risk stocks
         this.stocks[2].updatePrice();
         this.stocks[5].updatePrice();
+
+        //Update Player's stocks
+        getCurrentPlayer().updateInvestment(this.stocks);
 
         nextRound(); // Check current round;
     }

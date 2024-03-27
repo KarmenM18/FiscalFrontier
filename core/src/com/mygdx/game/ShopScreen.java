@@ -125,7 +125,7 @@ public class ShopScreen extends GameScreen {
 
         //UI implementation for all stocks
         for (int i = 0; i < 6; i++) {
-            Label ticker = new Label("Ticker Name: " + stocksAvailable[i].getTickerName(), skin);
+            Label ticker = new Label("Ticker Name: " + stocksAvailable[i].getTickerName() + " Qty Owned: " + currentPlayer.getCurrentInvestments().get(i).size(), skin);
             Label stockDescription = new Label("Description of stock: \n" + this.stocksAvailable[i].getDescription(), skin);
             Label stockPrice = new Label("Stock Price: " + this.stocksAvailable[i].getPrice(), skin);
             Label stockPriceChange = new Label("Stock Price Change: " + this.decformat.format(this.stocksAvailable[i].getPriceChange()) + "%", skin);

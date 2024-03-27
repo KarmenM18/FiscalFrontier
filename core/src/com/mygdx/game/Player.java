@@ -518,12 +518,12 @@ public class Player implements Serializable {
     /**
      * @param updatedStocks updated list of stocks. Used to simulate stock market dynamics
      */
-    public void updateInvestment(ArrayList<Stock> updatedStocks) {
+    public void updateInvestment(Stock [] updatedStocks) {
         this.investments = 0;
 
         //Multiplies the current stock price with quantity of that the player owns for the given stock price
         for (int i = 0; i < this.stocks.size(); i++) {
-            this.investments += updatedStocks.get(i).getPrice() * this.stocks.get(i).size();
+            this.investments += updatedStocks[i].getPrice() * this.stocks.get(i).size();
         }
     }
 
