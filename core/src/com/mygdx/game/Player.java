@@ -267,28 +267,21 @@ public class Player implements Serializable {
      *
      * @return Player's out-of-game profile
      */
-    public PlayerProfile getPlayerProfile() {
-        return this.profile;
-    }
+    public PlayerProfile getPlayerProfile() {return this.profile;}
 
     /**
      * Returns the player's money.
      *
      * @return Player's money
      */
-    public int getMoney() {
-        return this.money;
-    }
-
+    public int getMoney() {return this.money;}
 
     /**
      * Sets the player's money to the given amount.
      *
      * @param amount New value for player's money
      */
-    public void setMoney(int amount) {
-        this.money = amount;
-    }
+    public void setMoney(int amount) {this.money = amount;}
 
 
     public int getLevel(){

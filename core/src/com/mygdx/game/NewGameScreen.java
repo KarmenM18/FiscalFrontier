@@ -55,6 +55,22 @@ public class NewGameScreen extends GameScreen {
         selectedPlayerNames = new Array<String>();
         selectablePlayerNames = new Array<String>();
 
+        // Setup keyboard shortcuts
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    menuEvent.notifyObservers(null);
+                }
+                else if (keycode == Input.Keys.FORWARD_DEL) {
+                    deleteSelectedButton.fire(new ChangeListener.ChangeEvent());
+                }
+                else return false;
+
+                return true;
+            }
+        });
+
         // Initialize GUI elements
         table = new Table();
         table.setFillParent(true);
@@ -94,6 +110,11 @@ public class NewGameScreen extends GameScreen {
         deleteSelectedButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                // Only show delete button if there are players to remove
+                if (selectedPlayerNames.size < 1) {
+                    deleteSelectedButton.setVisible(false);
+                }
+
                 // Re-add name to selectables
                 selectablePlayerNames.add(selectedPlayersBox.getSelected());
                 playerSelector.setItems(selectablePlayerNames);
@@ -101,9 +122,6 @@ public class NewGameScreen extends GameScreen {
                 // Remove the currently selected player from the list
                 selectedPlayerNames.removeIndex(selectedPlayersBox.getSelectedIndex());
                 selectedPlayersBox.setItems(selectedPlayerNames);
-
-                // Only show delete button if there are players to remove
-                if (selectedPlayerNames.size < 1) deleteSelectedButton.setVisible(false);
             }
         });
 
@@ -152,6 +170,7 @@ public class NewGameScreen extends GameScreen {
     public void show() {
         // Add list of player profiles to the selector
         selectablePlayerNames.clear();
+        profilesMap.clear();
         selectablePlayerNames.add(""); // Add blank value to indicate "nothing selected"
         for (PlayerProfile profile : profileManager.getStudentProfiles()) {
             assert !profile.getName().equals("");

@@ -24,8 +24,8 @@ public class Config {
         return ConfigHolder.instance;
     }
 
-    private String uiPath = "ui/flat-earth-ui.json"; // Path of UI skin file
-    private String gameStateSavePath = "GS"; // All save game files start with this string.
+    //private String uiPath = "ui/flat-earth-ui.json"; // Path of UI skin file
+    private String uiPath = "ui/8bit/uiskin.json"; // Path of UI skin file
     private String tilePath = "tileGemini.jpeg";
     private String starTilePath = "starTile.jpg";
     private String penaltyTilePath = "penalty-node1.png";
@@ -37,10 +37,6 @@ public class Config {
 
     public String getUiPath() {
         return uiPath;
-    }
-
-    public String getGameStateSavePath() {
-        return gameStateSavePath;
     }
 
     public String getTilePath() {

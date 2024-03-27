@@ -126,6 +126,7 @@ public class MainMenuScreen extends GameScreen {
 
         // Layout GUI
         table.setFillParent(true); // Size table to stage
+        table.row().pad(10, 0, 10, 0);
         table.add(playButton).fillX();
         table.row().pad(10, 0, 10, 0);
         table.add(continueButton).fillX();

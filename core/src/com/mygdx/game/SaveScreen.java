@@ -107,7 +107,7 @@ public class SaveScreen extends GameScreen {
             if (file.isFile()) {
                 // Match all strings starting with a valid save filename and ending with .json
                 Config config = Config.getInstance();
-                Pattern pattern = Pattern.compile("^.*_" + config.getGameStateSavePath() + "_.*\\.json$");
+                Pattern pattern = Pattern.compile("^.*_.*\\.json$");
                 Matcher matcher = pattern.matcher(file.getName());
                 if (matcher.matches()) {
                     // Get ID
@@ -141,7 +141,7 @@ public class SaveScreen extends GameScreen {
             if (file.isFile()) {
                 // Match all strings starting with a valid save filename and ending with .json
                 Config config = Config.getInstance();
-                Pattern pattern = Pattern.compile("^.*_" + config.getGameStateSavePath() + "_.*\\.json$");
+                Pattern pattern = Pattern.compile("^.*_.*\\.json$");
                 Matcher matcher = pattern.matcher(file.getName());
                 if (matcher.matches()) {
                     // Get ID
@@ -178,7 +178,7 @@ public class SaveScreen extends GameScreen {
             if (file.isFile()) {
                 // Match all strings starting with a valid save filename and ending with .json
                 Config config = Config.getInstance();
-                Pattern pattern = Pattern.compile("^.*_" + config.getGameStateSavePath() + "_.*\\.json$");
+                Pattern pattern = Pattern.compile("^.*_.*\\.json$");
                 Matcher matcher = pattern.matcher(file.getName());
                 if (matcher.matches()) {
                     Label saveLabel = new Label(file.getName(), skin);

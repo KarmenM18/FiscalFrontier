@@ -36,8 +36,6 @@ public class MainGame extends Game {
 	private SaveSystem saveSystem = new SaveSystem();
 
 	private ProfileManager profileManager;
-
-	List<PlayerProfile> profileList; // List of player profiles
 	
 	@Override
 	public void create() {
@@ -68,13 +66,6 @@ public class MainGame extends Game {
 		endScreen = new EndScreen(batch, assets);
 		highScoreScreen = new HighScoreScreen(batch, assets, this.profileManager);
 		newGameScreen = new NewGameScreen(batch, assets, profileManager);
-
-		// Load players from save if possible
-		profileList = new ArrayList<PlayerProfile>();
-		profileList.add(new PlayerProfile("Player 1"));
-		profileList.add(new PlayerProfile("Player 2"));
-		profileList.add(new PlayerProfile("Player 3"));
-		profileList.add(new PlayerProfile("Player 4"));
 
 		// Set starting screen
 		setScreen(mainMenuScreen);
@@ -109,12 +100,20 @@ public class MainGame extends Game {
 		// Set EndScreen observers
 		endScreen.addMenuListener(v -> setScreen(mainMenuScreen));
 		endScreen.addDeleteSavesListener(id -> {
+			// Delete all saves related to the completed game
             try {
                 saveScreen.deleteByID(id, saveSystem);
             } catch (FileNotFoundException e) {
                 Utility.showErrorDialog("Error; failed to open saves folder.", endScreen.stage, endScreen.skin);
             }
         });
+		endScreen.addUpdateScoreListener(profile -> {
+			// Modify the PlayerProfile based on what happened in the game
+			// TODO: Handle renames and removals of profiles
+			profileManager.updateHighScore(profile.getName(), profile.getHighScore());
+			profileManager.addLifetimeScore(profile.getName(), profile.getLifetimeScore());
+			// TODO: must check that game profile's lifetime score is synchronized with profile manager in the case of several save files
+		});
 
 		// Set HighScoreScreen observers
 		highScoreScreen.addMenuListener(v -> setScreen(mainMenuScreen));
@@ -150,12 +149,7 @@ public class MainGame extends Game {
 		mainMenuScreen.addStartGameListener(v -> setScreen(newGameScreen));
 		mainMenuScreen.addContinueGameListener(v -> {
 			GameState gs;
-			// TODO: load LAST save. Should probably be stored along with the PlayerProfiles.
-			if (Utility.fileExists(config.getGameStateSavePath())) {
-				gs = loadGameState(config.getGameStateSavePath());
-				gameBoard.setGameState(gs);
-				setScreen(gameBoard);
-			}
+			// TODO: load LAST save. Should check modified time of save files
 			// TODO inform the user that there is no save to continue from
 		});
 
@@ -241,7 +235,7 @@ public class MainGame extends Game {
 	 * @param gs the GameState to save
 	 */
 	public void saveGameState(GameState gs, String saveName) {
-		saveSystem.saveGameState(gs, saveName + "_" + Config.getInstance().getGameStateSavePath());
+		saveSystem.saveGameState(gs, saveName);
 	}
 
 	/**

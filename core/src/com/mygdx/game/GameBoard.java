@@ -55,7 +55,6 @@ public class GameBoard extends GameScreen {
     private TextButton pauseButton;
     private TextButton rollButton;
     private TextButton nextTurnButton;
-    private TextButton shopButton;
     private Label currPlayerLabel;
     private Label moneyLabel;
     private Label scoreLabel;
@@ -155,6 +154,8 @@ public class GameBoard extends GameScreen {
                        // Player selected a reachable node, we update their position and activate the node
                        currPlayer.move(nodeID, nodeMap, batch, gameState.getHardMode());
                        gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin, gameState.getHardMode());
+
+
                        turnChange();
                        moveCameraPlayer();
                        return true;
@@ -223,7 +224,6 @@ public class GameBoard extends GameScreen {
                 pauseEvent.notifyObservers(null);
             }
         });
-
 
         rollButton.addListener(new ChangeListener() {
             @Override

@@ -11,12 +11,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
+import java.util.Map;
+
 /**
  * Screen displayed at the end of a game.
  */
 public class EndScreen extends GameScreen {
     private Observable<Void> menuEvent = new Observable<>();
     private Observable<Integer> deleteSavesEvent = new Observable<>();
+    private Observable<PlayerProfile> updateScoreEvent = new Observable<>(); // Updates lifetime and highscore of the player
 
     private Table table;
     private Button menuButton;
@@ -105,13 +108,12 @@ public class EndScreen extends GameScreen {
         table.add(menuButton);
 
         // Update Player Profiles
-        // TODO: We need to test if player profiles are syncing properly between the Players and the Profiles in the Main Menu.
-        // TODO: If not, the Player Profile in the menu should be updated rather than the local one
         for (Player player : finalGameState.getPlayerList()) {
-            // TODO update everything in the profile
             PlayerProfile profile = player.getPlayerProfile();
-            profile.setLifetimeScore(profile.getLifetimeScore() + player.getScore());
+            profile.setLifetimeScore(player.getScore());
             if (profile.getHighScore() < player.getScore()) profile.setHighScore(player.getScore());
+
+            updateScoreEvent.notifyObservers(profile);
         }
 
         // Delete all saves for the game by matching the ID
@@ -120,4 +122,5 @@ public class EndScreen extends GameScreen {
 
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
     public void addDeleteSavesListener(Observer<Integer> ob) { deleteSavesEvent.addObserver(ob); }
+    public void addUpdateScoreListener(Observer<PlayerProfile> ob) { updateScoreEvent.addObserver(ob); }
 }
