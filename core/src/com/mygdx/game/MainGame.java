@@ -60,7 +60,9 @@ public class MainGame extends Game {
 		shopScreen = new ShopScreen(batch, assets);
 		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
 		saveScreen = new SaveScreen(batch, assets);
-		profileManager = new ProfileManager("studentInformation.json", "highScoreTable.json", "lifetimeScoreTable.json");
+
+		ClassLoader CL = getClass().getClassLoader();
+		profileManager = new ProfileManager(CL.getResource("studentInformation.json").getFile(), CL.getResource("highScoreTable.json").getFile(), CL.getResource("lifetimeScoreTable.json").getFile());
 		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets, this.profileManager);
 		manageStudentsScreen = new ManageStudentsScreen(batch, assets, this.profileManager);
 		endScreen = new EndScreen(batch, assets);
