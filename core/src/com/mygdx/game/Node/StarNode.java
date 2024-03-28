@@ -75,9 +75,9 @@ public class StarNode extends Node {
                     @Override
                     protected void result(Object object) {
                         if ((Boolean) object) {
-                            starMod(player, true, hardmode);
+                            starMod(player, true);
                         }else{
-                            starMod(player, false, hardmode);
+                            starMod(player, false);
                         }
 
                         // Inform GameState to change the turn
@@ -114,19 +114,12 @@ public class StarNode extends Node {
      * hardmode higher price
      * @param player
      * @param buy
-     * @param hardmode
      */
-    private void starMod(Player player, boolean buy, boolean hardmode){
-        if(hardmode){
-
-        }
+    private void starMod(Player player, boolean buy){
         if(buy){
             this.hasStar = false;
             player.addStar();
             player.setMoney(player.getMoney() - starCost);
-            checkStar();
-        }else{
-            this.hasStar = true;
             checkStar();
         }
     }

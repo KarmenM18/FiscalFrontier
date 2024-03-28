@@ -16,7 +16,7 @@ public class EventNode extends Node {
     // Recreate observers when deserializing
     transient protected Observable<Void> callEventNode = new Observable<Void>();
     transient protected Observable<Integer> globalEvent = new Observable<Integer>();
-    protected int penaltyAmount = 5;
+    protected int penaltyAmount = 50;
     protected Texture eventTexture;
 
     public EventNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
@@ -47,12 +47,18 @@ public class EventNode extends Node {
      */
     @Override
     public void activate(Player player, SpriteBatch batch, boolean hardmode) {
+        //setting penalty amount to be double, actual activation is in GameState
+        if(hardmode){
+            penaltyAmount *= 2;
+        }
+        //notify observer in GameState
         globalEvent.notifyObservers(penaltyAmount);
     }
     public void addEventListener(Observer<Integer> ob) {globalEvent.addObserver(ob); }
 
     //TODO decide where the star selling should go, shop/sellnode or something else
     //Hardmode everyone lose star if they have money
+    /*
     public void sellStar(Player p, int starToMoney, int starsToSell){
         if(p.getStars() <= 0){
             //show dialogue for player has no star
@@ -62,4 +68,5 @@ public class EventNode extends Node {
             p.setMoney(p.getMoney() + moneyGained);
         }
     }
+    */
 }

@@ -337,11 +337,19 @@ public class GameState implements Serializable {
         //TODO adjust Money penalty logic for hardmode
         for (Player p : getPlayerList()){
             if(p.getHasShield()){
-                //do nothing
-            }else if(p.getStars() > 0){
-                p.setStars(p.getStars() - 1);
-            }else if(p.getMoney() > 0){
-                p.setMoney(p.getMoney() - penaltyAmount);
+                p.setHasShield(false);
+            }else if(hardMode){
+                if(p.getStars() > 0){
+                    p.setStars(p.getStars() - 1);
+                }else{
+                    p.setMoney(p.getMoney() - penaltyAmount);
+                }
+            }else {
+                if(p.getMoney() > 0){
+                    p.setMoney(p.getMoney() - penaltyAmount);
+                }else{
+                    p.setMoney(0);
+                }
             }
         }
     }

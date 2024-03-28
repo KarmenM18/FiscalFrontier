@@ -10,7 +10,7 @@ import com.mygdx.game.Player;
 import java.util.Map;
 
 public class PenaltyNode extends Node {
-    protected int penaltyAmount = 5;
+    protected int penaltyAmount = 50;
     protected Texture penaltyTexture;
 
     public PenaltyNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
@@ -45,13 +45,15 @@ public class PenaltyNode extends Node {
     public void activate(Player player, SpriteBatch batch, boolean hardmode) {
         if(!hardmode){
             if (player.getHasShield()) {
-                //do nothing
+                player.setHasShield(false);
             } else if (player.getMoney() >= penaltyAmount) {
                 player.setMoney(player.getMoney() - penaltyAmount);
+            } else{
+                player.setMoney(0);
             }
         }else {
             if (player.getHasShield()) {
-                //do nothing
+                player.setHasShield(false);
             } else if (player.getStars() > 0) {
                 player.setStars(player.getStars() - 1);
             } else {
