@@ -25,8 +25,8 @@ public class Config {
     }
 
     //private String uiPath = "ui/flat-earth-ui.json"; // Path of UI skin file
-    //private String uiPath = "ui/jigsaw/tile-jigsaw-ui.json"; // Path of UI skin file
-    private String uiPath = "ui/8bit/uiskin.json"; // Path of UI skin file
+    private String uiPath = "ui/clean-crispy/skin/clean-crispy-ui.json"; // Path of UI skin file
+    //private String uiPath = "ui/8bit/uiskin.json"; // Path of UI skin file
     private String tilePath = "tileGemini.jpeg";
     private String starTilePath = "starTile.jpg";
     private String penaltyTilePath = "penalty-node1.png";

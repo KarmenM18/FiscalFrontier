@@ -2,13 +2,20 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.mygdx.game.Observer.Observer;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -42,6 +49,10 @@ public class MainGame extends Game {
 		batch = new SpriteBatch();
 		// Load assets
 		Config config = Config.getInstance();
+
+		// Support TTF fonts
+		assets.setLoader(Skin.class, new FreeTypeSkinLoader(assets.getFileHandleResolver()));
+
 		assets.load(config.getUiPath(), Skin.class);
 		assets.load(config.getTilePath(), Texture.class);
 		assets.load(config.getStarTilePath(), Texture.class);
@@ -49,7 +60,7 @@ public class MainGame extends Game {
 		assets.load(config.getPenaltyTilePath(), Texture.class);
 		assets.load(config.getPlayerPath(), Texture.class);
 		assets.load("background2.jpg", Texture.class);
-		assets.finishLoading(); // Make sure assets are loaded before continuing;
+		assets.finishLoading(); // Make sure assets are loaded before continuing.
 
 		// Load screens
 		mainMenuScreen = new MainMenuScreen(batch, assets);
@@ -148,10 +159,12 @@ public class MainGame extends Game {
 		// Set MainMenuScreen observers
 		mainMenuScreen.addStartGameListener(v -> setScreen(newGameScreen));
 		mainMenuScreen.addContinueGameListener(v -> {
-			GameState gs;
-			// TODO: load LAST save. Should check modified time of save files
-			// TODO inform the user that there is no save to continue from
-		});
+            try {
+                saveScreen.loadLatestSave(mainMenuScreen.stage, mainMenuScreen.skin);
+            } catch (FileNotFoundException e) {
+				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
+            }
+        });
 
 		// Set InstructorDashboardScreen observers
 		mainMenuScreen.addLoadGameListener(v -> {

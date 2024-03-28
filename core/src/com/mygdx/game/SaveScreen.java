@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
@@ -120,6 +121,42 @@ public class SaveScreen extends GameScreen {
         } while (foundIDs.contains(randID));
 
         return randID;
+    }
+
+    /**
+     * Get the last save played.
+     * @param stage Stage to show possible error dialogs on
+     * @param skin Skin to draw possible error dialogs
+     * @throws FileNotFoundException if the saves folder isn't found
+     */
+    public void loadLatestSave(Stage stage, Skin skin) throws FileNotFoundException {
+        File[] fileList = getFileList();
+
+        // Get the latest save by modified time
+        File latestModifiedFile = null;
+        long lastModifiedTime = Long.MIN_VALUE;
+
+        for (File file : fileList) {
+            if (file.isFile()) {
+                // Match all strings starting with a valid save filename and ending with .json
+                Config config = Config.getInstance();
+                Pattern pattern = Pattern.compile("^.*_.*\\.json$");
+                Matcher matcher = pattern.matcher(file.getName());
+                if (matcher.matches()) {
+                    if (file.lastModified() > lastModifiedTime) {
+                        lastModifiedTime = file.lastModified();
+                        latestModifiedFile = file;
+                    }
+                }
+            }
+        }
+
+        if (latestModifiedFile == null) {
+            Utility.showErrorDialog("No saves to load.", stage, skin);
+        }
+        else {
+            loadSaveEvent.notifyObservers(latestModifiedFile.getName());
+        }
     }
 
     /**
