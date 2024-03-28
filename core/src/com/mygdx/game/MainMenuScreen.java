@@ -11,6 +11,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -32,6 +33,9 @@ public class MainMenuScreen extends GameScreen {
     private Observable<Void> debugEvent = new Observable<>();
     private Observable<Void> tutorialScreenEvent = new Observable<>();
 
+    private Texture backgroundAni;
+    private int width = 1920;
+    private int height = 1080;
     private Table table;
     private Table devs;
     private Table background;
@@ -167,6 +171,13 @@ public class MainMenuScreen extends GameScreen {
             }
         });
 
+        assets.load("busi.png", Texture.class);
+        assets.finishLoading();
+
+        backgroundAni = assets.get("busi.png");
+        Image backgroundImage = new Image(backgroundAni);
+        backgroundImage.setSize(width, height);
+        stage.addActor(backgroundImage);
 
         // Layout GUI
         table.row().pad(10, 0, 10, 0);
