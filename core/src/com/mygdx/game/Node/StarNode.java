@@ -68,9 +68,9 @@ public class StarNode extends Node {
      */
     public boolean activate(Player player, SpriteBatch batch, Stage stage, Skin skin, GameBoard board, boolean hardmode) {
         if(!hardmode){
-            starCost = 10;
+            starCost = 100;
         }else {
-            starCost = 20;
+            starCost = 250;
         }
         if(hasStar){
             if(player.getMoney() >= starCost){
