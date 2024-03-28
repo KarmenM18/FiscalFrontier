@@ -334,7 +334,7 @@ public class GameState implements Serializable {
      * @param penaltyAmount
      */
     public void globalEvent(int penaltyAmount){
-        //TODO adjust Money penalty logic for hardmode
+        //needs to be put here due to activation order
         for (Player p : getPlayerList()){
             if(p.getHasShield()){
                 p.setHasShield(false);

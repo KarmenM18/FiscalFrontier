@@ -51,6 +51,9 @@ public class EventNode extends Node {
         if(hardmode){
             penaltyAmount *= 2;
         }
+        if(player.getHasShield()){
+            player.setHasShield(false);
+        }
         //notify observer in GameState
         globalEvent.notifyObservers(penaltyAmount);
     }
