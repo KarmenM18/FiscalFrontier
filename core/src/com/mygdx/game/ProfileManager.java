@@ -96,12 +96,32 @@ public class ProfileManager implements Serializable {
 
 
     /**
-     * Returns an array of student profiles
+     * Returns an array of all student profiles
      *
      * @return Array of student profiles
      */
     public ArrayList<PlayerProfile> getStudentProfiles() {
         return this.studentInformation;
+    }
+
+    /**
+     * Returns the top 5 students with the highest achieved individual game scores.
+     * Sorted from highest score to lowest score.
+     *
+     * @return Students with the highest achieved individual game scores.
+     */
+    public ArrayList<PlayerProfile> getHighScoreList() {
+        return this.highScoreList;
+    }
+
+
+    /**
+     * Returns the top 5 students with the highest overall lifetime scores, in order from highest score to lowest score.
+     *
+     * @return Students with the highest overall lifetime scores.
+     */
+    public ArrayList<PlayerProfile> getLifetimeHighScoreList() {
+        return this.lifetimeHighScoreList;
     }
 
 
@@ -203,7 +223,7 @@ public class ProfileManager implements Serializable {
         this.studentInformation.add(studentProfile);
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
-        this.updateHighScores();  // Update high score tables
+        this.updateHighScoreFiles();  // Update high score tables
         
     }
 
@@ -221,7 +241,7 @@ public class ProfileManager implements Serializable {
         this.studentInformation.remove(removedProfile);   // Remove profile from list
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
-        this.updateHighScores();  // Update high score tables
+        this.updateHighScoreFiles();  // Update high score tables
 
         return removedProfile;
 
@@ -241,7 +261,7 @@ public class ProfileManager implements Serializable {
         profile.setName(newName);   // Rename student
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
-        this.updateHighScores();  // Update high score tables
+        this.updateHighScoreFiles();  // Update high score tables
 
     }
 
@@ -259,7 +279,7 @@ public class ProfileManager implements Serializable {
         profile.setKnowledgeLevel(newKnowledgeLevel);   // Change student's knowledge level
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
-        this.updateHighScores();  // Update high score tables
+        this.updateHighScoreFiles();  // Update high score tables
 
     }
 
@@ -282,7 +302,7 @@ public class ProfileManager implements Serializable {
         }
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
-        this.updateHighScores();  // Update high score tables
+        this.updateHighScoreFiles();  // Update high score tables
 
     }
 
@@ -299,7 +319,7 @@ public class ProfileManager implements Serializable {
         profile.setLifetimeScore(newLifetimeScore);  // Update student's lifetime score
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
-        this.updateHighScores();  // Update high score tables
+        this.updateHighScoreFiles();  // Update high score tables
 
     }
 
@@ -316,9 +336,11 @@ public class ProfileManager implements Serializable {
         profile.setLifetimeScore(profile.getLifetimeScore() + newScore);  // Update student's lifetime score
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
-        this.updateHighScores();  // Update high score tables
+        this.updateHighScoreFiles();  // Update high score tables
 
     }
+
+    // FIXME: Can we combine addLifetimeScore and updateLifetimeScore into one function?
 
 
     /**
@@ -402,7 +424,7 @@ public class ProfileManager implements Serializable {
     /**
      * Updates the individual game and lifetime high score tables.
      */
-    public void updateHighScores() {
+    private void updateHighScoreFiles() {
 
         // Find top 5 students with the highest achieved game scores and lifetime scores
         this.highScoreList = this.sortHighScore();
@@ -418,27 +440,5 @@ public class ProfileManager implements Serializable {
         this.saveProfiles(lifetimeHighScoreList, this.lifetimeScoreFilename);
 
     }
-
-
-    /**
-     * Returns the top 5 students with the highest achieved individual game scores.
-     * Sorted from highest score to lowest score.
-     *
-     * @return Students with the highest achieved individual game scores.
-     */
-    public ArrayList<PlayerProfile> getHighScoreList() {
-        return this.highScoreList;
-    }
-
-
-    /**
-     * Returns the top 5 students with the highest overall lifetime scores, in order from highest score to lowest score.
-     *
-     * @return Students with the highest overall lifetime scores.
-     */
-    public ArrayList<PlayerProfile> getLifetimeHighScoreList() {
-        return this.lifetimeHighScoreList;
-    }
-
 
 }
