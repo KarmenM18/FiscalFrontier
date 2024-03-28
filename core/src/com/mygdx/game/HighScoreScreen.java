@@ -69,7 +69,7 @@ public class HighScoreScreen extends GameScreen {
         lifetimeHighScoreTable.defaults().pad(10);
 
         // Add screen title
-        Label title = new Label("High Score Screen", skin);
+        Label title = new Label("High Score Screen", skin, "menu");
         title.setAlignment(Align.center);
         table.add(title).colspan(2).fillX();
         table.row();

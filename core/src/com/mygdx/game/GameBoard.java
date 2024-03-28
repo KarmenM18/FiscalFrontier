@@ -23,12 +23,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Items.Item;
-import com.mygdx.game.Node.Node;
-import com.mygdx.game.Node.StarNode;
+import com.mygdx.game.Node.*;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
@@ -61,6 +61,10 @@ public class GameBoard extends GameScreen {
     private Label starsLabel;
     private Label rollLabel;
     private Label roundLabel;
+
+    // Debugmode stuff
+    private TextButton modifyPlayer;
+    private TextButton modifyTile;
 
     transient private ArrayList<Item> playerItems; // Transient as it will be regenerated when the state is deserialized
     transient private ArrayList<TextButton> itemButtons;
@@ -207,7 +211,6 @@ public class GameBoard extends GameScreen {
      * Load and layout HUD elements
      */
     private void initializeHUD() {
-        hudStage.setDebugAll(false);
         // Initialize buttons and labels
         pauseButton = new TextButton("Pause", skin);
         nextTurnButton = new TextButton("Next Turn", skin);
@@ -239,6 +242,7 @@ public class GameBoard extends GameScreen {
 
         hudStage.addActor(t);
 
+
         // Add listeners
         pauseButton.addListener(new ChangeListener() {
             @Override
@@ -260,6 +264,164 @@ public class GameBoard extends GameScreen {
                 checkRollButton();
             }
         });
+
+        // Setup debugmode
+        modifyPlayer = new TextButton("(DEBUG) Modify Player", skin);
+        modifyPlayer.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Dialog playerModDialog = new Dialog("(DEBUG) Modify Player", skin);
+                Table dataTable = new Table();
+                dataTable.setFillParent(true);
+
+                TextField moneyField = new TextField(Integer.toString(gameState.getCurrentPlayer().getMoney()), skin);
+                TextField starField = new TextField(Integer.toString(gameState.getCurrentPlayer().getStars()), skin);
+                TextField levelField = new TextField(Integer.toString(gameState.getCurrentPlayer().getLevel()), skin);
+                TextButton applyButton = new TextButton("Apply", skin);
+                applyButton.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        gameState.getCurrentPlayer().setMoney(Integer.parseInt(moneyField.getText()));
+                        gameState.getCurrentPlayer().setStars(Integer.parseInt(starField.getText()));
+                        int desiredLevel = Integer.parseInt(levelField.getText());
+                        try {
+                            gameState.getCurrentPlayer().setLevel(desiredLevel);
+                        } catch (IllegalArgumentException e) {
+                            levelField.setText(Integer.toString(gameState.getCurrentPlayer().getLevel()));
+                        }
+                    }
+                });
+
+                dataTable.add(new Label("Money: ", skin));
+                dataTable.add(moneyField);
+                dataTable.row();
+                dataTable.add(new Label("Stars: ", skin));
+                dataTable.add(starField);
+                dataTable.row();
+                dataTable.add(new Label("Level: ", skin));
+                dataTable.add(levelField);
+                dataTable.row();
+                dataTable.add(applyButton);
+
+                playerModDialog.getContentTable().add(dataTable);
+                playerModDialog.button("Close");
+
+                playerModDialog.show(hudStage);
+            }
+        });
+        modifyTile = new TextButton("(DEBUG) Modify Tile", skin);
+        modifyTile.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Dialog modifyDialog = new Dialog("(DEBUG) Modify Tile", skin);
+
+                Map<String, Node> nodeMap = gameState.getNodeMap();
+                Node currentNode = nodeMap.get(gameState.getCurrentPlayer().getCurrentTile());
+
+                TextButton normalTile = new TextButton("Normal Tile", skin);
+                normalTile.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        String currentKey = currentNode.getID();
+                        int x = currentNode.getMapX();
+                        int y = currentNode.getMapY();
+                        boolean north = currentNode.getNorth();
+                        boolean south = currentNode.getSouth();
+                        boolean west = currentNode.getWest();
+                        boolean east = currentNode.getEast();
+                        nodeMap.remove(currentKey);
+                        NormalNode newNormal = new NormalNode(x, y, north, east, south, west, nodeMap, assets);
+                        nodeMap.put(currentKey, newNormal);
+                    }
+                });
+                TextButton starTile = new TextButton("Star Tile", skin);
+                starTile.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        String currentKey = currentNode.getID();
+                        int x = currentNode.getMapX();
+                        int y = currentNode.getMapY();
+                        boolean north = currentNode.getNorth();
+                        boolean south = currentNode.getSouth();
+                        boolean west = currentNode.getWest();
+                        boolean east = currentNode.getEast();
+                        nodeMap.remove(currentKey);
+                        StarNode newStar = new StarNode(x, y, north, east, south, west, nodeMap, assets);
+                        nodeMap.put(currentKey, newStar);
+                    }
+                });
+                TextButton penaltyTile = new TextButton("Penalty Tile", skin);
+                penaltyTile.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        String currentKey = currentNode.getID();
+                        int x = currentNode.getMapX();
+                        int y = currentNode.getMapY();
+                        boolean north = currentNode.getNorth();
+                        boolean south = currentNode.getSouth();
+                        boolean west = currentNode.getWest();
+                        boolean east = currentNode.getEast();
+                        nodeMap.remove(currentKey);
+                        PenaltyNode newPenal = new PenaltyNode(x, y, north, east, south, west, nodeMap, assets);
+                        nodeMap.put(currentKey, newPenal);
+                    }
+                });
+
+                TextButton eventTile = new TextButton("Event Tile", skin);
+                eventTile.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        String currentKey = currentNode.getID();
+                        int x = currentNode.getMapX();
+                        int y = currentNode.getMapY();
+                        boolean north = currentNode.getNorth();
+                        boolean south = currentNode.getSouth();
+                        boolean west = currentNode.getWest();
+                        boolean east = currentNode.getEast();
+                        nodeMap.remove(currentKey);
+                        EventNode newEvent = new EventNode(x, y, north, east, south, west, nodeMap, assets);
+                        newEvent.addEventListener(penaltyAmount -> gameState.globalEvent(penaltyAmount));
+                        nodeMap.put(currentKey, newEvent);
+                    }
+                });
+
+                // Setup ButtonGroup
+                // TODO does nothing?
+                ButtonGroup selectGroup = new ButtonGroup(normalTile, starTile, penaltyTile, eventTile);
+                selectGroup.setMaxCheckCount(1);
+                if (currentNode instanceof NormalNode) selectGroup.setChecked("Normal Tile");
+                else if (currentNode instanceof StarNode) selectGroup.setChecked("Star Tile");
+                else if (currentNode instanceof PenaltyNode) selectGroup.setChecked("Penalty Tile");
+                else if (currentNode instanceof EventNode) selectGroup.setChecked("Event Tile");
+
+                Table dataTable = new Table();
+                dataTable.setFillParent(true);
+
+                dataTable.add(new Label("Select Tile Type:", skin));
+                dataTable.row();
+                dataTable.add(normalTile).fillX().uniform();
+                dataTable.row();
+                dataTable.add(starTile).fillX().uniform();
+                dataTable.row();
+                dataTable.add(penaltyTile).fillX().uniform();
+                dataTable.row();
+                dataTable.add(eventTile).fillX().uniform();
+
+                modifyDialog.getContentTable().add(dataTable);
+                modifyDialog.button("Close");
+
+                modifyDialog.show(hudStage);
+            }
+        });
+
+        // Layout debug stuff
+        modifyPlayer.setVisible(false);
+        modifyPlayer.setPosition(hudStage.getWidth() - modifyPlayer.getWidth(), 0);
+        modifyTile.setWidth(modifyPlayer.getWidth());
+        modifyTile.setVisible(false);
+        modifyTile.setPosition(hudStage.getWidth() - modifyTile.getWidth(), modifyPlayer.getHeight()); // Put on top of the other button
+        hudStage.addActor(modifyPlayer);
+        hudStage.addActor(modifyTile);
 
         // Setup input multiplexer so all input handlers work at the same time
         inputMultiplexer = new InputMultiplexer();
@@ -286,7 +448,11 @@ public class GameBoard extends GameScreen {
             throw new IllegalStateException("Switched to GameBoard without a GameState set");
         }
 
-        if (gameState.isDebugMode()) hudStage.setDebugAll(true); // Enable draw debug if we are in debug mode
+        if (gameState.isDebugMode()) {
+            hudStage.setDebugAll(true); // Enable draw debug if we are in debug mode
+            modifyPlayer.setVisible(true);
+            modifyTile.setVisible(true);
+        }
 
         moveCameraPlayer();
         updateItemButtons();

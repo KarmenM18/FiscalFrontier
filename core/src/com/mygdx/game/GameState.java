@@ -395,7 +395,7 @@ public class GameState implements Serializable {
 
     /**
      * make taken star node back to normal node
-     * @param nodeMap
+     * @param nodeMap the map of nodes on the board
      */
     public void removeStar(HashMap<String, Node> nodeMap){
         Node currentNode = nodeMap.get(getCurrentPlayer().getCurrentTile());

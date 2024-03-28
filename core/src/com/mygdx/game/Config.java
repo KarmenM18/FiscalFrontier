@@ -5,8 +5,19 @@ package com.mygdx.game;
  * Singleton Pattern
  */
 public class Config {
-    // Private constructor to prevent instantiation
-    private Config() {}
+    private String uiPath = "ui/clean-crispy/skin/clean-crispy-ui.json"; // Path of UI skin file
+    //private String uiPath = "ui/8bit/uiskin.json"; // Path of UI skin file
+    private String tilePath = "kenny_block_pack/PNG/Double (128px)/tileGrass.png";
+    private String starTilePath = "starTile.jpg";
+    private String penaltyTilePath = "penalty-node1.png";
+    private String eventTilePath = "eventNode.png";
+    private String playerPath = "player-alt.png";
+    private String saveFolder = "saves";
+    private String debugPassword = "noclip";
+    private int maxPlayers = 5;
+    private int minPlayers = 2;
+    private int maxRounds = 26; // The highest reachable round before the game ends
+    private int maxLevel = 13;
 
     /**
      * Contains the static Singleton.
@@ -24,18 +35,12 @@ public class Config {
         return ConfigHolder.instance;
     }
 
-    private String uiPath = "ui/clean-crispy/skin/clean-crispy-ui.json"; // Path of UI skin file
-    //private String uiPath = "ui/8bit/uiskin.json"; // Path of UI skin file
-    private String tilePath = "kenny_block_pack/PNG/Double (128px)/tileGrass.png";
-    private String starTilePath = "starTile.jpg";
-    private String penaltyTilePath = "penalty-node1.png";
-    private String eventTilePath = "eventNode.png";
-    private String playerPath = "player-alt.png";
-    private String saveFolder = "saves";
-    private String debugPassword = "noclip";
-    private int maxPlayers = 5;
-    private int minPlayers = 2;
-    private int maxRounds = 26; // The highest reachable round before the game ends
+    // Private constructor to prevent instantiation
+    private Config() {}
+
+    public int getMaxLevel() {
+        return maxLevel;
+    }
 
     public String getUiPath() {
         return uiPath;

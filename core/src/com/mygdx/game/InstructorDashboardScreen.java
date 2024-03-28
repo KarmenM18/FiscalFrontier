@@ -66,7 +66,7 @@ public class InstructorDashboardScreen extends GameScreen{
         buttonTable.defaults().pad(10);
 
         // Add screen title
-        Label title = new Label("Instructor Dashboard", skin);
+        Label title = new Label("Instructor Dashboard", skin, "menu");
         title.setAlignment(Align.center);
         table.add(title).colspan(5);
         table.row();

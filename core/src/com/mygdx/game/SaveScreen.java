@@ -30,7 +30,6 @@ public class SaveScreen extends GameScreen {
 
     private ScrollPane scrollPane; // Used so we can have a scrollable list of saves
     private Table table;
-    private Label title;
     private Button menuButton;
 
     /**
@@ -42,11 +41,9 @@ public class SaveScreen extends GameScreen {
     public SaveScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
-        title = new Label("SaveScreen", skin);
-        stage.addActor(title);
-
         // Setup GUI
         table = new Table();
+
         scrollPane = new ScrollPane(table);
         scrollPane.setScrollbarsVisible(true);
         scrollPane.setFillParent(true);
