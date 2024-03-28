@@ -63,6 +63,7 @@ public class NewGameScreen extends GameScreen {
                     menuEvent.notifyObservers(null);
                 }
                 else if (keycode == Input.Keys.FORWARD_DEL) {
+                    // Delete the currently selected Player
                     deleteSelectedButton.fire(new ChangeListener.ChangeEvent());
                 }
                 else return false;

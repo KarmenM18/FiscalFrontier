@@ -588,10 +588,4 @@ public class GameState implements Serializable {
     public int getID() {
         return id;
     }
-    public static void starDialog(String text, Stage stage, Skin skin) {
-        Dialog errorDialog = new Dialog("Star", skin);
-        errorDialog.text(text);
-        errorDialog.button("Buy Star", true);
-        errorDialog.show(stage);
-    }
 }
