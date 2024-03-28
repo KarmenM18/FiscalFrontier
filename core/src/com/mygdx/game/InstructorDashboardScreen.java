@@ -54,28 +54,30 @@ public class InstructorDashboardScreen extends GameScreen{
 
         // Clear any previously loaded data
         stage.clear();
-        Table table = new Table();         // Create new table storing all GUI elements
-        Table buttonTable = new Table();   // Table containing buttons only, for nicer formatting
+        Table table = new Table();          // Stores all GUI elements
+        Table studentTable = new Table();   // Table displaying all student information
+        Table buttonTable = new Table();    // Table containing buttons only, for nicer formatting
 
         // Setup GUI
         stage.addActor(table);
         table.setFillParent(true);  // Size table to stage
         table.defaults().pad(10);
+        studentTable.defaults().pad(10);
         buttonTable.defaults().pad(10);
 
         // Add screen title
         Label title = new Label("Instructor Dashboard", skin);
         title.setAlignment(Align.center);
-        table.add(title).colspan(5).fillX();
+        table.add(title).colspan(5);
         table.row();
 
         // Add header to student information table
-        table.add(new Label("Student Name", skin));
-        table.add(new Label("High Score", skin));
-        table.add(new Label("Lifetime Score", skin));
-        table.add(new Label("Knowledge Level", skin));
-        table.add(new Label("Tips Unlocked", skin));
-        table.row();
+        studentTable.add(new Label("Student Name", skin));
+        studentTable.add(new Label("High Score", skin));
+        studentTable.add(new Label("Lifetime Score", skin));
+        studentTable.add(new Label("Knowledge Level", skin));
+        studentTable.add(new Label("Tips Unlocked", skin));
+        studentTable.row();
 
         // Load student information
         ArrayList<PlayerProfile> studentProfiles = this.profileManager.getStudentProfiles();
@@ -91,14 +93,22 @@ public class InstructorDashboardScreen extends GameScreen{
             Label tipsUnlocked = new Label(Integer.toString(studentProfile.getTipCount()), skin);
 
             // Display each field
-            table.add(studentName);
-            table.add(highScore);
-            table.add(lifetimeScore);
-            table.add(knowledgeLevel);
-            table.add(tipsUnlocked);
-            table.row();
+            studentTable.add(studentName);
+            studentTable.add(highScore);
+            studentTable.add(lifetimeScore);
+            studentTable.add(knowledgeLevel);
+            studentTable.add(tipsUnlocked);
+            studentTable.row();
 
         }
+
+        // Enable scrolling
+        ScrollPane scroll = new ScrollPane(studentTable, skin);
+        scroll.setScrollBarPositions(false, true);
+        scroll.setScrollbarsOnTop(false);
+        scroll.setScrollbarsVisible(true);
+        table.add(scroll).colspan(5).fillX().expand();
+        table.row();
 
         // Initialize buttons
         TextButton manageStudentsButton = new TextButton("Manage Students", skin);  // Enter manage students mode
@@ -107,7 +117,7 @@ public class InstructorDashboardScreen extends GameScreen{
         // Display buttons
         buttonTable.add(manageStudentsButton);
         buttonTable.add(returnButton);
-        table.add(buttonTable).colspan(5).fillX();
+        table.add(buttonTable).colspan(5).expandX();
 
         // Add button listeners
         manageStudentsButton.addListener(new ChangeListener() {
