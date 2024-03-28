@@ -234,6 +234,14 @@ public class GameState implements Serializable {
         if(turnNumber % playerList.size() == 0 && turnNumber != 0){
             roundNumber++;
 
+            //Paying out dividend for safe and medium risk stocks for all players
+            for (Player p : getPlayerList()) {
+                payoutDividend(p, 0);
+                payoutDividend(p, 1);
+                payoutDividend(p, 3);
+                payoutDividend(p, 4);
+            }
+
             //Updating Safe and Medium Risk Stocks
             stocks[0].updatePrice();
             stocks[1].updatePrice();
@@ -280,6 +288,8 @@ public class GameState implements Serializable {
         turnNumber++;
 
         //Paying out stocks that payout dividends every turn
+        this.payoutDividend(getCurrentPlayer(), 2);
+        this.payoutDividend(getCurrentPlayer(), 2);
 
         //Updating high risk stocks
         this.stocks[2].updatePrice();
@@ -555,6 +565,7 @@ public class GameState implements Serializable {
                 "Dividend payout: every ROUND\n" +
                 "Dividend decrease: 2% decrease in pay or 10% pay increase";
         divRisk = 3;
+        divPay = 20; //Dividend pay of 20% per round
         stocks[4] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
 
         //HIGH RISK Dividend STOCK
@@ -570,6 +581,7 @@ public class GameState implements Serializable {
                 "Dividend payout: every TURN\n" +
                 "Dividend decrease: 50% decrease in pay or 30% pay increase";
         divRisk = 5;
+        divPay = 80; //80% div pay per turn
         stocks[5] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
     }
 
@@ -583,16 +595,16 @@ public class GameState implements Serializable {
      */
     public int getID() {return id;}
 
-    private void payoutDividend (int stockID) {
+    private void payoutDividend (Player player, int stockID) {
 
         //Finding how much of each stock that the player owns
-        int owned = this.getCurrentPlayer().getCurrentInvestments().get(stockID).size();
+        int owned = player.getCurrentInvestments().get(stockID).size();
 
-        int playMoney = this.getCurrentPlayer().getMoney();
+        int playMoney = player.getMoney();
         int divPay = this.stocks[stockID].dividendPay();
 
-        //Paying out dividend
-
-
+        //Paying out dividend:
+        //Amount player has + how much the stock pays per share * how many shares the player owns.
+        player.setMoney(playMoney + (divPay*owned));
     }
 }

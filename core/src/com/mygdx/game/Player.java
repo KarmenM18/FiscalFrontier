@@ -105,7 +105,7 @@ public class Player implements Serializable {
         // Initialize all player attributes
         this.profile = profile;
         this.stars = stars;
-        this.money = 20;
+        this.money = 500;
         this.investments = 0;
         this.score = score;
         this.items = items;

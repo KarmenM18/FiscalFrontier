@@ -56,6 +56,11 @@ public class Stock {
     public int getPrice(){return this.price;}
 
     /**
+     * @return returns dividend payout information in %
+     */
+    public double getDivPay() {return divPay;}
+
+    /**
      * @return Description about the stock
      */
     public String getDescription() {return this.description;}

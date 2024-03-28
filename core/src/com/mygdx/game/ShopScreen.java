@@ -130,6 +130,7 @@ public class ShopScreen extends GameScreen {
             Label stockPrice = new Label("Stock Price: " + this.stocksAvailable[i].getPrice(), skin);
             Label stockPriceChange = new Label("Stock Price Change: " + this.decformat.format(this.stocksAvailable[i].getPriceChange()) + "%", skin);
             Label stockDivPayChange = new Label("Dividend Pay Change: " + this.decformat.format(this.stocksAvailable[i].getDivPayChange()) + "%", skin);
+            Label stockDivPay = new Label("Dividend Pay: " + this.decformat.format(this.stocksAvailable[i].getDivPay()) + "%", skin);
             Label lineBreak = new Label("-------------------------------------------------------------------------------------------------------------------", skin);
             Label space = new Label("     ", skin);
 
@@ -149,6 +150,7 @@ public class ShopScreen extends GameScreen {
             stockPriceChange.setAlignment(Align.left);
             stockDivPayChange.setAlignment(Align.left);
             space.setAlignment(Align.left);
+            stockDivPay.setAlignment(Align.left);
 
             //Adding each element to a table and formatting
             investments.add(ticker).width(600).height(80).left();
@@ -166,6 +168,8 @@ public class ShopScreen extends GameScreen {
             investments.add(stockPriceChange).width(500).height(30).left();
             investments.row();
             investments.add(stockDivPayChange).width(500).height(30).left();
+            investments.row();
+            investments.add(stockDivPay).width(500).height(30).left();
             investments.row();
             investments.add(lineBreak).width(500).height(30).left();
             investments.row();
