@@ -33,6 +33,8 @@ public class MainMenuScreen extends GameScreen {
     private Observable<Void> tutorialScreenEvent = new Observable<>();
 
     private Table table;
+    private Table devs;
+    private Table background;
     private TextButton quitButton;
     private TextButton playButton;
     private TextButton continueButton;
@@ -54,10 +56,45 @@ public class MainMenuScreen extends GameScreen {
      */
     public MainMenuScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
+        int textWidth = 100;
 
         // Setup GUI
+        background = new Table();
+        background.setFillParent(true);
         table = new Table();
-        stage.addActor(table);
+        devs = new Table();
+
+        //UI for creator bio
+        Label earl = new Label("Name: Earl Castillo\nEmail: ecastil3@uwo.ca", skin);
+        Label joelene = new Label("Name: Joelene Hales\nEmail: jhales5@uwo.ca", skin);
+        Label kevin = new Label("Name: Kevin Chen\nEmail: kchen546@uwo.ca", skin);
+        Label frank = new Label("Name: Frank Limtung\nEmail: flimtung@uwo.ca", skin);
+        Label karmen = new Label("Name: Karmen Minhas\nEmail: kminhas7@uwo.ca",skin);
+        Label course = new Label("Created as part of CS2212 Final Project at Western University", skin);
+        Label term = new Label("Term created in: Winter 2024", skin);
+        Label about = new Label("About This Project: ", skin);
+        Label blank = new Label(" ", skin);
+        Label title = new Label("Navigating the Fiscal Frontier", skin);
+
+        about.setFontScale(2);
+        title.setFontScale(4);
+        devs.add(about).width(textWidth).center();
+        devs.row();
+        devs.add(blank);
+        devs.row();
+        devs.add(course).width(textWidth).left();
+        devs.row();
+        devs.add(term).width(textWidth).left();
+        devs.row();
+        devs.add(earl).left();
+        devs.add(blank);
+        devs.add(karmen).left();
+        devs.add(blank);
+        devs.add(joelene).left();
+        devs.add(blank);
+        devs.add(frank).left();
+        devs.add(blank);
+        devs.add(kevin).left();
 
         // Initialize buttons
         quitButton = new TextButton("Quit", skin);
@@ -69,7 +106,7 @@ public class MainMenuScreen extends GameScreen {
         tutorialButton = new TextButton("Game Tutorial", skin);
         debugButton = new Button(skin);
         debugButton.setSize(75, 75);
-        debugButton.setPosition(500, 50);
+        debugButton.setPosition(1700, 100);
         debugButton.setColor(1, 1, 1 ,0.2f);
 
         // Initialize confirm to quit dialog box
@@ -132,7 +169,6 @@ public class MainMenuScreen extends GameScreen {
 
 
         // Layout GUI
-        table.setFillParent(true); // Size table to stage
         table.row().pad(10, 0, 10, 0);
         table.add(playButton).fillX();
         table.row().pad(10, 0, 10, 0);
@@ -148,6 +184,14 @@ public class MainMenuScreen extends GameScreen {
         table.row().pad(10, 0, 10, 0);
         table.add(quitButton).fillX();
 
+        //Adding to background
+        background.add(title).top().center().expandY();
+        background.row();
+        background.add(table).center().expandY();
+        background.row();
+        background.add(devs).bottom().expandY();
+
+        stage.addActor(background);
         stage.addActor(debugButton);
 
         // Add button listeners
