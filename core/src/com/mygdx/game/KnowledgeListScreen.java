@@ -49,10 +49,7 @@ public class KnowledgeListScreen extends GameScreen{
                     background.remove();
                     pauseScreenEvent.notifyObservers(null); // Moving back to pause screen
                 }
-                else {
-                    return false;
-                }
-
+                else {return false;}
                 return true;
             }
         });

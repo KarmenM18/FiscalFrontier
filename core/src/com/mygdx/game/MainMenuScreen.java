@@ -29,6 +29,7 @@ public class MainMenuScreen extends GameScreen {
     private Observable<Void> instructorDashboardEvent = new Observable<Void>();
     private Observable<Void> loadGameScreenEvent = new Observable<Void>();
     private Observable<Void> highScoreScreenEvent = new Observable<Void>();
+    private Observable<Void> tutorialScreenEvent = new Observable<>();
 
     private Table table;
     private TextButton quitButton;
@@ -37,6 +38,7 @@ public class MainMenuScreen extends GameScreen {
     private TextButton instructorDashboardButton;
     private TextButton loadGameButton;
     private TextButton highScoreButton;
+    private TextButton tutorialButton;
     private Button debugButton;
     private Dialog confirmQuitDialog;
 
@@ -63,6 +65,7 @@ public class MainMenuScreen extends GameScreen {
         loadGameButton = new TextButton("Load Game", skin);
         highScoreButton = new TextButton("High Scores", skin);
         instructorDashboardButton = new TextButton("Instructor Dashboard", skin);
+        tutorialButton = new TextButton("Game Tutorial", skin);
         debugButton = new Button(skin);
         debugButton.setSize(75, 75);
         debugButton.setPosition(500, 50);
@@ -142,6 +145,8 @@ public class MainMenuScreen extends GameScreen {
         table.row().pad(10, 0, 10, 0);
         table.add(instructorDashboardButton).fillX();
         table.row().pad(10, 0, 10, 0);
+        table.add(tutorialButton).fillX();
+        table.row().pad(10, 0, 10, 0);
         table.add(quitButton).fillX();
 
         stage.addActor(debugButton);
@@ -183,6 +188,12 @@ public class MainMenuScreen extends GameScreen {
                 highScoreScreenEvent.notifyObservers(null);
             }
         });
+        tutorialButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                tutorialScreenEvent.notifyObservers(null);
+            }
+        });
 
     }
 
@@ -192,4 +203,5 @@ public class MainMenuScreen extends GameScreen {
     void addInstructorDashboardListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
     void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
     void addHighScoreListener(Observer<Void> ob) { highScoreScreenEvent.addObserver(ob); }
+    void addTutorialScreenListener(Observer<Void> ob) {tutorialScreenEvent.addObserver(ob);}
 }

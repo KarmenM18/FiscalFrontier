@@ -28,6 +28,8 @@ import java.util.List;
  */
 public class MainGame extends Game {
 	SpriteBatch batch;
+
+	//All Screens needed for the game
 	private GameBoard gameBoard;
 	private PauseScreen pauseScreen;
 	private ShopScreen shopScreen;
@@ -39,6 +41,7 @@ public class MainGame extends Game {
 	private EndScreen endScreen;
 	private HighScoreScreen highScoreScreen;
 	private NewGameScreen newGameScreen;
+	private TutorialScreen tutorialScreen;
 
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
@@ -73,6 +76,7 @@ public class MainGame extends Game {
 		shopScreen = new ShopScreen(batch, assets);
 		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
 		saveScreen = new SaveScreen(batch, assets);
+		tutorialScreen = new TutorialScreen(batch, assets);
 
 		ClassLoader CL = getClass().getClassLoader();
 		profileManager = new ProfileManager("studentInformation.json", "highScoreTable.json", "lifetimeScoreTable.json");
@@ -98,7 +102,9 @@ public class MainGame extends Game {
 			setScreen(endScreen);
 		});
 
+		//For back to screen buttons
 		knowledgeListScreen.addBackToPause(v -> setScreen(pauseScreen));
+		tutorialScreen.addBackToMenu(v -> setScreen(mainMenuScreen));
 
 		// Set PauseScreen observers
 		pauseScreen.addSaveGameListener(saveName -> saveGameState(gameBoard.getGameState(), saveName));
@@ -169,7 +175,8 @@ public class MainGame extends Game {
 				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
             }
         });
-
+		//Adding tutorial screen
+		mainMenuScreen.addTutorialScreenListener(v -> setScreen(tutorialScreen));
 		// Set InstructorDashboardScreen observers
 		mainMenuScreen.addLoadGameListener(v -> {
 			setScreen(saveScreen);
