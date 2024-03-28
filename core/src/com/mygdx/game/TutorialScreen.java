@@ -11,6 +11,8 @@ import com.mygdx.game.Observer.Observer;
 public class TutorialScreen extends GameScreen{
     private Observable<Void> mainmenu = new Observable<>();
 
+    //UI for TutorialScreen
+
     /**
      * @param batch  SpriteBatch to initialize the Stage with
      * @param assets AssetManager to load assets with
