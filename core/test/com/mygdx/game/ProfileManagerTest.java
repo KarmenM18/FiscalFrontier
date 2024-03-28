@@ -122,6 +122,74 @@ class ProfileManagerTest {
     }
 
 
+    /**
+     * Checks if a list of scores is sorted from highest to lowest.
+     * @param list List of scores
+     * @return True if the list is sorted from highest to lowest, false if otherwise
+     */
+    private boolean isSorted(ArrayList<Integer> list) {
+
+        for (int i = 0; i < list.size() - 1; i++) {
+            if (list.get(i).compareTo(list.get(i + 1)) < 0) {  // Next item is larger than it
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Test
+    void getHighScoreList() {
+
+        ArrayList<PlayerProfile> highScoreList = profileManager.getHighScoreList();  // High score list, loaded from file
+
+        // Verify that all 5 students were loaded
+        assertEquals(5, highScoreList.size());
+
+        // Verify that the high score list was saved in the correct order
+        ArrayList<Integer> scores = new ArrayList<Integer>();
+        for (PlayerProfile student : highScoreList) {
+            scores.add(student.getHighScore());
+        }
+        assertTrue(isSorted(scores));
+
+        // Verify that one student was loaded from file as expected, in the correct position
+        PlayerProfile lastStudent = highScoreList.get(4);
+        assertEquals("Student3", lastStudent.getName());
+        assertEquals(7, lastStudent.getKnowledgeLevel());
+        assertEquals(4, lastStudent.getHighScore());
+        assertEquals(60, lastStudent.getLifetimeScore());
+
+    }
+
+
+    @Test
+    void getLifetimeHighScoreList() {
+
+        ArrayList<PlayerProfile> lifetimeHighScoreList = profileManager.getLifetimeHighScoreList();  // Lifetime high score list, loaded from file
+
+        // Verify that all 5 students were loaded
+        assertEquals(5, lifetimeHighScoreList.size());
+
+        // Verify that the lifetime high score list was saved in the correct order
+        ArrayList<Integer> scores = new ArrayList<Integer>();
+        for (PlayerProfile student : lifetimeHighScoreList) {
+            scores.add(student.getLifetimeScore());
+        }
+        assertTrue(isSorted(scores));
+
+
+        // Verify that one student was loaded from file as expected, in the correct position
+        PlayerProfile lastStudent = lifetimeHighScoreList.get(4);
+        assertEquals("Student5", lastStudent.getName());
+        assertEquals(12, lastStudent.getKnowledgeLevel());
+        assertEquals(13, lastStudent.getHighScore());
+        assertEquals(46, lastStudent.getLifetimeScore());
+
+
+    }
+
+
     @Test
     void addDuplicateStudent() {
         // Attempt to add a student with a name that is already taken in the database
@@ -142,6 +210,10 @@ class ProfileManagerTest {
         ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
         PlayerProfile fileLastStudent = secondManager.getStudentProfiles().get(numStudents);
         assertEquals("NewStudent", fileLastStudent.getName());
+
+        // Verify that the high score lists remained the correct length
+        assertEquals(5, secondManager.getHighScoreList().size());
+        assertEquals(5, secondManager.getLifetimeHighScoreList().size());
 
     }
 
@@ -192,6 +264,19 @@ class ProfileManagerTest {
         assertNotEquals(studentName, secondManager.getHighScoreList().get(3).getName());  // Confirm a different student is now in the removed student's place
         assertEquals(5, secondManager.getHighScoreList().size());                // Confirm that another student was added to fill the list
 
+        // Confirm that the high score lists remained in order
+        ArrayList<Integer> highScores = new ArrayList<Integer>();
+        for (PlayerProfile student : secondManager.getHighScoreList()) {
+            highScores.add(student.getHighScore());
+        }
+        assertTrue(isSorted(highScores));
+
+        ArrayList<Integer> lifetimeScores = new ArrayList<Integer>();
+        for (PlayerProfile student : secondManager.getLifetimeHighScoreList()) {
+            lifetimeScores.add(student.getLifetimeScore());
+        }
+        assertTrue(isSorted(lifetimeScores));
+
     }
 
     @Test
@@ -233,8 +318,43 @@ class ProfileManagerTest {
     }
 
     @Test
-    void changeKnowledgeLevel() {
+    void changeKnowledgeLevelFakeStudent() {
+        // Attempt to change the knowledge level of a student that does not exist
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.changeKnowledgeLevel("FakeStudent", 5);});
     }
+
+    @Test
+    void changeKnowledgeLevelListUpdates() {
+
+        // Rename an existing student from the database
+        int knowledgeLevel = 20;  // New knowledge level
+        profileManager.changeKnowledgeLevel("Student2", knowledgeLevel);
+
+        // Confirm change was made in each list
+        assertEquals(profileManager.getStudentProfiles().get(1).getKnowledgeLevel(), knowledgeLevel);        // Changed in list of all student profiles
+        assertEquals(profileManager.getHighScoreList().get(1).getKnowledgeLevel(), knowledgeLevel);          // Changed in high score list
+        assertEquals(profileManager.getLifetimeHighScoreList().get(0).getKnowledgeLevel(), knowledgeLevel);  // Changed in lifetime high score list
+
+    }
+
+
+    @Test
+    void changeKnowledgeLevelFileUpdates() {
+
+        // Rename an existing student from the database
+        int knowledgeLevel = 20;  // New knowledge level
+        profileManager.changeKnowledgeLevel("Student2", knowledgeLevel);
+
+        // Load the database with another instance to confirm changes were written to file
+        ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
+
+        // Confirm each database file was written
+        assertEquals(secondManager.getStudentProfiles().get(1).getKnowledgeLevel(), knowledgeLevel);   // Changed in student profiles database
+        assertEquals(secondManager.getHighScoreList().get(1).getKnowledgeLevel(), knowledgeLevel);     // Changed in high score database
+        assertEquals(secondManager.getLifetimeHighScoreList().get(0).getKnowledgeLevel(), knowledgeLevel);   // Changed in lifetime high score database
+
+    }
+
 
     @Test
     void updateHighScore() {
@@ -244,15 +364,7 @@ class ProfileManagerTest {
     void updateLifetimeScore() {
     }
 
-    @Test
-    void updateHighScores() {
-    }
+    // FIXME: Add tests for addLifetimeScore(), or combine the method with updateLifetimeScore()
 
-    @Test
-    void getHighScoreList() {
-    }
 
-    @Test
-    void getLifetimeHighScoreList() {
-    }
 }
