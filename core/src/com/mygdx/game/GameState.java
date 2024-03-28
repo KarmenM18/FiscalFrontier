@@ -279,11 +279,7 @@ public class GameState implements Serializable {
         getCurrentPlayer().startTurn(nodeMap);
         turnNumber++;
 
-        //Paying dividends from high risk stocks
-        //Only dividend stocks will be paid out
-        for (int i = 3; i < 6; i++) {
-
-        }
+        //Paying out stocks that payout dividends every turn
 
         //Updating high risk stocks
         this.stocks[2].updatePrice();
@@ -585,13 +581,18 @@ public class GameState implements Serializable {
     /**
      * @return integer GameState's ID
      */
-    public int getID() {
-        return id;
-    }
-    public static void starDialog(String text, Stage stage, Skin skin) {
-        Dialog errorDialog = new Dialog("Star", skin);
-        errorDialog.text(text);
-        errorDialog.button("Buy Star", true);
-        errorDialog.show(stage);
+    public int getID() {return id;}
+
+    private void payoutDividend (int stockID) {
+
+        //Finding how much of each stock that the player owns
+        int owned = this.getCurrentPlayer().getCurrentInvestments().get(stockID).size();
+
+        int playMoney = this.getCurrentPlayer().getMoney();
+        int divPay = this.stocks[stockID].dividendPay();
+
+        //Paying out dividend
+
+
     }
 }
