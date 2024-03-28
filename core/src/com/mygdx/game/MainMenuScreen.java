@@ -171,10 +171,10 @@ public class MainMenuScreen extends GameScreen {
             }
         });
 
-        assets.load("busi.png", Texture.class);
+        assets.load("stock2.jpg", Texture.class);
         assets.finishLoading();
 
-        backgroundAni = assets.get("busi.png");
+        backgroundAni = assets.get("stock2.jpg");
         Image backgroundImage = new Image(backgroundAni);
         backgroundImage.setSize(width, height);
         stage.addActor(backgroundImage);
