@@ -40,6 +40,8 @@ public class NewGameScreen extends GameScreen {
     private Array<String> selectablePlayerNames;
     private SelectBox<String> playerSelector; // SelectBox widget to select Players
     private TextButton startButton;
+
+    private TextButton returnButton;
     private CheckBox hardModeCheckBox;
     /**
      * Constructor initializes the screen.
@@ -148,6 +150,16 @@ public class NewGameScreen extends GameScreen {
 
         hardModeCheckBox = new CheckBox("Hard mode", skin);
 
+        returnButton = new TextButton("Return to Main Menu", skin);
+
+        returnButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                menuEvent.notifyObservers(null);
+            }
+        });
+
+
         // Layout GUI
         table.add(leftTable).left().grow();
         table.add(rightTable).right().grow();
@@ -163,6 +175,8 @@ public class NewGameScreen extends GameScreen {
         rightTable.add(startButton).growX().height(100);
         rightTable.row();
         rightTable.add(hardModeCheckBox);
+        rightTable.row();
+        rightTable.add(returnButton).padTop(100);
 
         stage.addActor(table);
     }
