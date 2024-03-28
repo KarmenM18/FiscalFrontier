@@ -172,9 +172,9 @@ public class NewGameScreen extends GameScreen {
         // Add list of player profiles to the selector
         selectablePlayerNames.clear();
         profilesMap.clear();
-        selectablePlayerNames.add(""); // Add blank value to indicate "nothing selected"
+        selectablePlayerNames.add("Select Players"); // Add value which indicates "nothing selected"
         for (PlayerProfile profile : profileManager.getStudentProfiles()) {
-            assert !profile.getName().equals("");
+            assert !profile.getName().equals("Select Players");
 
             profilesMap.put(profile.getName(), profile);
             selectablePlayerNames.add(profile.getName());

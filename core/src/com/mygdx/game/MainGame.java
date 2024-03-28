@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
@@ -49,6 +50,9 @@ public class MainGame extends Game {
 		batch = new SpriteBatch();
 		// Load assets
 		Config config = Config.getInstance();
+
+		// Set renderClear color
+		Gdx.gl.glClearColor(135/255f, 206/255f, 235/255f, 1);
 
 		// Support TTF fonts
 		assets.setLoader(Skin.class, new FreeTypeSkinLoader(assets.getFileHandleResolver()));
