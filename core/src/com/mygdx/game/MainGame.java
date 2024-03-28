@@ -6,7 +6,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -14,7 +16,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ray3k.stripe.FreeTypeSkinLoader;
 
@@ -47,6 +51,8 @@ public class MainGame extends Game {
 	private SaveSystem saveSystem = new SaveSystem();
 
 	private ProfileManager profileManager;
+
+	private boolean debugMode = false; // Indicates that we are in debug mode.
 	
 	@Override
 	public void create() {
@@ -149,6 +155,7 @@ public class MainGame extends Game {
 				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
 				return;
 			}
+			newGame.setDebugMode(debugMode);
 			gameBoard.setGameState(newGame);
 			setScreen(gameBoard);
 		});
@@ -162,6 +169,7 @@ public class MainGame extends Game {
 		saveScreen.addMenuListener(v -> setScreen(mainMenuScreen));
 		saveScreen.addLoadSaveListener(savePath -> {
 			GameState gs = loadGameState(savePath);
+			gs.setDebugMode(debugMode);
 			gameBoard.setGameState(gs);
 			setScreen(gameBoard);
 		});
@@ -188,6 +196,10 @@ public class MainGame extends Game {
 		mainMenuScreen.addInstructorDashboardListener(v -> {
 			setScreen(instructorDashboardScreen);  // Open instructor dashboard from main menu
 		});
+		mainMenuScreen.addDebugListener(v -> {
+			debugMode = true;
+		});
+
 		instructorDashboardScreen.addMenuListener(v -> {
 			setScreen(mainMenuScreen);  // Return to main menu
 		});
@@ -242,6 +254,20 @@ public class MainGame extends Game {
 	@Override
 	public void render() {
 		super.render(); // Render current screen
+
+		// Render debug text and debugdraw if we are in debug mode
+		if (debugMode) {
+			Stage stage = ((GameScreen)getScreen()).stage;
+			stage.setDebugAll(true);
+
+			Batch debugBatch = stage.getBatch();
+			BitmapFont font = assets.get(Config.getInstance().getUiPath(), Skin.class).getFont("font");
+			font.setColor(Color.RED);
+
+			debugBatch.begin();
+			font.draw(debugBatch, "DEBUG MODE ENABLED", 1520, 1080);
+			debugBatch.end();
+		}
 	}
 	
 	@Override

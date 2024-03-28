@@ -43,11 +43,15 @@ public class GameState implements Serializable {
     private int currentPen;
     private boolean gameOver = false; // Set to true when roundNumber exceeds the round maximum. Should be checked by GameBoard
     private boolean hardMode = false; // Hard mode changes the game mechanics to be less forgiving.
+    transient private boolean debugMode = false; // Not saved; set to true whenever debugMode is enabled
+
     /**
      * Constructor
      * Will throw error if the profileList is null or empty
-     *
-     * @param profileList The profile list of players in the game
+     * @param profileList the list of PlayerProfiles participating in the game
+     * @param assets AssetManager to use
+     * @param id UNIQUE ID of the gameState. Used to cleanup saves after termination of a game
+     * @param hardMode controls if hard mode is enabled
      */
     public GameState(List<PlayerProfile> profileList, AssetManager assets, int id, boolean hardMode) {
         assetMan = assets;
@@ -606,5 +610,20 @@ public class GameState implements Serializable {
         //Paying out dividend:
         //Amount player has + how much the stock pays per share * how many shares the player owns.
         player.setMoney(playMoney + (divPay*owned));
+    }
+
+
+    /**
+     * @return debugMode
+     */
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    /**
+     * @param debugMode boolean flag
+     */
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
     }
 }

@@ -93,7 +93,7 @@ public final class Utility {
      * @param a float one
      * @param b float two
      * @param epsilon epsilon value
-     * @return True or False based on abs(a - b) <= epsilon
+     * @return True or False based on abs(a - b) less than or equal to epsilon
      */
     public static Boolean epsilonEqual(float a, float b, float epsilon) {
         return abs(a - b) <= epsilon;

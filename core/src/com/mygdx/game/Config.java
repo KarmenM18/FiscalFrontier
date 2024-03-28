@@ -32,6 +32,7 @@ public class Config {
     private String eventTilePath = "eventNode.png";
     private String playerPath = "player-alt.png";
     private String saveFolder = "saves";
+    private String debugPassword = "noclip";
     private int maxPlayers = 5;
     private int minPlayers = 2;
     private int maxRounds = 26; // The highest reachable round before the game ends
@@ -69,4 +70,6 @@ public class Config {
     public String getSaveFolder() {
         return saveFolder;
     }
+
+    public String getDebugPassword() { return debugPassword; }
 }

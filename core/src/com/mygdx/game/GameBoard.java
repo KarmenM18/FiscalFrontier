@@ -149,6 +149,23 @@ public class GameBoard extends GameScreen {
                Vector3 touchPoint = new Vector3(screenX, screenY, 0);
                camera.unproject(touchPoint);
 
+               // Debug movement; the play can go anywhere
+               if (gameState.isDebugMode() && (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT))) {
+                   for (Node node : gameState.getNodeMap().values()) {
+                       if (node.getSprite().getBoundingRectangle().contains(touchPoint.x, touchPoint.y)) {
+                           // Create new "path" to the node
+                           currPlayer.getReachablePaths().add(new ArrayList<String>(Arrays.asList(currPlayer.getCurrentTile(), node.getID())));
+
+                           currPlayer.move(node.getID(), gameState.getNodeMap(), batch, gameState.getHardMode());
+                           if (!gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin, GameBoard.this, gameState.getHardMode())) {
+                               turnChange();
+                           }
+
+                           return true;
+                       }
+                   }
+               }
+
                Map<String, Node> nodeMap = gameState.getNodeMap();
                for (ArrayList<String> path : currPlayer.getReachablePaths()) {
                    String nodeID = path.get(path.size() - 1);
@@ -269,6 +286,8 @@ public class GameBoard extends GameScreen {
             throw new IllegalStateException("Switched to GameBoard without a GameState set");
         }
 
+        if (gameState.isDebugMode()) hudStage.setDebugAll(true); // Enable draw debug if we are in debug mode
+
         moveCameraPlayer();
         updateItemButtons();
         Gdx.input.setInputProcessor(inputMultiplexer);
@@ -375,7 +394,7 @@ public class GameBoard extends GameScreen {
         }
         itemButtons.clear();
 
-        // TODO: we might want to enable buttons even if the player can move
+        // TODO: we might want to enable buttons even if the player can't move
         if (!gameState.getCurrentPlayer().canMove()) {
             return;
         }

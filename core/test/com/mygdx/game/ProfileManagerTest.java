@@ -39,9 +39,9 @@ class ProfileManagerTest {
         try {
 
             // Define filepaths to each database
-            studentFile = test + "/TestingDatabases/studentDatabase1.json";
-            highScoreFile = test + "/TestingDatabases/highScoreDatabase1.json";
-            lifetimeScoreFile = test + "/TestingDatabases/lifetimeScoreDatabase1.json";
+            studentFile = test + "/TestingDatabases/TestingDatabases/studentDatabase1.json";
+            highScoreFile = test + "/TestingDatabases/TestingDatabases/highScoreDatabase1.json";
+            lifetimeScoreFile = test + "/TestingDatabases/TestingDatabases/lifetimeScoreDatabase1.json";
 
             // Store database contents to be restored after each test
             studentDatabase = Files.readString(Path.of(studentFile));

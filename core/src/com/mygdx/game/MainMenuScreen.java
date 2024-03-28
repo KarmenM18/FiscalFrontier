@@ -29,6 +29,7 @@ public class MainMenuScreen extends GameScreen {
     private Observable<Void> instructorDashboardEvent = new Observable<Void>();
     private Observable<Void> loadGameScreenEvent = new Observable<Void>();
     private Observable<Void> highScoreScreenEvent = new Observable<Void>();
+    private Observable<Void> debugEvent = new Observable<>();
     private Observable<Void> tutorialScreenEvent = new Observable<>();
 
     private Table table;
@@ -40,10 +41,10 @@ public class MainMenuScreen extends GameScreen {
     private TextButton highScoreButton;
     private TextButton tutorialButton;
     private Button debugButton;
+
     private Dialog confirmQuitDialog;
-
     private Dialog instructorPasswordDialog;
-
+    private Dialog debugDialog;
 
     /**
      * Constructor.
@@ -69,16 +70,14 @@ public class MainMenuScreen extends GameScreen {
         debugButton = new Button(skin);
         debugButton.setSize(75, 75);
         debugButton.setPosition(500, 50);
-        debugButton.setColor(1, 1, 1 ,0.3f);
+        debugButton.setColor(1, 1, 1 ,0.2f);
 
         // Initialize confirm to quit dialog box
         confirmQuitDialog = new Dialog("Confirm Quit", skin) {
             @Override
             protected void result(Object object) {
                 if ((Boolean) object) {
-                    // Save players before quitting TODO IMPLEMENT SAVING
-                    // main.saveProfiles();
-                    Gdx.app.exit();
+                    Gdx.app.exit(); // Quit the game
                 }
             }
         };
@@ -195,6 +194,36 @@ public class MainMenuScreen extends GameScreen {
             }
         });
 
+        // Setup debug button
+        debugButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent event, Actor actor) {
+                debugDialog.show(stage);
+            }
+        });
+        // Initialize debug password prompt dialog
+        debugDialog = new Dialog("DEBUG", skin);
+        debugDialog.text("ENTER PASSWORD:");
+        TextField debugPassField = new TextField("", skin);
+        debugDialog.getContentTable().add(debugPassField);
+        TextButton debugContinueButton = new TextButton("Continue", skin);
+        debugContinueButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                // Check if the password matches the debug password
+                String inputPassword = debugPassField.getText();
+                if (inputPassword.equals(Config.getInstance().getDebugPassword())) {
+                    debugButton.setVisible(false);
+                    debugEvent.notifyObservers(null);
+                    debugDialog.hide();
+                }
+                else {
+                    Utility.showErrorDialog("Incorrect password. Please try again.", stage, skin);
+                }
+            }
+        });
+        debugDialog.button("Cancel");
+        debugDialog.getButtonTable().add(debugContinueButton);
     }
 
     // Listener setters
@@ -204,4 +233,5 @@ public class MainMenuScreen extends GameScreen {
     public void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
     public void addHighScoreListener(Observer<Void> ob) { highScoreScreenEvent.addObserver(ob); }
     public void addTutorialScreenListener(Observer<Void> ob) {tutorialScreenEvent.addObserver(ob);}
+    public void addDebugListener(Observer<Void> ob) { debugEvent.addObserver(ob); }
 }

@@ -52,7 +52,7 @@ class SaveSystemTest {
         GameState gs = new GameState(Collections.singletonList(testProfile), asset, 0, false);
         saver.saveGameState(gs, "testSave");
         // TODO update file name when we implement naming saves
-        Path saveFile = Paths.get("testSave_1.json");
+        Path saveFile = Paths.get("saves/testSave_1.json");
         assertTrue(Files.exists(saveFile));
 
         GameState deserialized = saver.readGameState("testSave_1.json", asset);
