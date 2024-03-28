@@ -65,6 +65,8 @@ public class PauseScreen extends GameScreen {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.P) {
+                    confirmMenuDialog.hide();
+                    saveGameDialog.hide();
                     boardEvent.notifyObservers(null);
                 }
                 else {
@@ -84,7 +86,7 @@ public class PauseScreen extends GameScreen {
                 }
             }
         };
-        confirmMenuDialog.text("Are you sure you want to exit to menu? Game progress will NOT be saved.");
+        confirmMenuDialog.text("Are you sure you want to exit to menu?\n Game progress will NOT be saved automatically.");
         confirmMenuDialog.button("Yes", true);
         confirmMenuDialog.button("No", false);
 
@@ -115,6 +117,8 @@ public class PauseScreen extends GameScreen {
         resumeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                confirmMenuDialog.hide();
+                saveGameDialog.hide();
                 boardEvent.notifyObservers(null);
             }
         });

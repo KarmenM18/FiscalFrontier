@@ -81,7 +81,7 @@
 			color: font
 			gamma: 1
 			renderCount: 2
-			borderWidth: 0.75
+			borderWidth: 1
 			borderStraight: false
 			borderGamma: 1
 			shadowOffsetX: 1
