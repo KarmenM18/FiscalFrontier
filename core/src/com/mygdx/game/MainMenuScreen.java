@@ -37,6 +37,7 @@ public class MainMenuScreen extends GameScreen {
     private TextButton instructorDashboardButton;
     private TextButton loadGameButton;
     private TextButton highScoreButton;
+    private Button debugButton;
     private Dialog confirmQuitDialog;
 
     private Dialog instructorPasswordDialog;
@@ -62,6 +63,10 @@ public class MainMenuScreen extends GameScreen {
         loadGameButton = new TextButton("Load Game", skin);
         highScoreButton = new TextButton("High Scores", skin);
         instructorDashboardButton = new TextButton("Instructor Dashboard", skin);
+        debugButton = new Button(skin);
+        debugButton.setSize(75, 75);
+        debugButton.setPosition(500, 50);
+        debugButton.setColor(1, 1, 1 ,0.3f);
 
         // Initialize confirm to quit dialog box
         confirmQuitDialog = new Dialog("Confirm Quit", skin) {
@@ -139,6 +144,7 @@ public class MainMenuScreen extends GameScreen {
         table.row().pad(10, 0, 10, 0);
         table.add(quitButton).fillX();
 
+        stage.addActor(debugButton);
 
         // Add button listeners
         quitButton.addListener(new ChangeListener() {
@@ -180,6 +186,7 @@ public class MainMenuScreen extends GameScreen {
 
     }
 
+    // Listener setters
     void addStartGameListener(Observer<Void> ob) { startGameEvent.addObserver(ob); }
     void addContinueGameListener(Observer<Void> ob) { continueGameEvent.addObserver(ob); }
     void addInstructorDashboardListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }

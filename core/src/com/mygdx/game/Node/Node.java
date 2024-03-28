@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Config;
+import com.mygdx.game.GameBoard;
 import com.mygdx.game.Player;
 
 
@@ -78,11 +79,28 @@ public abstract class Node implements Serializable {
 
     /**
      * Runs when the Node is landed on.
+     *
+     * @param player the Player who landed on the Node
+     * @param batch the SpriteBatch to draw on
+     * @param hardmode whether the gameState is in hard mode
      */
     public void activate(Player player, SpriteBatch batch, boolean hardmode) {
     }
-    public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin, boolean hardmode) {
-        //System.out.println("this is working");
+
+    /**
+     * Run by the GameBoard when the Node is landed on. Used to allow interaction with the GameBoard.
+     * To delay passing of a turn, this function can return true to indicate that it will control starting the next turn.
+     *
+     * @param player the Player who landed on the Node
+     * @param batch the SpriteBatch to draw on
+     * @param stage the GameBoard's Stage
+     * @param skin the GameBoard's Skin
+     * @param board the GameBoard executing the function
+     * @param hardmode whether the gameState is in hard mode
+     * @return true if the Node will handle changing the turn, false otherwise
+     */
+    public boolean activate(Player player, SpriteBatch batch, Stage stage, Skin skin, GameBoard board, boolean hardmode) {
+        return false; // Returns false if the GameBoard should start the next turn automatically
     }
     /**
      * Get all Nodes reachable from this Node, exactly {@code distance} nodes away from it.

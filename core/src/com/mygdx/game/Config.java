@@ -24,10 +24,9 @@ public class Config {
         return ConfigHolder.instance;
     }
 
-    //private String uiPath = "ui/flat-earth-ui.json"; // Path of UI skin file
     private String uiPath = "ui/clean-crispy/skin/clean-crispy-ui.json"; // Path of UI skin file
     //private String uiPath = "ui/8bit/uiskin.json"; // Path of UI skin file
-    private String tilePath = "tileGemini.jpeg";
+    private String tilePath = "kenny_block_pack/PNG/Double (128px)/tileGrass.png";
     private String starTilePath = "starTile.jpg";
     private String penaltyTilePath = "penalty-node1.png";
     private String eventTilePath = "eventNode.png";

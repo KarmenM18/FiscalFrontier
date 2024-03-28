@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Config;
+import com.mygdx.game.GameBoard;
 import com.mygdx.game.Node.Node;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Player;
@@ -57,12 +58,15 @@ public class StarNode extends Node {
     /**
      * activate the star purchase dialog,
      * TODO add a delay to move cam until player confirms action
-     * @param player
-     * @param batch
-     * @param stage
-     * @param skin
+     * @param player the Player who landed on the Node
+     * @param batch the SpriteBatch to draw on
+     * @param stage the GameBoard's Stage
+     * @param skin the GameBoard's Skin
+     * @param board the GameBoard executing the function
+     * @param hardmode whether the gameState is in hard mode
+     * @return true if the Node will handle changing the turn, false otherwise
      */
-    public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin, boolean hardmode) {
+    public boolean activate(Player player, SpriteBatch batch, Stage stage, Skin skin, GameBoard board, boolean hardmode) {
         if(!hardmode){
             starCost = 10;
         }else {
@@ -78,6 +82,9 @@ public class StarNode extends Node {
                         }else{
                             starMod(player, false, hardmode);
                         }
+
+                        // Inform GameState to change the turn
+                        board.turnChange();
                     }
                 };
                 //TODO add Y/N keyboard shortcut for purchase confirmation
@@ -91,6 +98,8 @@ public class StarNode extends Node {
                     @Override
                     protected void result(Object object) {
                         if ((Boolean) object) {
+                            // Inform GameState to change the turn
+                            board.turnChange();
                         }
                     }
                 };
@@ -100,6 +109,8 @@ public class StarNode extends Node {
                 //TODO dialog for purchasing
             }
         }
+
+        return true;
     }
 
     /**

@@ -110,6 +110,9 @@ public class GameBoard extends GameScreen {
                    // Go to shop screen
                    shopEvent.notifyObservers(null);
                }
+               else if (keycode == Input.Keys.SPACE) {
+                   rollButton.fire(new ChangeListener.ChangeEvent());
+               }
                else if (ctrl && keycode == Input.Keys.NUMPAD_ADD) { cameraZoomIn = true; }
                else if (ctrl && keycode == Input.Keys.NUMPAD_SUBTRACT) { cameraZoomOut = true; }
                else if (keycode == Input.Keys.W) { cameraMoveUp = true; }
@@ -145,7 +148,7 @@ public class GameBoard extends GameScreen {
                // Get position of the click
                Vector3 touchPoint = new Vector3(screenX, screenY, 0);
                camera.unproject(touchPoint);
-            //TODO add spacebar shortcut as roll
+
                Map<String, Node> nodeMap = gameState.getNodeMap();
                for (ArrayList<String> path : currPlayer.getReachablePaths()) {
                    String nodeID = path.get(path.size() - 1);
@@ -153,11 +156,13 @@ public class GameBoard extends GameScreen {
                    if (sprite.getBoundingRectangle().contains(touchPoint.x, touchPoint.y)) {
                        // Player selected a reachable node, we update their position and activate the node
                        currPlayer.move(nodeID, nodeMap, batch, gameState.getHardMode());
-                       gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin, gameState.getHardMode());
 
+                       // Attempt to call Node's activate using the GameBoard's activate function. If it returns false, automatically change the turn.
+                       // Otherwise, let the Node handle turn changing.
+                       if (!gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin, GameBoard.this, gameState.getHardMode())) {
+                           turnChange();
+                       }
 
-                       turnChange();
-                       moveCameraPlayer();
                        return true;
                    }
                }
@@ -322,8 +327,8 @@ public class GameBoard extends GameScreen {
 
         // Camera logic - handle WASD input
         if (cameraMoveUp || cameraMoveRight || cameraMoveDown || cameraMoveLeft) {
-            newCameraX += 4f * (cameraMoveRight ? 1 : 0) + -4f * (cameraMoveLeft ? 1 : 0);
-            newCameraY += 4f * (cameraMoveUp ? 1 : 0) + -4f * (cameraMoveDown ? 1 : 0);
+            newCameraX += 8f * (cameraMoveRight ? 1 : 0) + -8f * (cameraMoveLeft ? 1 : 0);
+            newCameraY += 8f * (cameraMoveUp ? 1 : 0) + -8f * (cameraMoveDown ? 1 : 0);
             // Recalculate angle
             newCameraAngle = MathUtils.atan2(newCameraY - camera.position.y, newCameraX - camera.position.x);
         }
@@ -441,32 +446,35 @@ public class GameBoard extends GameScreen {
         camera.zoom = 1f; // Set to default
     }
 
-    private void turnChange() {
+    /**
+     * Finish the turn of the GameState and go to the next one.
+     */
+    public void turnChange() {
         rollButton.setVisible(true);
         rollLabel.setVisible(false);
         gameState.nextTurn();
 
         // Check for end of game
         if (gameState.isGameOver()) {
-                Dialog goToEnd = new Dialog("End Game", skin) {
-                    @Override
-                    protected void result(Object object) {
-                        if ((Boolean) object) {
-                            endEvent.notifyObservers(gameState);
-                        }
+            Dialog goToEnd = new Dialog("End Game", skin) {
+                @Override
+                protected void result(Object object) {
+                    if ((Boolean) object) {
+                        endEvent.notifyObservers(gameState);
                     }
-                };
-                goToEnd.text("Game is over.");
-                goToEnd.button("Continue", true);
-                goToEnd.show(hudStage);
-                goToEnd.setScale(2f);
+                }
+            };
+            goToEnd.text("Game is over.");
+            goToEnd.button("Continue", true);
+            goToEnd.show(hudStage);
+            goToEnd.setScale(2f);
 
-                return;
-            }
+            return;
+        }
 
-            moveCameraPlayer();
-            // Update items to the new player
-            updateItemButtons();
+        moveCameraPlayer();
+        // Update items to the new player
+        updateItemButtons();
     }
 
 
