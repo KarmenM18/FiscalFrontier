@@ -1,14 +1,13 @@
 package com.mygdx.game;
-
 import java.util.Random;
 
 /**
- * A safe growth stock option. With low risk low reward
+ * Holds the logic for simulating the stock market fluctuation
  */
 public class Stock {
 
     private String tickerName;  //Name of the stock
-    private int price;       //Stock Buy Price per QTY
+    private int price;          //Stock Buy Price per QTY
     private String description; //Description outlining the risks and reward
     private double priceChange; //Price Change since last round as a %
     private double divPayChange;//Dividend Pay Change as a %
@@ -21,6 +20,7 @@ public class Stock {
     private double maxChangeDecline;
     private int risk;
     private int divRisk;
+    private Random rand;
 
     /**
      * Constructor for preset stocks
@@ -38,6 +38,7 @@ public class Stock {
         this.divPay = divPay;
         this.risk = risk;
         this.divRisk = divRisk;
+        this.rand = new Random();
     }
 
     /**
@@ -94,7 +95,6 @@ public class Stock {
      * divRisk 5 -> 50% chance to decrease divPay. 30% increase in divPay or 50% divPay decrease
      */
     public void updatePrice(){
-        Random rand = new Random();
         int prob = rand.nextInt(10) + 1; //Picks a number from 1 to 10 for stock price growth
         int div = rand.nextInt(10) + 1; //Picks a number from 1 to 10 for dividend decline
         //For Stock Price change

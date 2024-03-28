@@ -74,36 +74,13 @@ public class ShopScreen extends GameScreen {
         });
     }
 
-    /*
-    TODO: create exhaustive final list of all possible store items, link it here
-     */
-
     /**
-     * PURPOSE: to show all the available items that the store offers to a Player
-     * @param player that's currently accessing the store
-     * @return list of items that are available to purchase
+     * Updates the shop screen to show the player's
+     * stocks that they can buy
+     * as well as their balance
      */
-    /*public ArrayList<Item> showItems(Player player) {
-        return currentPlayer.getPlayerItems(player);
-    }*/
-
-    /**
-     * PURPOSE: display the amount of coins that the Player has so far
-     * @param player who's currently accessing the ShopScreen
-     * @return number of coins that the Player has
-     */
-    /*public int showCoins(Player player) {
-        return currentPlayer.viewTotalCoins(player);
-    }*/
-
-    /*public ArrayList<Item> showCurrentOwnedItems(Player player) {
-       for (int i = 0; i < player.getItems().size(); i++) {
-           System.out.println("Item " + (i + 1) + ": " + player.getItems().get(i).getName());
-       }
-       return currentPlayer.getPlayerItems(player);
-    }*/
-
     public void updateScreen() {
+        this.currentPlayer.updateInvestment(this.stocksAvailable); //updates player's stocks investment account
         showAvailableInvestments();
         showPlayerInfo();
 

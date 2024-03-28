@@ -299,8 +299,6 @@ public class GameState implements Serializable {
         this.stocks[2].updatePrice();
         this.stocks[5].updatePrice();
 
-        //Update Player's stocks
-        getCurrentPlayer().updateInvestment(this.stocks);
 
         nextRound(); // Check current round;
     }
