@@ -336,7 +336,7 @@ public class Player implements Serializable {
      * Score = 5 * stars + money
      */
     public void calculateScore() {
-        this.score = 5 * this.stars + this.money;
+        this.score = 1000 * this.stars + this.money + this.investments;
     }
 
     /**
