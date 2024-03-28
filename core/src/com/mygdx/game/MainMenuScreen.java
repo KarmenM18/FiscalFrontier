@@ -198,10 +198,10 @@ public class MainMenuScreen extends GameScreen {
     }
 
     // Listener setters
-    void addStartGameListener(Observer<Void> ob) { startGameEvent.addObserver(ob); }
-    void addContinueGameListener(Observer<Void> ob) { continueGameEvent.addObserver(ob); }
-    void addInstructorDashboardListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
-    void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
-    void addHighScoreListener(Observer<Void> ob) { highScoreScreenEvent.addObserver(ob); }
-    void addTutorialScreenListener(Observer<Void> ob) {tutorialScreenEvent.addObserver(ob);}
+    public void addStartGameListener(Observer<Void> ob) { startGameEvent.addObserver(ob); }
+    public void addContinueGameListener(Observer<Void> ob) { continueGameEvent.addObserver(ob); }
+    public void addInstructorDashboardListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
+    public void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
+    public void addHighScoreListener(Observer<Void> ob) { highScoreScreenEvent.addObserver(ob); }
+    public void addTutorialScreenListener(Observer<Void> ob) {tutorialScreenEvent.addObserver(ob);}
 }
