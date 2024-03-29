@@ -27,12 +27,12 @@ public class InstructorDashboardScreen extends GameScreen{
     private final Observable<Void> menuEvent = new Observable<Void>();
     /** Event enters manage students mode. */
     private final Observable<Void> manageStudentsEvent = new Observable<Void>();
-    /** Object responsible for storing and managing student profiles. */
-    private ProfileManager profileManager;
+    /** Responsible for storing and managing student profiles. */
+    private final ProfileManager profileManager;
 
 
     /**
-     * Constructor initializes the instructor dashboard's assets.
+     * Constructor initializes the instructor dashboard screen's assets.
      *
      * @param batch  SpriteBatch to initialize the Stage with
      * @param assets AssetManager to load assets with
@@ -46,6 +46,7 @@ public class InstructorDashboardScreen extends GameScreen{
         this.loadDashboard();   // Load student information and initialize buttons
 
     }
+
 
     /**
      * Initializes the dashboard GUI and displays all student information.

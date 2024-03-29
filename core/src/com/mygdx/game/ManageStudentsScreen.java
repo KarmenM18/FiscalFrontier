@@ -13,42 +13,40 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Manage students mode screen in instructor dashboard.
- * <br></br>
- * Includes methods to add new students and edit and remove existing students.
+ * Manage students mode in the instructor dashboard. Provides a user interface for instructors to manage their class.
+ * <br><br>
+ * Includes methods to add, edit, or remove student profiles. Any changes made will be written to the student database
+ * and synced across the application via the profile manager.
+ * <br><br>
+ *
+ * <b>Adding student profiles:</b>
+ * New student profiles can be created by selecting "Add Student." A dialog box will prompt the instructor to enter a
+ * name for the new student. The student's name must not be taken by an existing student. The new student profile will be
+ * created with a knowledge level of 1 and both high scores set to 0.
+ * <br>
+ *
+ * <b>Editing student profiles:</b>
+ * Instructors can change the name or knowledge level of existing students by clicking on the student they wish to edit
+ * and selecting "Edit Student." A dialog box will prompt the instructor to enter a new name and/or knowledge level for
+ * the selected student. If a new name is entered, it must not be taken by an existing student. If a knowledge level is
+ * entered, it must be a positive integer.
+ * <br>
+ *
+ * <b>Removing student profiles:</b>
+ * Existing student profiles can be deleted by clicking on the student they wish to remove and selecting "Remove
+ * Student." A dialog box will prompt the instructor for confirmation to delete the selected student.
+ * <br>
+ *
+ * @see PlayerProfile
+ * @see ProfileManager
+ * @see InstructorDashboardScreen
  *
  * @author Joelene Hales
  */
 public class ManageStudentsScreen extends GameScreen {
 
-    /** Button to exit manage students mode.  */
-    private TextButton backButton;
-    /** Button to add a new student. */
-    private TextButton addStudentButton;
-    /** Buttons to select each student to edit or remove. */
-    private ArrayList<TextButton> studentButtons = new ArrayList<TextButton>();
-    /** Button to edit the name and knowledge level of an existing student.
-     * <br><br>
-     * Must first select an existing student to enable. */
-    private TextButton editStudentButton;
-    /** Button to remove an existing student.
-     * <br><br>
-     * Must first select an existing student to enable. */
-    private TextButton removeStudentButton;
     /** Event exits manage students mode and returns to the instructor dashboard. */
     private final Observable<Void> instructorDashboardEvent = new Observable<Void>();
-    /** Dialog prompts to enter student name when adding a new student. */
-    private Dialog addStudentDialog;
-    /** Dialog prompts to enter new name and knowledge level when editing a student's information.. */
-    private Dialog editStudentDialog;
-    /** Dialog prompts for confirmation to delete a student. */
-    private Dialog removeStudentDialog;
-    /** Text displayed in dialog prompt for confirmation to delete student. */
-    private Label removeStudentNameText;
-    /** List of student profiles */
-    private ArrayList<PlayerProfile> studentProfiles;
-    /** Object responsible for storing and managing student profiles. */
-    private ProfileManager profileManager;
     /** Event adds a new student to the database. */
     private final Observable<String> addStudentEvent = new Observable<String>();
     /** Event edits an existing student's name and knowledge level in the database. */
@@ -56,20 +54,31 @@ public class ManageStudentsScreen extends GameScreen {
     /** Event removes a student from the database. */
     private final Observable<String> removeStudentEvent = new Observable<String>();
 
-    /** Text input field used to enter new name for an existing student. */
-    private TextField editNameInput;
-    /** Text input field used to enter new knowledge level for an existing student. */
-    private TextField editKnowledgeLevelInput;
-    /** Displays error when invalid input has been entered. */
-    private Label editSubtext;
-    /** Displays error when student was unable to be removed. */
-    private Label removeSubtext;
 
-    /** Button to confirm edited student information. */
+    /** Responsible for storing and managing student profiles. */
+    private ProfileManager profileManager;
+    /** List of all student profiles. */
+    private ArrayList<PlayerProfile> studentProfiles;
+
+
+    /** Button to exit manage students mode.  */
+    private TextButton backButton;
+    /** Button to add a new student. */
+    private TextButton addStudentButton;
+    /** Buttons to select each student to be edited or removed. */
+    private ArrayList<TextButton> studentButtons = new ArrayList<TextButton>();
+    /** Button to edit the name and knowledge level of an existing student.<br><br>
+     *  Must first select an existing student to enable. */
+    private TextButton editStudentButton;
+    /** Button to remove an existing student.<br><br>
+     *  Must first select an existing student to enable. */
+    private TextButton removeStudentButton;
+    /** Button to confirm and submit edited student information. */
     private TextButton editStudentConfirm;
-
-    /** Button to confirm removing a student. */
+    /** Button to confirm and submit removing a student. */
     private TextButton removeStudentConfirm;
+
+
     /** Width of dialog prompts. */
     private static int dialogWidth;
     /** Height of dialog prompts. */
@@ -78,12 +87,39 @@ public class ManageStudentsScreen extends GameScreen {
     private static int textWidth;
 
 
+    /** Dialog prompts to enter student name when adding a new student. */
+    private Dialog addStudentDialog;
+    /** Dialog prompts to enter new name and knowledge level when editing a student's information. */
+    private Dialog editStudentDialog;
+    /** Dialog prompts for confirmation to delete a student. */
+    private Dialog removeStudentDialog;
 
+
+    /** Text input field used to enter a new name for an existing student. */
+    private TextField editNameInput;
+    /** Text input field used to enter a new knowledge level for an existing student. */
+    private TextField editKnowledgeLevelInput;
+    /** Displays error when invalid input has been entered when editing student information. */
+    private Label editSubtext;
+    /** Text displayed in dialog prompt for confirmation to delete student. */
+    private Label removeStudentNameText;
+    /** Displays error when student was unable to be removed. */
+    private Label removeSubtext;
+
+
+    /**
+     * Constructor initializes the manage students screen's assets.
+     *
+     * @param batch  SpriteBatch to initialize the Stage with
+     * @param assets AssetManager to load assets with
+     * @param profileManager ProfileManager responsible for storing and managing student profiles and high scores
+     */
     public ManageStudentsScreen(SpriteBatch batch, AssetManager assets, ProfileManager profileManager) {
 
         super(batch, assets);
         this.profileManager = profileManager;
 
+        // Define width and height of dialog boxes and associated text
         dialogWidth = 650;
         dialogHeight = 350;
         textWidth = dialogWidth - 75;
@@ -94,7 +130,7 @@ public class ManageStudentsScreen extends GameScreen {
 
 
     /**
-     * Displays existing students and initializes buttons.
+     * Initializes the dashboard GUI.
      */
     public void loadDashboard() {
 
@@ -131,12 +167,12 @@ public class ManageStudentsScreen extends GameScreen {
         this.removeStudentButton = new TextButton("Remove Student", this.skin);   // Remove existing student
         this.backButton = new TextButton("Back", this.skin);                      // Return to instructor dashboard
 
-        this.editStudentButton.setTouchable(Touchable.disabled);    // Disable until a student is selected
+        this.editStudentButton.setTouchable(Touchable.disabled);    // Disable clicking until a student is selected
         this.removeStudentButton.setTouchable(Touchable.disabled);  // TODO: Should somehow make these grayed out, so it doesn't look like you can click them
+
 
         // Initialize dialog prompt to add a new student
         this.addStudentDialog = new Dialog("Add Student", this.skin);
-
         this.addStudentDialog.text("Enter student name:");
         this.addStudentDialog.getContentTable().row();
 
@@ -176,7 +212,7 @@ public class ManageStudentsScreen extends GameScreen {
                         }
                     }
 
-                    // Adds the student to the database
+                    // Add the student to the database
                     addStudentEvent.notifyObservers(studentNameInput.getText());
 
                 }
@@ -259,10 +295,12 @@ public class ManageStudentsScreen extends GameScreen {
             }
         });
 
-        // Create a button to select each existing student to edit or remove
+
+        // Create buttons to select each existing student to edit or remove
         for (PlayerProfile student : this.studentProfiles) {
             this.newStudentButton(student);
         }
+
 
         // Add button listeners
         this.addStudentButton.addListener(new ChangeListener() {
@@ -329,20 +367,13 @@ public class ManageStudentsScreen extends GameScreen {
         buttonTable.add(this.backButton);
         table.add(buttonTable).colspan(3).expandX();
 
-
     }
-
-    /** Add listeners for each event. Handled by the MainGame screen manager. */
-    void addBackListener(Observer<Void> ob) { this.instructorDashboardEvent.addObserver(ob); }
-    void addAddStudentListener(Observer<String> ob) { this.addStudentEvent.addObserver(ob); }
-    void addEditStudentListener(Observer<String> ob) { this.editStudentEvent.addObserver(ob); }
-    void addRemoveStudentListener(Observer<String> ob) { this.removeStudentEvent.addObserver(ob); }
 
 
     /**
-     * Create a button on the dashboard linked to a student. Used to select each student to edit or remove.
+     * Create a button on the dashboard linked to a student. Used to select the student to edit or remove.
      *
-     * @param student Student's profile
+     * @param student Student's profile.
      */
     private void newStudentButton(PlayerProfile student) {
 
@@ -441,10 +472,11 @@ public class ManageStudentsScreen extends GameScreen {
 
     }
 
+
     /**
-     * Displays a confirmation message of an action.
+     * Displays an action confirmation message.
      *
-     * @param message Confirmation message to display
+     * @param message Confirmation message to display.
      */
     public void showConfirmation(String message) {
 
@@ -471,5 +503,30 @@ public class ManageStudentsScreen extends GameScreen {
         this.stage.addActor(actionConfirmation);  // Display dialog
 
     }
+
+
+    /**
+     * Assigns an observer to listen for the event to return to the instructor dashboard.
+     * @param ob Observer.
+     */
+    void addBackListener(Observer<Void> ob) { this.instructorDashboardEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to add a new student.
+     * @param ob Observer.
+     */
+    void addAddStudentListener(Observer<String> ob) { this.addStudentEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to edit an existing student.
+     * @param ob Observer.
+     */
+    void addEditStudentListener(Observer<String> ob) { this.editStudentEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to remove a student.
+     * @param ob Observer.
+     */
+    void addRemoveStudentListener(Observer<String> ob) { this.removeStudentEvent.addObserver(ob); }
 
 }
