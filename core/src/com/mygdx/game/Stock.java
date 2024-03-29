@@ -44,7 +44,9 @@ public class Stock {
     /**
      * Private no-arg constructor for serialization.
      */
-    private Stock() {}
+    private Stock() {
+        rand = new Random();
+    }
 
     /**
      * @return dividend payout every 5 rounds. Also rounds the number up

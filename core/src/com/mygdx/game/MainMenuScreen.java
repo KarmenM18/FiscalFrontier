@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,16 +78,17 @@ public class MainMenuScreen extends GameScreen {
         Label earl = new Label("Name: Earl Castillo\nEmail: ecastil3@uwo.ca", skin);
         Label joelene = new Label("Name: Joelene Hales\nEmail: jhales5@uwo.ca", skin);
         Label kevin = new Label("Name: Kevin Chen\nEmail: kchen546@uwo.ca", skin);
-        Label frank = new Label("Name: Frank Limtung\nEmail: flimtung@uwo.ca", skin);
+        Label frank = new Label("Name: Franck Limtung\nEmail: flimtung@uwo.ca", skin);
         Label karmen = new Label("Name: Karmen Minhas\nEmail: kminhas7@uwo.ca",skin);
         Label course = new Label("Created as part of CS2212 Final Project at Western University", skin);
         Label term = new Label("Term created in: Winter 2024", skin);
         Label about = new Label("About This Project: ", skin);
         Label blank = new Label(" ", skin);
-        Label title = new Label("Navigating the Fiscal Frontier", skin);
+        Label title = new Label("Navigating the Fiscal Frontier", skin, "menu");
+        title.setColor(0.27f, 0.79f, 0.53f, 1);
 
         about.setFontScale(2);
-        title.setFontScale(4);
+        title.setFontScale(2);
         devs.add(about).width(textWidth).center();
         devs.row();
         devs.add(blank);
@@ -104,6 +106,10 @@ public class MainMenuScreen extends GameScreen {
         devs.add(frank).left();
         devs.add(blank);
         devs.add(kevin).left();
+        for (Actor actor : devs.getChildren().toArray()) {
+            Label label = (Label)actor;
+            label.setColor(1, 1, 1, 1);
+        }
 
         // Initialize buttons
         quitButton = new TextButton("Quit", skin);

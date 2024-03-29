@@ -284,11 +284,30 @@ public class Player implements Serializable {
     public void setMoney(int amount) {this.money = amount;}
 
 
+    /**
+     * @return Player level
+     */
     public int getLevel(){
         return this.level;
     }
+
+    /**
+     * Checks to see if the new level is valid.
+     *
+     * @param level desired level
+     * @throws IllegalArgumentException if the level is invalid
+     */
+    public void setLevel(int level) throws IllegalArgumentException {
+        if (level < 0 || level > Config.getInstance().getMaxLevel()) throw new IllegalArgumentException();
+        // Else
+        this.level = level;
+    }
+
+    /**
+     * Increase Player level by one, as long as the Player is not already at the max level.
+     */
     public void levelUp(){
-        if(this.level <= 13){
+        if(this.level <= Config.getInstance().getMaxLevel()){
             this.level++;
         }
     }

@@ -1,23 +1,176 @@
 {
-com.badlogic.gdx.graphics.g2d.BitmapFont: {
-	font: {
-		file: font-export.fnt
+	com.badlogic.gdx.graphics.Color: {
+		black: {
+			r: 0
+			g: 0
+			b: 0
+			a: 1
+		}
+		dialog-font: {
+			r: 0.13333334
+			g: 0.2
+			b: 0.23137255
+			a: 1
+		}
+		dialog-stage-background: {
+			r: 0
+			g: 0
+			b: 0
+			a: 0.13725491
+		}
+		font: {
+			r: 1
+			g: 1
+			b: 1
+			a: 1
+		}
+		font-shadow: {
+			r: 0
+			g: 0
+			b: 0
+			a: 0.75
+		}
+		selection: {
+			r: 0.7058824
+			g: 0.76637036
+			b: 0.8
+			a: 1
+		}
+		white: {
+			r: 1
+			g: 1
+			b: 1
+			a: 1
+		},
+		color: {
+			r: 1
+			g: 1
+			b: 1
+			a: 1
+		}
 	}
-}
-com.badlogic.gdx.graphics.Color: {
-	color: {
-		r: 1
-		g: 1
-		b: 1
-		a: 1
+	com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
+		dialog: {
+			font: font/Sansation_Bold.ttf,
+			size: 20
+			mono: false
+			color: dialog-font
+			gamma: 1
+			renderCount: 3
+			borderWidth: 1
+			borderStraight: false
+			borderGamma: 1
+			shadowOffsetX: 1
+			shadowOffsetY: 1
+			shadowColor: font-shadow
+			spaceX: 0
+			spaceY: 0
+			kerning: true
+			flip: false
+			genMipMaps: false
+			incremental: false
+			hinting: AutoFull
+			minFilter: Linear
+			magFilter: Linear
+			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•"
+		}
+		font: {
+			font: font/Sansation_Light.ttf,
+			size: 14
+			mono: false
+			color: font
+			gamma: 1
+			renderCount: 2
+			borderWidth: 1
+			borderStraight: false
+			borderGamma: 1
+			shadowOffsetX: 1
+			shadowOffsetY: 1
+			shadowColor: font-shadow
+			spaceX: 0
+			spaceY: 0
+			kerning: true
+			flip: false
+			genMipMaps: false
+			incremental: false
+			hinting: AutoFull
+			minFilter: Linear
+			magFilter: Linear
+			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•"
+		}
+		menu: {
+			font: font/Sansation_Bold.ttf,
+			size: 30,
+			mono: false
+			color: font
+			gamma: 1
+			renderCount: 3
+			borderWidth: 2
+			borderStraight: false
+			borderGamma: 1.8
+			shadowOffsetX: 1
+			shadowOffsetY: 1
+			shadowColor: font-shadow
+			spaceX: 0
+			spaceY: 0
+			kerning: true
+			flip: false
+			genMipMaps: false
+			incremental: false
+			hinting: AutoFull
+			minFilter: Linear
+			magFilter: Linear
+			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•"
+		}
+		start: {
+			font: font/Sansation_Bold.ttf
+			size: 25
+			mono: false
+			color: font
+			gamma: 1
+			renderCount: 3
+			borderWidth: 1
+			borderStraight: false
+			borderGamma: 1
+			shadowOffsetX: 1
+			shadowOffsetY: 1
+			shadowColor: font-shadow
+			spaceX: 1
+			spaceY: 0
+			kerning: true
+			flip: false
+			genMipMaps: false
+			incremental: false
+			hinting: AutoFull
+			minFilter: Linear
+			magFilter: Linear
+			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•"
+		}
+		textfield: {
+			font: font/Sansation_Regular.ttf
+			size: 16
+			mono: false
+			color: black
+			gamma: 1.8
+			renderCount: 3
+			borderWidth: 1
+			borderStraight: false
+			borderGamma: 1
+			shadowOffsetX: 0
+			shadowOffsetY: 0
+			spaceX: 0
+			spaceY: 0
+			kerning: true
+			flip: false
+			genMipMaps: false
+			incremental: false
+			hinting: AutoMedium
+			minFilter: Linear
+			magFilter: Linear
+			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•"
+		}
 	}
-	selection: {
-		r: 0.70333326
-		g: 0.70333326
-		b: 0.70333326
-		a: 1
-	}
-}
+
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	button-c: {
 		name: button
@@ -294,14 +447,14 @@ com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 		checkboxOn: checkbox-pressed-c
 		checkboxOff: checkbox-c
 		checkboxOver: checkbox-over-c
-		font: font
+		font: menu
 		fontColor: color
 	}
 	radio: {
 		checkboxOn: radio-pressed-c
 		checkboxOff: radio-c
 		checkboxOver: radio-over-c
-		font: font
+		font: menu
 		fontColor: color
 	}
 }
@@ -321,13 +474,13 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
-		font: font
+		font: menu
 		up: button-c
 		down: button-pressed-over-c
 		over: button-over-c
 	}
 	toggle: {
-		font: font
+		font: menu
 		up: button-c
 		down: button-pressed-c
 		over: button-over-c
@@ -340,7 +493,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		imageOver: radio-over-c
 		imageChecked: radio-pressed-c
 		imageCheckedOver: radio-pressed-over-c
-		font: font
+		font: menu
 	}
 	checkbox: {
 		imageUp: checkbox-c
@@ -348,13 +501,24 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		imageOver: checkbox-over-c
 		imageChecked: checkbox-pressed-c
 		imageCheckedOver: checkbox-pressed-over-c
-		font: font
+		font: menu
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: font
-		fontColor: color
+		font: font,
+	}
+	menu: {
+		font: menu
+	}
+	start: {
+		font: start
+	}
+	textfield: {
+		font: textfield
+	}
+	dialog: {
+		font: dialog
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
@@ -394,7 +558,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
-		font: font
+		font: menu,
 		fontColor: color
 		background: selectbox-c
 		scrollStyle: default
@@ -435,7 +599,7 @@ com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
-		font: font
+		font: menu
 		fontColor: color
 		up: button-c
 		down: button-pressed-over-c
