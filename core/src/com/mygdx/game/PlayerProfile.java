@@ -194,11 +194,18 @@ public class PlayerProfile {
         //Reading from file
         try {
 
-            // Define path to assets directory, where knolwedge catalog is stored
-            String directory = System.getProperty("user.dir");
-            directory = directory.substring(0, directory.length()-4) + "assets";
+            // Define path to assets directory, where knowledge catalog is stored
+            String catalogPathname = "external/knowledge catalog.txt";
+            String currentDirectory = System.getProperty("user.dir");
 
-            Scanner catalog = new Scanner(new File(directory + "/external/knowledge catalog.txt"));
+            // Specify absolute path if running from unit tests folder
+            if (currentDirectory.endsWith("core")) {
+                catalogPathname = currentDirectory.substring(0, currentDirectory.length()-4) + "assets/" + catalogPathname;
+            }
+
+            // Open file
+            Scanner catalog = new Scanner(new File(catalogPathname));
+
             for (int i = 0; i < line; i++) { //Getting all knowledge up to line
                 if (!catalog.hasNextLine()) break; //No more lines to read
 
@@ -207,7 +214,6 @@ public class PlayerProfile {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
 
     }
 
