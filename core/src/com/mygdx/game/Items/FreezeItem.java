@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.game.GameState;
 import com.mygdx.game.Player;
+import com.mygdx.game.SoundSystem;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,6 @@ import java.util.ArrayList;
  * This Item allows a Player to freeze another Player for a turn
  */
 public class FreezeItem extends Item {
-    // TODO What happens if the game is saved while the dialog box is up? We should probably disallow this somehow.
     transient GameState gameState; // Transient, only set when use() is activated and used in the dialog
 
     public FreezeItem(Skin skin) {
@@ -44,6 +44,8 @@ public class FreezeItem extends Item {
         usedItemDialog = new Dialog("Choice", skin) {
             @Override
             protected void result(Object object) {
+                // Play sound effect
+                SoundSystem.getInstance().playSound("coldsnap.wav");
                 gameState.getPlayerList().get((int)object).setFrozen(true);
             }
         };

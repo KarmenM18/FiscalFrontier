@@ -74,6 +74,11 @@ public class Player implements Serializable {
     private Sprite sprite;
 
     /**
+     * Sprite to render over player when they are frozen
+     */
+    private Sprite freezeSprite;
+
+    /**
      * Board movement variables
      */
     private int dieRoll;
@@ -133,6 +138,10 @@ public class Player implements Serializable {
         loadTextures(assets);
         sprite.setSize(100, 100);
         sprite.setPosition(0, 0);
+
+        freezeSprite = new Sprite((Texture) assets.get(Config.getInstance().getPlayerFreezePath()));
+        freezeSprite.setSize(100, 100);
+        freezeSprite.setAlpha(0.5f);
     }
 
     /**

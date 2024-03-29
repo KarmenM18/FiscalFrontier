@@ -72,7 +72,7 @@ public class MainGame extends Game {
 		assets.load(config.getEventTilePath(), Texture.class);
 		assets.load(config.getPenaltyTilePath(), Texture.class);
 		assets.load(config.getPlayerPath(), Texture.class);
-		assets.load("background2.jpg", Texture.class);
+		assets.load(config.getBackgroundPath(), Texture.class);
 		assets.finishLoading(); // Make sure assets are loaded before continuing.
 
 		// Load screens
@@ -115,6 +115,7 @@ public class MainGame extends Game {
 		// Set PauseScreen observers
 		pauseScreen.addSaveGameListener(saveName -> saveGameState(gameBoard.getGameState(), saveName));
 		pauseScreen.addMenuListener(v -> {
+			SoundSystem.getInstance().stopMusic();
 			setScreen(mainMenuScreen);
 		});
 		pauseScreen.addBoardListener(v -> setScreen(gameBoard));
@@ -125,7 +126,10 @@ public class MainGame extends Game {
 		});
 
 		// Set EndScreen observers
-		endScreen.addMenuListener(v -> setScreen(mainMenuScreen));
+		endScreen.addMenuListener(v -> {
+			SoundSystem.getInstance().stopMusic();
+			setScreen(mainMenuScreen);
+		});
 		endScreen.addDeleteSavesListener(id -> {
 			// Delete all saves related to the completed game
             try {
@@ -157,6 +161,8 @@ public class MainGame extends Game {
 			}
 			newGame.setDebugMode(debugMode);
 			gameBoard.setGameState(newGame);
+			SoundSystem.getInstance().playMusic();
+
 			setScreen(gameBoard);
 		});
 
@@ -171,6 +177,8 @@ public class MainGame extends Game {
 			GameState gs = loadGameState(savePath);
 			gs.setDebugMode(debugMode);
 			gameBoard.setGameState(gs);
+			SoundSystem.getInstance().playMusic();
+
 			setScreen(gameBoard);
 		});
 
@@ -274,6 +282,18 @@ public class MainGame extends Game {
 	public void dispose() {
 		mainMenuScreen.dispose();
 		gameBoard.dispose();
+		pauseScreen.dispose();
+		shopScreen.dispose();
+		mainMenuScreen.dispose();
+		knowledgeListScreen.dispose();
+		saveScreen.dispose();
+		instructorDashboardScreen.dispose();
+		manageStudentsScreen.dispose();
+		endScreen.dispose();
+		highScoreScreen.dispose();
+		newGameScreen.dispose();
+		tutorialScreen.dispose();
+
 		batch.dispose();
 		assets.dispose();
 		super.dispose();

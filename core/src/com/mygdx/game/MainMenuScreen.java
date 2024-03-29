@@ -76,13 +76,11 @@ public class MainMenuScreen extends GameScreen {
         Label frank = new Label("Name: Franck Limtung\nEmail: flimtung@uwo.ca", skin);
         Label karmen = new Label("Name: Karmen Minhas\nEmail: kminhas7@uwo.ca",skin);
         Label course = new Label("Created as part of CS2212 Final Project at Western University", skin);
-        Label term = new Label("Term created in: Winter 2024", skin);
-        Label about = new Label("About This Project: ", skin);
+        Label term = new Label("Term Created: Winter Term 2024", skin);
+        Label about = new Label("About This Project: ", skin, "menu");
         Label blank = new Label(" ", skin);
         Label title = new Label("Navigating the Fiscal Frontier", skin, "menu");
         title.setColor(0.27f, 0.79f, 0.53f, 1);
-
-        about.setFontScale(2);
         title.setFontScale(2);
         devs.add(about).width(textWidth).center();
         devs.row();

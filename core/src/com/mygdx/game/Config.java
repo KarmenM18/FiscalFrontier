@@ -18,25 +18,9 @@ public class Config {
     private int minPlayers = 2;
     private int maxRounds = 26; // The highest reachable round before the game ends
     private int maxLevel = 13;
-
-    /**
-     * Contains the static Singleton.
-     */
-    private static class ConfigHolder {
-        private static final Config instance = new Config();
-    }
-
-    /**
-     * Accessor for the static Singleton.
-     *
-     * @return the Config object
-     */
-    public static Config getInstance() {
-        return ConfigHolder.instance;
-    }
-
-    // Private constructor to prevent instantiation
-    private Config() {}
+    private String soundsFolder = "sounds/";
+    private String backgroundPath = "background.jpg";
+    private String playerFreezePath = "kenny_block_pack/PNG/Double (128px)/tileSnow_slope.png";
 
     public int getMaxLevel() {
         return maxLevel;
@@ -77,4 +61,35 @@ public class Config {
     }
 
     public String getDebugPassword() { return debugPassword; }
+
+    public String getSoundsFolder() {
+        return soundsFolder;
+    }
+
+    public String getBackgroundPath() {
+        return backgroundPath;
+    }
+
+    public String getPlayerFreezePath() {
+        return playerFreezePath;
+    }
+
+    /**
+     * Contains the static Singleton.
+     */
+    private static class ConfigHolder {
+        private static final Config instance = new Config();
+    }
+
+    /**
+     * Accessor for the static Singleton.
+     *
+     * @return the Config object
+     */
+    public static Config getInstance() {
+        return ConfigHolder.instance;
+    }
+
+    // Private constructor to prevent instantiation
+    private Config() {}
 }
