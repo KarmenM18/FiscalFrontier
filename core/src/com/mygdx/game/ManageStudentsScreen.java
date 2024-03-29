@@ -15,7 +15,7 @@ import java.util.Arrays;
 /**
  * Manage students mode in the instructor dashboard. Provides a user interface for instructors to manage their class.
  * <br><br>
- * Includes methods to add, edit, or remove student profiles. Any changes made will be written to the student database
+ * Includes options to add, edit, or remove student profiles. Any changes made will be written to the student database
  * and synced across the application via the profile manager.
  * <br><br>
  *

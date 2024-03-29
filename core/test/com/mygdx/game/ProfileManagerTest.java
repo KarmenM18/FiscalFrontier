@@ -14,20 +14,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ProfileManagerTest {
 
-    static ProfileManager profileManager;
+    /** Object instance used in each test. */
+    private static ProfileManager profileManager;
 
-    static String studentFile;
 
-    static String highScoreFile;
-
+    /** File storing student database to use in testing. */
+    private static String studentFile;
+    /** File storing individual game high score table to use in testing. */
+    private static String highScoreFile;
+    /** File storing overall lifetime high score table to use in testing. */
     static String lifetimeScoreFile;
 
+
+    /** Contents of the student database used to restore the file after each test. */
     static String studentDatabase;
-
+    /** Contents of the individual game high score table used to restore the file after each test. */
     static String highScoreDatabase;
-
+    /** Contents of the overall lifetime high score table used to restore the file after each test. */
     static String lifetimeScoreDatabase;
-
+    /** Number of students in test student database. */
     static int numStudents;
 
 
@@ -279,6 +284,7 @@ class ProfileManagerTest {
 
     }
 
+
     @Test
     void renameFakeStudent() {
         // Attempt to rename a student that does not exist
@@ -298,7 +304,6 @@ class ProfileManagerTest {
         assertEquals(profileManager.getLifetimeHighScoreList().get(2).getName(), newName);  // Renamed in lifetime high score list
 
     }
-
 
     @Test
     void renameStudentFileUpdates() {
@@ -337,7 +342,6 @@ class ProfileManagerTest {
 
     }
 
-
     @Test
     void changeKnowledgeLevelFileUpdates() {
 
@@ -361,10 +365,9 @@ class ProfileManagerTest {
     }
 
     @Test
-    void updateLifetimeScore() {
+    void addLifetimeScore() {
     }
 
-    // FIXME: Add tests for addLifetimeScore(), or combine the method with updateLifetimeScore()
 
 
 }
