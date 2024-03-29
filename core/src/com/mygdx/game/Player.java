@@ -74,7 +74,7 @@ public class Player implements Serializable {
     private Sprite sprite;
 
     /**
-     * Sprite to render over player when they are frozen
+     * Sprite to render over Player when they are frozen
      */
     private Sprite freezeSprite;
 
@@ -135,13 +135,14 @@ public class Player implements Serializable {
 
         Config config = Config.getInstance();
         sprite = new Sprite((Texture) assets.get(profile.getSpritePath()));
-        loadTextures(assets);
         sprite.setSize(100, 100);
         sprite.setPosition(0, 0);
 
         freezeSprite = new Sprite((Texture) assets.get(Config.getInstance().getPlayerFreezePath()));
         freezeSprite.setSize(100, 100);
-        freezeSprite.setAlpha(0.5f);
+        freezeSprite.setAlpha(0.0f); // Starts invisible
+
+        loadTextures(assets);
     }
 
     /**
@@ -161,6 +162,8 @@ public class Player implements Serializable {
 
     public void loadTextures(AssetManager assets) {
         sprite.setTexture(assets.get(profile.getSpritePath()));
+        freezeSprite.setTexture(assets.get(Config.getInstance().getPlayerFreezePath()));
+
         // Load textures for all items
         Config config = Config.getInstance();
         Skin skin = assets.get(config.getUiPath(), Skin.class);
@@ -502,9 +505,25 @@ public class Player implements Serializable {
     public Sprite getSprite() { return sprite; }
 
     /**
+     * @return Sprite for frozen state
+     */
+    public Sprite getFreezeSprite() {
+        return freezeSprite;
+    }
+
+    /**
      * FreezeItem the Player for a turn. Their next turn is skipped
      */
-    public void setFrozen(boolean t) { frozen = t; }
+    public void setFrozen(boolean t) {
+        frozen = t;
+        if (frozen) {
+            freezeSprite.setPosition(sprite.getX(), sprite.getY());
+            freezeSprite.setAlpha(0.8f);
+        }
+        else {
+            freezeSprite.setAlpha(0);
+        }
+    }
     public boolean isFrozen() { return frozen; }
 
     /**

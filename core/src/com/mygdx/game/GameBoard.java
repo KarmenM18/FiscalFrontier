@@ -483,7 +483,10 @@ public class GameBoard extends GameScreen {
         List<Player> playerList = gameState.getPlayerList();
         for (Player player : playerList) {
             Sprite sprite = player.getSprite();
+            Sprite freezeSprite = player.getFreezeSprite();
+
             sprite.draw(batch);
+            freezeSprite.draw(batch);
         }
         batch.end();
 

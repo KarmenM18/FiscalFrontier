@@ -20,7 +20,7 @@ public class Config {
     private int maxLevel = 13;
     private String soundsFolder = "sounds/";
     private String backgroundPath = "background.jpg";
-    private String playerFreezePath = "kenny_block_pack/PNG/Double (128px)/tileSnow_slope.png";
+    private String playerFreezePath = "kenny_block_pack/PNG/Double (128px)/detail_snow.png";
 
     public int getMaxLevel() {
         return maxLevel;
