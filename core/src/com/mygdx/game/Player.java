@@ -517,6 +517,10 @@ public class Player implements Serializable {
     public void setFrozen(boolean t) {
         frozen = t;
         if (frozen) {
+            if (hasShield) return; // Resistant to freezing
+
+            // Play sound effect
+            SoundSystem.getInstance().playSound("coldsnap.wav");
             freezeSprite.setPosition(sprite.getX(), sprite.getY());
             freezeSprite.setAlpha(0.8f);
         }

@@ -44,8 +44,6 @@ public class FreezeItem extends Item {
         usedItemDialog = new Dialog("Choice", skin) {
             @Override
             protected void result(Object object) {
-                // Play sound effect
-                SoundSystem.getInstance().playSound("coldsnap.wav");
                 gameState.getPlayerList().get((int)object).setFrozen(true);
             }
         };
