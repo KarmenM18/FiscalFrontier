@@ -53,30 +53,30 @@ public class InstructorDashboardScreen extends GameScreen{
     public void loadDashboard() {
 
         // Clear any previously loaded data
-        stage.clear();
+        this.stage.clear();
         Table table = new Table();          // Stores all GUI elements
         Table studentTable = new Table();   // Table displaying all student information
         Table buttonTable = new Table();    // Table containing buttons only, for nicer formatting
 
         // Setup GUI
-        stage.addActor(table);
+        this.stage.addActor(table);
         table.setFillParent(true);  // Size table to stage
         table.defaults().pad(10);
         studentTable.defaults().pad(10);
         buttonTable.defaults().pad(10);
 
         // Add screen title
-        Label title = new Label("Instructor Dashboard", skin);
+        Label title = new Label("Instructor Dashboard", this.skin);
         title.setAlignment(Align.center);
         table.add(title).colspan(5);
         table.row();
 
         // Add header to student information table
-        studentTable.add(new Label("Student Name", skin));
-        studentTable.add(new Label("High Score", skin));
-        studentTable.add(new Label("Lifetime Score", skin));
-        studentTable.add(new Label("Knowledge Level", skin));
-        studentTable.add(new Label("Tips Unlocked", skin));
+        studentTable.add(new Label("Student Name", this.skin));
+        studentTable.add(new Label("High Score", this.skin));
+        studentTable.add(new Label("Lifetime Score", this.skin));
+        studentTable.add(new Label("Knowledge Level", this.skin));
+        studentTable.add(new Label("Tips Unlocked", this.skin));
         studentTable.row();
 
         // Load student information
@@ -86,11 +86,11 @@ public class InstructorDashboardScreen extends GameScreen{
         for (PlayerProfile studentProfile : studentProfiles) {
 
             // Create text for each field
-            Label studentName = new Label(studentProfile.getName(), skin);
-            Label highScore = new Label(Integer.toString(studentProfile.getHighScore()), skin);
-            Label lifetimeScore = new Label(Integer.toString(studentProfile.getLifetimeScore()), skin);
-            Label knowledgeLevel = new Label(Integer.toString(studentProfile.getKnowledgeLevel()), skin);
-            Label tipsUnlocked = new Label(Integer.toString(studentProfile.getTipCount()), skin);
+            Label studentName = new Label(studentProfile.getName(), this.skin);
+            Label highScore = new Label(Integer.toString(studentProfile.getHighScore()), this.skin);
+            Label lifetimeScore = new Label(Integer.toString(studentProfile.getLifetimeScore()), this.skin);
+            Label knowledgeLevel = new Label(Integer.toString(studentProfile.getKnowledgeLevel()), this.skin);
+            Label tipsUnlocked = new Label(Integer.toString(studentProfile.getTipCount()), this.skin);
 
             // Display each field
             studentTable.add(studentName);
@@ -103,7 +103,7 @@ public class InstructorDashboardScreen extends GameScreen{
         }
 
         // Enable scrolling
-        ScrollPane scroll = new ScrollPane(studentTable, skin);
+        ScrollPane scroll = new ScrollPane(studentTable, this.skin);
         scroll.setScrollBarPositions(false, true);
         scroll.setScrollbarsOnTop(false);
         scroll.setScrollbarsVisible(true);
@@ -111,8 +111,8 @@ public class InstructorDashboardScreen extends GameScreen{
         table.row();
 
         // Initialize buttons
-        TextButton manageStudentsButton = new TextButton("Manage Students", skin);  // Enter manage students mode
-        TextButton returnButton = new TextButton("Return to Main Menu", skin);      // Return to the main menu screen
+        TextButton manageStudentsButton = new TextButton("Manage Students", this.skin);  // Enter manage students mode
+        TextButton returnButton = new TextButton("Return to Main Menu", this.skin);      // Return to the main menu screen
 
         // Display buttons
         buttonTable.add(manageStudentsButton);
@@ -140,12 +140,12 @@ public class InstructorDashboardScreen extends GameScreen{
      * Assigns an observer to listen for the event to return to main menu.
      * @param ob Observer
      */
-    void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
+    public void addMenuListener(Observer<Void> ob) { this.menuEvent.addObserver(ob); }
 
     /**
      * Assigns an observer to listen for the event to enter manage students mode.
      * @param ob Observer
      */
-    void addManageStudentsListener(Observer<Void> ob) { manageStudentsEvent.addObserver(ob); }
+    public void addManageStudentsListener(Observer<Void> ob) { this.manageStudentsEvent.addObserver(ob); }
 
 }

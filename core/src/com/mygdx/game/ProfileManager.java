@@ -430,7 +430,7 @@ public class ProfileManager implements Serializable {
         this.highScoreList = this.sortHighScore();
         this.lifetimeHighScoreList = this.sortLifetimeScore();
 
-        if (this.studentInformation.size() > 5) {  // More than 5 students in the database
+        if (this.studentInformation.size() >= 5) {  // More than 5 students in the database
             this.highScoreList =  new ArrayList<PlayerProfile>(this.highScoreList.subList(0, 5));  // Take only the top 5 students
             this.lifetimeHighScoreList =  new ArrayList<PlayerProfile>(this.lifetimeHighScoreList.subList(0, 5));
         }
