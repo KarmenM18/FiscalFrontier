@@ -53,6 +53,9 @@ public class MainMenuScreen extends GameScreen {
     private Dialog instructorPasswordDialog;
     private Dialog debugDialog;
 
+    /** Password to enter instructor dashboard. */
+    private static String correctInstructorPassword;
+
     /**
      * Constructor.
      *
@@ -62,6 +65,8 @@ public class MainMenuScreen extends GameScreen {
     public MainMenuScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
         int textWidth = 100;
+
+        correctInstructorPassword = "password";
 
         // Setup GUI
         background = new Table();
@@ -138,7 +143,7 @@ public class MainMenuScreen extends GameScreen {
         instructorPasswordDialog.getContentTable().row();
 
         TextField password = new TextField("", skin);
-        instructorPasswordDialog.getContentTable().add(password);
+        instructorPasswordDialog.getContentTable().add(password).width(300);
 
         Label invalidPasswordText = new Label("", skin);  // Placeholder for text displayed if incorrect password is etered
         instructorPasswordDialog.getContentTable().row();
@@ -155,9 +160,8 @@ public class MainMenuScreen extends GameScreen {
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
 
             String inputPassword = password.getText();
-            String correctPassword = "TEST";  // FIXME: Add a correct password
 
-            if (inputPassword.equals(correctPassword)) {  // Correct password entered
+            if (inputPassword.equals(correctInstructorPassword)) {  // Correct password entered
                 instructorPasswordDialog.hide();
                 instructorDashboardEvent.notifyObservers(null);
             }

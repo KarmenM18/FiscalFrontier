@@ -53,6 +53,9 @@ public class MainGame extends Game {
 	private ProfileManager profileManager;
 
 	private boolean debugMode = false; // Indicates that we are in debug mode.
+
+	/** Password to enter instructor dashboard. */
+	private static String instructorPassword;
 	
 	@Override
 	public void create() {
@@ -212,7 +215,7 @@ public class MainGame extends Game {
 			setScreen(mainMenuScreen);  // Return to main menu
 		});
 		instructorDashboardScreen.addManageStudentsListener(v -> {
-			setScreen(manageStudentsScreen);       // Enter manage students mode in instructor dashboard
+			setScreen(manageStudentsScreen);  // Enter manage students mode in instructor dashboard
 		});
 
 		// Set ManageStudentsScreen observers
@@ -227,6 +230,9 @@ public class MainGame extends Game {
 			// Reload dashboard screens to reflect changes
 			instructorDashboardScreen.loadDashboard();
 			manageStudentsScreen.loadDashboard();
+
+			// Display confirmation of action
+			manageStudentsScreen.showConfirmation("Student added successfully!");
 
 		});
 		manageStudentsScreen.addEditStudentListener(inputString -> {
@@ -246,6 +252,9 @@ public class MainGame extends Game {
 			manageStudentsScreen.loadDashboard();
 			instructorDashboardScreen.loadDashboard();
 
+			// Display confirmation of action
+			manageStudentsScreen.showConfirmation("Student edited successfully!");
+
 		});
 		manageStudentsScreen.addRemoveStudentListener(studentName -> {
 
@@ -255,6 +264,9 @@ public class MainGame extends Game {
 			// Reload dashboard screens to reflect changes
 			manageStudentsScreen.loadDashboard();
 			instructorDashboardScreen.loadDashboard();
+
+			// Display confirmation of action
+			manageStudentsScreen.showConfirmation("Student removed successfully!");
 
 		});
 	}

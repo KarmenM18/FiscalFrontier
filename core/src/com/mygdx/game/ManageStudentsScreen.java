@@ -6,9 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -21,44 +21,48 @@ import java.util.Arrays;
  */
 public class ManageStudentsScreen extends GameScreen {
 
-    /** Table storing all GUI buttons. */
-    private Table table;
     /** Button to exit manage students mode.  */
     private TextButton backButton;
     /** Button to add a new student. */
     private TextButton addStudentButton;
     /** Buttons to select each student to edit or remove. */
     private ArrayList<TextButton> studentButtons = new ArrayList<TextButton>();
-    /** Button to edit a student. */
+    /** Button to edit the name and knowledge level of an existing student.
+     * <br><br>
+     * Must first select an existing student to enable. */
     private TextButton editStudentButton;
-    /** Button to remove a student. */
+    /** Button to remove an existing student.
+     * <br><br>
+     * Must first select an existing student to enable. */
     private TextButton removeStudentButton;
     /** Event exits manage students mode and returns to the instructor dashboard. */
-    private Observable<Void> instructorDashboardEvent = new Observable<Void>();
+    private final Observable<Void> instructorDashboardEvent = new Observable<Void>();
     /** Dialog prompts to enter student name when adding a new student. */
     private Dialog addStudentDialog;
     /** Dialog prompts to enter new name and knowledge level when editing a student's information.. */
     private Dialog editStudentDialog;
     /** Dialog prompts for confirmation to delete a student. */
     private Dialog removeStudentDialog;
+    /** Text displayed in dialog prompt for confirmation to delete student. */
+    private Label removeStudentNameText;
     /** List of student profiles */
     private ArrayList<PlayerProfile> studentProfiles;
     /** Object responsible for storing and managing student profiles. */
     private ProfileManager profileManager;
     /** Event adds a new student to the database. */
-    private Observable<String> addStudentEvent = new Observable<String>();
+    private final Observable<String> addStudentEvent = new Observable<String>();
     /** Event edits an existing student's name and knowledge level in the database. */
-    private Observable<String> editStudentEvent = new Observable<String>();
+    private final Observable<String> editStudentEvent = new Observable<String>();
     /** Event removes a student from the database. */
-    private Observable<String> removeStudentEvent = new Observable<String>();
+    private final Observable<String> removeStudentEvent = new Observable<String>();
 
     /** Text input field used to enter new name for an existing student. */
     private TextField editNameInput;
     /** Text input field used to enter new knowledge level for an existing student. */
     private TextField editKnowledgeLevelInput;
-    /** Text displayed to confirm a student has been edited successfully or indicate invalid input has been entered. */
+    /** Displays error when invalid input has been entered. */
     private Label editSubtext;
-    /** Text displayed to confirm a student has been removed successfully or was unable to be removed. */
+    /** Displays error when student was unable to be removed. */
     private Label removeSubtext;
 
     /** Button to confirm edited student information. */
@@ -66,6 +70,13 @@ public class ManageStudentsScreen extends GameScreen {
 
     /** Button to confirm removing a student. */
     private TextButton removeStudentConfirm;
+    /** Width of dialog prompts. */
+    private static int dialogWidth;
+    /** Height of dialog prompts. */
+    private static int dialogHeight;
+    /** Maximum width of text within dialog prompts. */
+    private static int textWidth;
+
 
 
     public ManageStudentsScreen(SpriteBatch batch, AssetManager assets, ProfileManager profileManager) {
@@ -73,54 +84,76 @@ public class ManageStudentsScreen extends GameScreen {
         super(batch, assets);
         this.profileManager = profileManager;
 
+        dialogWidth = 650;
+        dialogHeight = 350;
+        textWidth = dialogWidth - 75;
+
         this.loadDashboard();  // Display buttons
 
     }
 
 
     /**
-     * Displays all students and initializes buttons.
+     * Displays existing students and initializes buttons.
      */
     public void loadDashboard() {
 
         // Clear any previously loaded data
-        stage.clear();
-        this.table = new Table();
+        this.stage.clear();
+        Table table = new Table();          // Stores all GUI elements
+        Table studentTable = new Table();   // Displays all existing students
+        Table buttonTable = new Table();    // Contains buttons for action options, for nicer formatting
+
+        this.studentProfiles = this.profileManager.getStudentProfiles();  // List of all student profiles
         this.studentButtons = new ArrayList<TextButton>();
-        this.studentProfiles = this.profileManager.getStudentProfiles();
 
         // Setup GUI
-        stage.addActor(table);
+        this.stage.addActor(table);
         table.setFillParent(true);  // Size table to stage
+        table.defaults().pad(10);
+        studentTable.defaults().pad(10);
+        buttonTable.defaults().pad(10);
+
+        // Add screen title
+        Label title = new Label("Manage Students", this.skin);
+        title.setAlignment(Align.center);
+        table.add(title).colspan(5);
+        table.row();
+
+        Label subtitle = new Label("Select a student to edit or remove:", this.skin);
+        title.setAlignment(Align.left);
+        table.add(subtitle).colspan(3);
+        table.row();
 
         // Initialize buttons
-        addStudentButton = new TextButton("Add Student", skin);
-        editStudentButton = new TextButton("Edit Student", skin);
-        removeStudentButton = new TextButton("Remove Student", skin);
-        backButton = new TextButton("Back", skin);
+        this.addStudentButton = new TextButton("Add Student", this.skin);         // Add a new student
+        this.editStudentButton = new TextButton("Edit Student", this.skin);       // Edit existing student name and knowledge level
+        this.removeStudentButton = new TextButton("Remove Student", this.skin);   // Remove existing student
+        this.backButton = new TextButton("Back", this.skin);                      // Return to instructor dashboard
 
-        editStudentButton.setTouchable(Touchable.disabled);    // Disable until a student is selected
-        removeStudentButton.setTouchable(Touchable.disabled);  // TODO: Should somehow make these grayed out, so it doesn't look like you can click them
-
+        this.editStudentButton.setTouchable(Touchable.disabled);    // Disable until a student is selected
+        this.removeStudentButton.setTouchable(Touchable.disabled);  // TODO: Should somehow make these grayed out, so it doesn't look like you can click them
 
         // Initialize dialog prompt to add a new student
-        addStudentDialog = new Dialog("Add Student Dialog", skin);
+        this.addStudentDialog = new Dialog("Add Student", this.skin);
 
-        addStudentDialog.text("Enter student name:");
-        addStudentDialog.getContentTable().row();
+        this.addStudentDialog.text("Enter student name:");
+        this.addStudentDialog.getContentTable().row();
 
         TextField studentNameInput = new TextField("", skin);
-        addStudentDialog.getContentTable().add(studentNameInput);
-        addStudentDialog.getContentTable().row();
+        this.addStudentDialog.getContentTable().add(studentNameInput);
+        this.addStudentDialog.getContentTable().row();
 
-        Label addSubtext = new Label("", skin);  // Placeholder for text displayed when action completed successfully or an invalid input is entered
-        addStudentDialog.getContentTable().add(addSubtext);
+        Label addSubtext = new Label("", skin);  // Placeholder for text displayed when an invalid input is entered
+        addSubtext.setWrap(true);
+        addSubtext.setAlignment(Align.center);
+        this.addStudentDialog.getContentTable().add(addSubtext).width(textWidth);
 
         TextButton addStudentConfirm = new TextButton("Confirm", skin);
         TextButton addStudentCancel = new TextButton("Back", skin);
 
-        addStudentDialog.getButtonTable().add(addStudentConfirm);
-        addStudentDialog.getButtonTable().add(addStudentCancel);
+        this.addStudentDialog.getButtonTable().add(addStudentConfirm);
+        this.addStudentDialog.getButtonTable().add(addStudentCancel);
 
         addStudentConfirm.addListener(new ChangeListener() {
 
@@ -143,8 +176,8 @@ public class ManageStudentsScreen extends GameScreen {
                         }
                     }
 
+                    // Adds the student to the database
                     addStudentEvent.notifyObservers(studentNameInput.getText());
-                    addSubtext.setText("Student added successfully.");  // Display confirmation of action
 
                 }
                 catch (IllegalArgumentException e) {
@@ -162,29 +195,31 @@ public class ManageStudentsScreen extends GameScreen {
 
 
         // Initialize dialog to edit student's name and knowledge level
-        editStudentDialog = new Dialog("Edit Student Dialog", skin);
+        this.editStudentDialog = new Dialog("Edit Student", this.skin);
 
-        editStudentDialog.text("Edit student information");
-        editStudentDialog.getContentTable().row();
+        this.editStudentDialog.text("Edit student information:").align(Align.left);
+        this.editStudentDialog.getContentTable().row();
 
-        editStudentDialog.text("Name:");
-        editNameInput = new TextField("", skin);
-        editStudentDialog.getContentTable().add(editNameInput);
-        editStudentDialog.getContentTable().row();
+        this.editStudentDialog.text("Name:").align(Align.left);
+        this.editNameInput = new TextField("", this.skin);
+        this.editStudentDialog.getContentTable().add(this.editNameInput).width(200);
+        this.editStudentDialog.getContentTable().row();
 
-        editStudentDialog.text("Knowledge Level:");
-        editKnowledgeLevelInput = new TextField("", skin);
-        editStudentDialog.getContentTable().add(editKnowledgeLevelInput);
-        editStudentDialog.getContentTable().row();
+        this.editStudentDialog.text("Knowledge Level:").align(Align.left);
+        this.editKnowledgeLevelInput = new TextField("", this.skin);
+        this.editStudentDialog.getContentTable().add(this.editKnowledgeLevelInput);
+        this.editStudentDialog.getContentTable().row();
 
-        editSubtext = new Label("", skin);  // Placeholder for text displayed when action completed successfully or if an invalid input is entered
-        editStudentDialog.getContentTable().add(editSubtext);
+        this.editSubtext = new Label("", this.skin);  // Placeholder for text displayed when  if an invalid input is entered
+        this.editSubtext.setWrap(true);
+        this.editSubtext.setAlignment(Align.center);
+        this.editStudentDialog.getContentTable().add(this.editSubtext).colspan(2).width(textWidth);
 
-        editStudentConfirm = new TextButton("Confirm", skin);
-        TextButton editStudentCancel = new TextButton("Back", skin);
+        this.editStudentConfirm = new TextButton("Confirm", this.skin);
+        TextButton editStudentCancel = new TextButton("Back", this.skin);
 
-        editStudentDialog.getButtonTable().add(editStudentConfirm);
-        editStudentDialog.getButtonTable().add(editStudentCancel);
+        this.editStudentDialog.getButtonTable().add(this.editStudentConfirm);
+        this.editStudentDialog.getButtonTable().add(editStudentCancel);
 
         editStudentCancel.addListener(new ChangeListener() {
             @Override
@@ -195,19 +230,27 @@ public class ManageStudentsScreen extends GameScreen {
 
 
         // Initialize dialog to confirm deleting a student
-        removeStudentDialog = new Dialog("Remove Student Dialog", skin);
+        this.removeStudentDialog = new Dialog("Remove Student", this.skin);
+        Label removePrompt = new Label("Are you sure you would like to delete this student?\n", this.skin);
+        removePrompt.setWrap(true);
+        this.removeStudentDialog.getContentTable().add(removePrompt).width(textWidth);
+        this.removeStudentDialog.getContentTable().row();
+        removeStudentNameText = new Label("", this.skin);  // Placeholder for student's name in confirmation text
+        removeStudentNameText.setAlignment(Align.center);
+        removeStudentNameText.setWrap(true);
+        this.removeStudentDialog.getContentTable().add(removeStudentNameText).width(textWidth);
+        this.removeStudentDialog.getContentTable().row();
 
-        removeStudentDialog.text("Are you sure you would like to delete this player?");  // TODO: Include the name of the player deleting
-        removeStudentDialog.getContentTable().row();
+        this.removeSubtext = new Label("", this.skin);  // Placeholder for text displayed when  an invalid input is entered
+        this.removeSubtext.setWrap(true);
+        this.removeSubtext.setAlignment(Align.center);
+        this.removeStudentDialog.getContentTable().add(this.removeSubtext).width(textWidth);
 
-        removeSubtext = new Label("", skin);  // Placeholder for text displayed when action completed successfully or an invalid input is entered
-        removeStudentDialog.getContentTable().add(removeSubtext);
+        this.removeStudentConfirm = new TextButton("Confirm", this.skin);
+        TextButton removeStudentCancel = new TextButton("Cancel", this.skin);
 
-        removeStudentConfirm = new TextButton("Confirm", skin);
-        TextButton removeStudentCancel = new TextButton("Cancel", skin);
-
-        removeStudentDialog.getButtonTable().add(removeStudentConfirm);
-        removeStudentDialog.getButtonTable().add(removeStudentCancel);
+        this.removeStudentDialog.getButtonTable().add(this.removeStudentConfirm);
+        this.removeStudentDialog.getButtonTable().add(removeStudentCancel);
 
         removeStudentCancel.addListener(new ChangeListener() {
             @Override
@@ -217,53 +260,83 @@ public class ManageStudentsScreen extends GameScreen {
         });
 
         // Create a button to select each existing student to edit or remove
-        for (PlayerProfile student : studentProfiles) {
+        for (PlayerProfile student : this.studentProfiles) {
             this.newStudentButton(student);
         }
 
         // Add button listeners
-        addStudentButton.addListener(new ChangeListener() {
+        this.addStudentButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                addStudentDialog.show(stage);  // Prompt to enter name of new student
+
+                // Prompt to enter name of new student
+                addStudentDialog.show(stage).setSize(dialogWidth, dialogHeight);
+                addStudentDialog.setPosition(stage.getWidth()/2, stage.getHeight()/2, Align.center);  // Center in the middle of the screen
+
             }
         });
-        editStudentButton.addListener(new ChangeListener() {
+        this.editStudentButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                editStudentDialog.show(stage);  // Prompt to enter new information for selected student
+
+                // Prompt to enter new information for selected student
+                editStudentDialog.show(stage).setSize(dialogWidth, dialogHeight);
+                editStudentDialog.setPosition(stage.getWidth()/2, stage.getHeight()/2, Align.center);  // Center in the middle of the screen
+
             }
         });
-        removeStudentButton.addListener(new ChangeListener() {
+        this.removeStudentButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                removeStudentDialog.show(stage);  // Prompt for confirmation
+
+                // Prompt for confirmation before removing student
+                removeStudentDialog.show(stage).setSize(dialogWidth, dialogHeight);
+                removeStudentDialog.setPosition(stage.getWidth()/2, stage.getHeight()/2, Align.center);  // Center in the middle of the screen
+
             }
         });
-        backButton.addListener(new ChangeListener() {
+        this.backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                instructorDashboardEvent.notifyObservers(null);
+                instructorDashboardEvent.notifyObservers(null);  // Return to instructor dashboard
             }
         });
 
-        // Display buttons
-        for (TextButton button : studentButtons) {
-            table.add(button).fillX();
-            table.row().pad(10, 0, 10, 0);
+        // Display each student
+        for (int i = 0; i < this.studentButtons.size(); i++) {
+
+            TextButton button = this.studentButtons.get(i);
+            studentTable.add(button);
+
+            if ((i+1) % 3 == 0) {  // Line down every 3 students
+                studentTable.row();
+            }
+
         }
-        table.add(addStudentButton).pad(10, 10, 10, 10);
-        table.add(editStudentButton).pad(10, 10, 10, 10);
-        table.add(removeStudentButton).pad(10, 10, 10, 10);
-        table.add(backButton).pad(10, 10, 10, 10);
+
+        // Enable scrolling
+        ScrollPane scroll = new ScrollPane(studentTable, this.skin);
+        scroll.setScrollBarPositions(false, true);
+        scroll.setScrollbarsOnTop(false);
+        scroll.setScrollbarsVisible(true);
+        table.add(scroll).colspan(3).fillX().expand();
+        table.row();
+
+        // Display each action button
+        buttonTable.add(this.addStudentButton);
+        buttonTable.add(this.editStudentButton);
+        buttonTable.add(this.removeStudentButton);
+        buttonTable.add(this.backButton);
+        table.add(buttonTable).colspan(3).expandX();
+
 
     }
 
     /** Add listeners for each event. Handled by the MainGame screen manager. */
-    void addBackListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
-    void addAddStudentListener(Observer<String> ob) { addStudentEvent.addObserver(ob); }
-    void addEditStudentListener(Observer<String> ob) { editStudentEvent.addObserver(ob); }
-    void addRemoveStudentListener(Observer<String> ob) { removeStudentEvent.addObserver(ob); }
+    void addBackListener(Observer<Void> ob) { this.instructorDashboardEvent.addObserver(ob); }
+    void addAddStudentListener(Observer<String> ob) { this.addStudentEvent.addObserver(ob); }
+    void addEditStudentListener(Observer<String> ob) { this.editStudentEvent.addObserver(ob); }
+    void addRemoveStudentListener(Observer<String> ob) { this.removeStudentEvent.addObserver(ob); }
 
 
     /**
@@ -274,8 +347,8 @@ public class ManageStudentsScreen extends GameScreen {
     private void newStudentButton(PlayerProfile student) {
 
         // Create button for the student
-        TextButton button = new TextButton(student.getName(), skin);
-        studentButtons.add(button);  // Add button to list of buttons
+        TextButton button = new TextButton(student.getName(), this.skin);
+        this.studentButtons.add(button);  // Add button to list of buttons
 
         // Link edit and remove buttons to the student when selected
         button.addListener(new ChangeListener() {
@@ -290,6 +363,9 @@ public class ManageStudentsScreen extends GameScreen {
                 // Allow edit and remove buttons to be clicked once student is selected
                 editStudentButton.setTouchable(Touchable.enabled);
                 removeStudentButton.setTouchable(Touchable.enabled);
+
+                // Set remove student confirmation to display the name of the selected player
+                removeStudentNameText.setText(studentName);
 
                 // Fill edit information fields with student's current name and knowledge level
                 editNameInput.setText(studentName);
@@ -335,7 +411,7 @@ public class ManageStudentsScreen extends GameScreen {
                             String[] studentData = {studentName, newName, newKnowledgeLevel};
                             editStudentEvent.notifyObservers(Arrays.toString(studentData));
 
-                            editSubtext.setText("Student edited successfully.");  // Display confirmation of action
+                            editSubtext.setText("");  // Clear any error messages that occurred
 
                         }
                         catch (NumberFormatException e) {
@@ -353,18 +429,46 @@ public class ManageStudentsScreen extends GameScreen {
                     @Override
                     public void changed(ChangeListener.ChangeEvent event, Actor actor) {
 
-                        // Remove button from dashboard
-                        studentButtons.remove(button);
-
-                        // Remove student from database
-                        removeStudentEvent.notifyObservers(studentName);
-                        removeSubtext.setText("Student removed successfully.");  // Display confirmation of action
+                        studentButtons.remove(button);                    // Remove button from dashboard
+                        removeStudentEvent.notifyObservers(studentName);  // Remove student from database
+                        removeSubtext.setText("");                        // Clear any error messages that occurred
 
                     }
                 });
             }
 
         });
+
+    }
+
+    /**
+     * Displays a confirmation message of an action.
+     *
+     * @param message Confirmation message to display
+     */
+    public void showConfirmation(String message) {
+
+        // Create dialog, set size and position
+        Dialog actionConfirmation = new Dialog("Confirmation", this.skin);
+        actionConfirmation.setSize(dialogWidth, dialogHeight);
+        actionConfirmation.setPosition(this.stage.getWidth()/2, this.stage.getHeight()/2, Align.center);  // Center in the middle of the screen
+
+        // Populate with given confirmation message
+        actionConfirmation.text(message);
+        actionConfirmation.getContentTable().row();
+
+        // Add button to hide dialog box
+        TextButton hideButton = new TextButton("Back", this.skin);
+        actionConfirmation.getButtonTable().add(hideButton);
+
+        actionConfirmation.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                actionConfirmation.hide();
+            }
+        });
+
+        this.stage.addActor(actionConfirmation);  // Display dialog
 
     }
 
