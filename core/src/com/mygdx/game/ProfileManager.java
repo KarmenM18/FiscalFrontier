@@ -289,11 +289,16 @@ public class ProfileManager implements Serializable {
      * @param name Student's name.
      * @param newKnowledgeLevel New knowledge level of student.
      * @throws IllegalArgumentException If a student with the entered name does not exist.
+     * @throws NumberFormatException If a negative knowledge level is given
      */
     public void changeKnowledgeLevel(String name, int newKnowledgeLevel) throws IllegalArgumentException {
 
         if (!this.exists(name)) {  // Check that the student exists
             throw new IllegalArgumentException("Student with the entered name does not exist.");
+        }
+
+        if (newKnowledgeLevel < 0) {  // Check that a valid knowledge level was given
+            throw new NumberFormatException("Knowledge level must be a non-negative integer.");
         }
 
         PlayerProfile profile = getProfile(name);      // Retrieve the profile of the student with the given name
