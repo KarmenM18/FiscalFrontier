@@ -61,13 +61,15 @@ public class GameBoard extends GameScreen {
     private Label starsLabel;
     private Label rollLabel;
     private Label roundLabel;
+    private Label levelLabel;
 
     // Debugmode stuff
     private TextButton modifyPlayer;
     private TextButton modifyTile;
 
-    transient private ArrayList<Item> playerItems; // Transient as it will be regenerated when the state is deserialized
-    transient private ArrayList<TextButton> itemButtons;
+    private Texture tileArrow; // Arrow shown for each possible direction from a tile.
+
+    transient private ArrayList<TextButton> itemButtons; // HUD buttons used to activate Items. Regenerated every turn
 
     private GameState gameState;
     private int width = 1920;
@@ -99,6 +101,9 @@ public class GameBoard extends GameScreen {
         Image backgroundImage = new Image(background);
         backgroundImage.setSize(width, height);
         stage.addActor(backgroundImage);
+
+        // Initialize tileArrow
+        tileArrow = assets.get(Config.getInstance().getMapArrowPath());
 
         // Setup keyboard shortcuts
         stage.addListener(new InputListener() {
@@ -217,25 +222,28 @@ public class GameBoard extends GameScreen {
         rollButton = new TextButton("Roll", skin);
         currPlayerLabel = new Label("currPlayerLabel", skin);
         scoreLabel = new Label("scoreLabel", skin);
-        starsLabel = new Label("starsLabel", skin);
+        starsLabel = new Label("starsL", skin);
         moneyLabel = new Label("moneyLabel", skin);
         rollLabel = new Label("rollLabel", skin);
         rollLabel.setColor(Color.YELLOW);
         roundLabel = new Label("-1", skin);
         rollLabel.setVisible(false);
+        levelLabel = new Label("knowledgelevelLabel", skin);
 
         // Initialize HUD
         hudTable = new Table();
         hudTable.setBackground(skin.getDrawable("window"));
-        hudTable.add(pauseButton).growY();
-        hudTable.add(currPlayerLabel).padLeft(5).uniform();
-        hudTable.add(scoreLabel).padLeft(5).uniform();
-        hudTable.add(starsLabel).padLeft(5).uniform();
-        hudTable.add(moneyLabel).padLeft(5).uniform();
-        hudTable.add(roundLabel).padLeft(5).uniform();
-        hudTable.add(rollButton).padLeft(25).grow();
-        hudTable.add(rollLabel).padLeft(5).uniform();
-        hudTable.add(nextTurnButton).padLeft(5).expandX();
+        hudTable.add(pauseButton).growY().left();
+        hudTable.add(currPlayerLabel).padRight(50).fill().left();
+        //hudTable.add(scoreLabel).padRight(5).uniform();
+        hudTable.add(starsLabel).padRight(50).fill().left();
+        hudTable.add(moneyLabel).padRight(50).fill().left();
+        hudTable.add(levelLabel).padRight(50).fill().left();
+        hudTable.add(roundLabel).padRight(50).fill().left();
+        hudTable.add(rollButton).padRight(50).growX().right();
+        hudTable.add(rollLabel).padRight(50).fill().right();
+
+        //hudTable.add(nextTurnButton).padLeft(5).expandX();
         // Put the hud table into another table to align it properly with the top of the screen
         Table t = new Table();
         t.setBounds(0, (float) (hudStage.getHeight() * 0.92) + 25, hudStage.getWidth(), (float) (hudStage.getHeight() *.08));
@@ -477,8 +485,35 @@ public class GameBoard extends GameScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        // Draw nodes
+        // Draw nodes and arrows indicating possible directions
+        // Arrows drawn first so they are below everything else
         Map<String, Node> nodeMap = gameState.getNodeMap();
+        Color c = batch.getColor();
+        batch.setColor(c.r, c.g, c.b, 0.5f); //set alpha to 50%
+        for (Node node : nodeMap.values()) {
+            if (node.getNorth()) {
+                batch.draw(tileArrow, node.getXPos(), node.getYPos() + 65, tileArrow.getWidth() / 2.0f,
+                        tileArrow.getHeight() / 2.0f, tileArrow.getWidth(), tileArrow.getHeight(), 0.4f,
+                        0.4f, 0, 0, 0, 100, 100, false, false);
+            }
+            if (node.getEast()) {
+                batch.draw(tileArrow, node.getXPos() + 75, node.getYPos(), tileArrow.getWidth() / 2.0f,
+                        tileArrow.getHeight() / 2.0f, tileArrow.getWidth(), tileArrow.getHeight(), 0.4f,
+                        0.4f, 270, 0, 0, 100, 100, false, false);
+            }
+            if (node.getSouth()) {
+                batch.draw(tileArrow, node.getXPos(), node.getYPos() - 90, tileArrow.getWidth() / 2.0f,
+                        tileArrow.getHeight() / 2.0f, tileArrow.getWidth(), tileArrow.getHeight(), 0.4f,
+                        0.4f, 180, 0, 0, 100, 100, false, false);
+            }
+            if (node.getWest()) {
+                batch.draw(tileArrow, node.getXPos() - 75, node.getYPos(), tileArrow.getWidth() / 2.0f,
+                        tileArrow.getHeight() / 2.0f, tileArrow.getWidth(), tileArrow.getHeight(), 0.4f,
+                        0.4f, 90, 0, 0, 100, 100, false, false);
+            }
+        }
+        batch.setColor(c.r, c.g, c.b, 1f); //set alpha back to normal
+
         for (Node node : nodeMap.values()) {
             node.draw(batch);
         }
@@ -507,6 +542,7 @@ public class GameBoard extends GameScreen {
         scoreLabel.setText("Score: " + currPlayer.getScore());
         starsLabel.setText("Stars: " + currPlayer.getStars());
         moneyLabel.setText("Money: $" + currPlayer.getMoney());
+        levelLabel.setText("Knowledge Level: " + currPlayer.getLevel());
 
         roundLabel.setText("Round: " + gameState.getRound());
 
@@ -605,9 +641,11 @@ public class GameBoard extends GameScreen {
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                     Player player = gameState.getCurrentPlayer();
                     boolean delete = item.use(gameState.getCurrentPlayer(), gameState, hudStage);
-                    ActionTextSystem.addText(item.getName() + " activated", player.getSprite().getX(), player.getSprite().getY() + 50, 0.5f);
 
-                    if (delete) gameState.getCurrentPlayer().removeItem(item.getName());
+                    if (delete) {
+                        gameState.getCurrentPlayer().removeItem(item.getName());
+                        ActionTextSystem.addText(item.getName() + " activated", player.getSprite().getX(), player.getSprite().getY() + 50, 0.5f);
+                    }
                     checkRollButton();
                     updateItemButtons();
                 }
@@ -660,6 +698,8 @@ public class GameBoard extends GameScreen {
 
         // Check for end of game
         if (gameState.isGameOver()) {
+            SoundSystem.getInstance().playSound("success_bell.mp3");
+
             Dialog goToEnd = new Dialog("End Game", skin) {
                 @Override
                 protected void result(Object object) {
@@ -671,7 +711,6 @@ public class GameBoard extends GameScreen {
             goToEnd.text("Game is over.");
             goToEnd.button("Continue", true);
             goToEnd.show(hudStage);
-            goToEnd.setScale(2f);
 
             return;
         }

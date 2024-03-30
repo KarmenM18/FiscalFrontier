@@ -22,7 +22,7 @@ public class StarNode extends Node {
     private Dialog buyStarDialog;
     private Dialog starDialog;
 
-    transient private Sprite starSprite; // Visible if there is a star on the node
+    transient protected Sprite starSprite; // Visible if there is a star on the node
 
 
     public StarNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {

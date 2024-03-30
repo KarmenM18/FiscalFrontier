@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.*;
+import com.mygdx.game.Observer.Observer;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GlobalPenaltyNodeTest {
     private PlayerProfile profile;
     private GameState state;
+    private GameContext gameContext;
     private AssetManager asset;
     private GlobalPenaltyNode globalPenaltyNode;
     private Player p;
@@ -27,21 +30,8 @@ class GlobalPenaltyNodeTest {
 
     @BeforeEach
     void setUp() {
-        HeadlessApplicationConfiguration GDXConfig = new HeadlessApplicationConfiguration();
-        new HeadlessApplication(new TestGame(), GDXConfig);
-        Gdx.gl = Mockito.mock(GL20.class);
-        state = Mockito.mock(GameState.class);
-        asset = new AssetManager();
-
-        Config config = Config.getInstance();
-        asset.load(config.getUiPath(), Skin.class);
-        asset.load(config.getTilePath(), Texture.class);
-        asset.load(config.getStarTilePath(), Texture.class);
-        asset.load(config.getEventTilePath(), Texture.class);
-        asset.load(config.getPenaltyTilePath(), Texture.class);
-        asset.load(config.getPlayerPath(), Texture.class);
-        asset.load("background.jpeg", Texture.class);
-        asset.finishLoading();
+        gameContext = new GameContext();
+        asset = gameContext.getAssetManager();
 
         profile = new PlayerProfile("test",0,0,0);
         globalPenaltyNode = new GlobalPenaltyNode(0,0, asset);
@@ -64,7 +54,7 @@ class GlobalPenaltyNodeTest {
         assertFalse(p.getHasShield());
 
         //test money
-        assertEquals(penalty, p.getMoney());
+        p.setMoney(penalty);
         globalPenaltyNode.activate(p,null,mode);
         assertEquals(0, p.getMoney());
 

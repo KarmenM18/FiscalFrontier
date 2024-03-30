@@ -11,14 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ray3k.stripe.FreeTypeSkinLoader;
 
@@ -78,6 +71,7 @@ public class MainGame extends Game {
 		assets.load(config.getPlayerFreezePath(), Texture.class);
 		assets.load(config.getBackgroundPath(), Texture.class);
 		assets.load(config.getPlayerShieldPath(), Texture.class);
+		assets.load(config.getMapArrowPath(), Texture.class);
 		assets.finishLoading(); // Make sure assets are loaded before continuing.
 
 		// Setup ActionTextSystem
@@ -92,7 +86,6 @@ public class MainGame extends Game {
 		saveScreen = new SaveScreen(batch, assets);
 		tutorialScreen = new TutorialScreen(batch, assets);
 
-		ClassLoader CL = getClass().getClassLoader();
 		profileManager = new ProfileManager("studentInformation.json", "highScoreTable.json", "lifetimeScoreTable.json");
 		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets, this.profileManager);
 		manageStudentsScreen = new ManageStudentsScreen(batch, assets, this.profileManager);
@@ -162,7 +155,7 @@ public class MainGame extends Game {
 		newGameScreen.addCreateGameStateListener(profileBoolPair -> {
 			GameState newGame;
 			try {
-				newGame = new GameState(profileBoolPair.getKey(), assets, gameBoard, saveScreen.getUniqueID(saveSystem), profileBoolPair.getValue());
+				newGame = new GameState(profileBoolPair.getKey(), assets, saveScreen.getUniqueID(saveSystem), profileBoolPair.getValue());
 			} catch (FileNotFoundException e) {
 				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
 				return;

@@ -7,6 +7,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,14 +15,13 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StockTest {
+    static private AssetManager asset;
+    static private GameContext gameContext;
 
-    @BeforeEach
-    void setUp() {
-        HeadlessApplicationConfiguration GDXConfig = new HeadlessApplicationConfiguration();
-        new HeadlessApplication(new TestGame(), GDXConfig);
-        Gdx.gl = Mockito.mock(GL20.class); // Mock gl to allow headless texture loading
-
-        Config config = Config.getInstance();
+    @BeforeAll
+    static void setUp() {
+        gameContext = new GameContext();
+        asset = gameContext.getAssetManager();
     }
 
     @Test

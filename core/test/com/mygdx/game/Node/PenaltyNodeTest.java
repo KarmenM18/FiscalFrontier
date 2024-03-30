@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.*;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PenaltyNodeTest {
     private PlayerProfile profile;
     private AssetManager asset;
+    private GameContext gameContext;
     private PenaltyNode penaltyNode;
     private Player p;
     private boolean easy = false;
@@ -26,20 +28,8 @@ class PenaltyNodeTest {
 
     @BeforeEach
     void setUp() {
-        HeadlessApplicationConfiguration GDXConfig = new HeadlessApplicationConfiguration();
-        new HeadlessApplication(new TestGame(), GDXConfig);
-        Gdx.gl = Mockito.mock(GL20.class);
-        asset = new AssetManager();
-
-        Config config = Config.getInstance();
-        asset.load(config.getUiPath(), Skin.class);
-        asset.load(config.getTilePath(), Texture.class);
-        asset.load(config.getStarTilePath(), Texture.class);
-        asset.load(config.getEventTilePath(), Texture.class);
-        asset.load(config.getPenaltyTilePath(), Texture.class);
-        asset.load(config.getPlayerPath(), Texture.class);
-        asset.load("background.jpeg", Texture.class);
-        asset.finishLoading();
+        gameContext = new GameContext();
+        asset = gameContext.getAssetManager();
 
         profile = new PlayerProfile("test",0,0,0);
         penaltyNode = new PenaltyNode(0,0, asset);

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.*;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,26 +17,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NormalNodeTest {
     private AssetManager asset;
+    private GameContext gameContext;
     private PlayerProfile profile;
     private NormalNode normalNode;
     private Player p;
     private int baseMoney;
     @BeforeEach
     void setUp() {
-        HeadlessApplicationConfiguration GDXConfig = new HeadlessApplicationConfiguration();
-        new HeadlessApplication(new TestGame(), GDXConfig);
-        Gdx.gl = Mockito.mock(GL20.class);
-        asset = new AssetManager();
-
-        Config config = Config.getInstance();
-        asset.load(config.getUiPath(), Skin.class);
-        asset.load(config.getTilePath(), Texture.class);
-        asset.load(config.getStarTilePath(), Texture.class);
-        asset.load(config.getEventTilePath(), Texture.class);
-        asset.load(config.getPenaltyTilePath(), Texture.class);
-        asset.load(config.getPlayerPath(), Texture.class);
-        asset.load("background.jpeg", Texture.class);
-        asset.finishLoading();
+        gameContext = new GameContext();
+        asset = gameContext.getAssetManager();
 
         profile = new PlayerProfile("test",0,0,0);
         normalNode = new NormalNode(0,0, asset);

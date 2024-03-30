@@ -7,9 +7,8 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import org.junit.jupiter.api.AfterEach;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -19,31 +18,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SaveSystemTest {
     static private SaveSystem saver;
     static private AssetManager asset;
+    static private GameContext gameContext;
 
     @BeforeAll
     static void setUp() {
-        HeadlessApplicationConfiguration GDXConfig = new HeadlessApplicationConfiguration();
-        new HeadlessApplication(new TestGame(), GDXConfig);
-        Gdx.gl = Mockito.mock(GL20.class); // Mock gl to allow headless texture loading
-
-        Config config = Config.getInstance();
-
+        gameContext = new GameContext();
+        asset = gameContext.getAssetManager();
         saver = new SaveSystem();
-        asset = new AssetManager();
-        // Load assets
-        asset.load(config.getUiPath(), Skin.class);
-        asset.load(config.getTilePath(), Texture.class);
-        asset.load(config.getStarTilePath(), Texture.class);
-        asset.load(config.getEventTilePath(), Texture.class);
-        asset.load(config.getPenaltyTilePath(), Texture.class);
-        asset.load(config.getPlayerPath(), Texture.class);
-        asset.load("background.jpeg", Texture.class);
-        asset.finishLoading();
     }
 
     @Test
@@ -51,7 +38,6 @@ class SaveSystemTest {
         PlayerProfile testProfile = new PlayerProfile("TestUser");
         GameState gs = new GameState(Collections.singletonList(testProfile), asset, 0, false);
         saver.saveGameState(gs, "testSave");
-        // TODO update file name when we implement naming saves
         Path saveFile = Paths.get("saves/testSave_1.json");
         assertTrue(Files.exists(saveFile));
 
