@@ -28,7 +28,7 @@ public class GameScreen extends ScreenAdapter {
         Config config = Config.getInstance();
         this.assets = assets;
         this.skin = assets.get(config.getUiPath(), Skin.class);
-        this.skin.getFont("font").getData().setScale(2); // Scale font size
+        //this.skin.getFont("font").getData().setScale(2); // Scale font size
         stage = new Stage(new FitViewport(1920, 1080), batch);
     }
 

@@ -75,8 +75,8 @@
 			characters: " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^$€-%+=#_&~* ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ•"
 		}
 		font: {
-			font: font/Sansation_Light.ttf,
-			size: 14
+			font: font/Sansation_Regular.ttf,
+			size: 28
 			mono: false
 			color: font
 			gamma: 1
