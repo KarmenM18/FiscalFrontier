@@ -72,19 +72,6 @@ public class PlayerProfile {
     private PlayerProfile() {}
 
     /**
-     * Add xp to the Player.
-     *
-     * @param xp amount of xp to add
-     */
-    public void addXP(int xp) {
-        // TODO level curve
-        while (xp >= 1000) {
-            xp -= 1000;
-            knowledgeLevel++;
-        }
-    }
-
-    /**
      * Add score to the Player.
      *
      * @param score the amount of score to add
@@ -222,7 +209,6 @@ public class PlayerProfile {
      * @return Returns a String to identify a random tip to show on the pause screen
      */
     public String getRandomTip () {
-
         int randTip = (int) (Math.random() * this.learned.size());
         try {
             return this.learned.get(randTip);

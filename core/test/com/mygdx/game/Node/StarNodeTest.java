@@ -7,11 +7,9 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.mygdx.game.Player;
+import com.mygdx.game.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.game.Config;
-import com.mygdx.game.PlayerProfile;
-import com.mygdx.game.TestGame;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 import org.mockito.Mockito;
 
 
@@ -19,30 +17,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StarNodeTest {
     private AssetManager asset;
+    private GameContext gameContext;
     private PlayerProfile profile;
 
     private StarNode starNode;
     private Player p;
     private boolean hasStar;
-    private Config config;
 
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        HeadlessApplicationConfiguration GDXConfig = new HeadlessApplicationConfiguration();
-        new HeadlessApplication(new TestGame(), GDXConfig);
-        Gdx.gl = Mockito.mock(GL20.class);
-        asset = new AssetManager();
-
-        config = Config.getInstance();
-        asset.load(config.getUiPath(), Skin.class);
-        asset.load(config.getTilePath(), Texture.class);
-        asset.load(config.getStarTilePath(), Texture.class);
-        asset.load(config.getEventTilePath(), Texture.class);
-        asset.load(config.getPenaltyTilePath(), Texture.class);
-        asset.load(config.getPlayerPath(), Texture.class);
-        asset.load("background.jpeg", Texture.class);
-        asset.finishLoading();
+        gameContext = new GameContext();
+        asset = gameContext.getAssetManager();
 
         profile = new PlayerProfile("test",0,0,0);
         starNode = new StarNode(0,0, asset);
@@ -64,9 +50,9 @@ class StarNodeTest {
     void checkStarTest() {
         starNode.hasStar = true;
         starNode.checkStar();
-        assertEquals(starNode.sprite.getTexture(), asset.get(config.getStarTilePath()));
+        assertTrue(starNode.starSprite.getColor().a == 1.0);
         starNode.hasStar = false;
         starNode.checkStar();
-        assertEquals(starNode.sprite.getTexture(), asset.get(config.getTilePath()));
+        assertTrue(starNode.starSprite.getColor().a == 0.0);
     }
 }

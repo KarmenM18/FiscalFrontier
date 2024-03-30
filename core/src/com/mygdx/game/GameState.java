@@ -48,11 +48,10 @@ public class GameState implements Serializable {
      * Will throw error if the profileList is null or empty
      * @param profileList the list of PlayerProfiles participating in the game
      * @param assets AssetManager to use
-     * @param board GameBoard to use
      * @param id UNIQUE ID of the gameState. Used to cleanup saves after termination of a game
      * @param hardMode controls if hard mode is enabled
      */
-    public GameState(List<PlayerProfile> profileList, AssetManager assets, GameBoard board, int id, boolean hardMode) {
+    public GameState(List<PlayerProfile> profileList, AssetManager assets, int id, boolean hardMode) {
         assetMan = assets;
         this.hardMode = hardMode;
         this.id = id;
@@ -333,7 +332,7 @@ public class GameState implements Serializable {
     public void globalPenaltyEvent(int penaltyAmount){
         //needs to be put here due to activation order
         for (Player p : getPlayerList()){
-            if (p.useShield()) return;
+            if (p.useShield()) continue;
 
             if(hardMode){
                 if(p.getStars() > 0){

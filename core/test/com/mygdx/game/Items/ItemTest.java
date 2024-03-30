@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.*;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,25 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ItemTest {
     static private AssetManager asset;
+    static private GameContext gameContext;
 
     @BeforeAll
     static void setUp() {
-        HeadlessApplicationConfiguration GDXConfig = new HeadlessApplicationConfiguration();
-        new HeadlessApplication(new TestGame(), GDXConfig);
-        Gdx.gl = Mockito.mock(GL20.class); // Mock gl to allow headless texture loading
-
-        Config config = Config.getInstance();
-
-        asset = new AssetManager();
-        // Load assets
-        asset.load(config.getUiPath(), Skin.class);
-        asset.load(config.getTilePath(), Texture.class);
-        asset.load(config.getStarTilePath(), Texture.class);
-        asset.load(config.getEventTilePath(), Texture.class);
-        asset.load(config.getPenaltyTilePath(), Texture.class);
-        asset.load(config.getPlayerPath(), Texture.class);
-        asset.load("background.jpeg", Texture.class);
-        asset.finishLoading();
+        gameContext = new GameContext();
+        asset = gameContext.getAssetManager();
     }
 
     @Test

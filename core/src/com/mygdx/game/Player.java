@@ -328,7 +328,7 @@ public class Player implements Serializable {
      * Increase Player level by one, as long as the Player is not already at the max level.
      */
     public void levelUp(){
-        if(this.level <= Config.getInstance().getMaxLevel()){
+        if(this.level < Config.getInstance().getMaxLevel()){
             this.level++;
         }
     }

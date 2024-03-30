@@ -5,8 +5,12 @@ package com.mygdx.game;
  * Singleton Pattern
  */
 public class Config {
+
+    private int maxPlayers = 5;
+    private int minPlayers = 2;
+    private int maxRounds = 26; // The highest reachable round before the game ends
+    private int maxLevel = 13;
     private String uiPath = "ui/clean-crispy/skin/clean-crispy-ui.json"; // Path of UI skin file
-    //private String uiPath = "ui/8bit/uiskin.json"; // Path of UI skin file
     private String tilePath = "kenny_block_pack/PNG/Double (128px)/tileGrass.png";
     private String starTilePath = "star.png";
     private String penaltyTilePath = "penalty-node1.png";
@@ -14,14 +18,11 @@ public class Config {
     private String playerPath = "player-alt.png";
     private String saveFolder = "saves";
     private String debugPassword = "noclip";
-    private int maxPlayers = 5;
-    private int minPlayers = 2;
-    private int maxRounds = 26; // The highest reachable round before the game ends
-    private int maxLevel = 13;
     private String soundsFolder = "sounds/";
     private String backgroundPath = "background.jpg";
     private String playerFreezePath = "kenny_block_pack/PNG/Double (128px)/detail_snow.png";
     private String playerShieldPath = "shield.png";
+    private String mapArrowPath = "arrow.png";
 
     public int getMaxLevel() {
         return maxLevel;
@@ -77,6 +78,10 @@ public class Config {
 
     public String getPlayerShieldPath() {
         return playerShieldPath;
+    }
+
+    public String getMapArrowPath() {
+        return mapArrowPath;
     }
 
     /**

@@ -45,7 +45,7 @@ public class PauseScreen extends GameScreen {
         table.add(title).colspan(2).fillX();
         table.row();
 
-        saveGameButton = new TextButton("Save Current Game", skin);
+        saveGameButton = new TextButton("Save Game", skin);
         viewKnowledgeButton = new TextButton("View Knowledge Catalog", skin);
         resumeButton = new TextButton("Resume Game", skin);
         menuButton = new TextButton("Exit To Main Menu", skin);
