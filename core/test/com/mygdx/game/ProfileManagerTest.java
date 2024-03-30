@@ -43,7 +43,7 @@ class ProfileManagerTest {
 
         try {
 
-            // Define filepaths to each database
+            // Define filepath to each database
             studentFile = test + "/TestingDatabases/TestingDatabases/studentDatabase1.json";
             highScoreFile = test + "/TestingDatabases/TestingDatabases/highScoreDatabase1.json";
             lifetimeScoreFile = test + "/TestingDatabases/TestingDatabases/lifetimeScoreDatabase1.json";

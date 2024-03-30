@@ -171,6 +171,26 @@ public class ProfileManager implements Serializable {
 
 
     /**
+     * Checks if a student profile with the given name exists in the database.
+     *
+     * @param name Student's name.
+     * @return True if a student profile with the given name exists, false if otherwise.
+     */
+    private boolean exists(String name) {
+
+        // Search the list of profiles for the student
+        for (PlayerProfile student : this.studentInformation) {
+            if (student.getName().equals(name)) {   // Profile with the given name found
+                return true;
+            }
+        }
+
+        return false;  // Checked entire list and student not found
+
+    }
+
+
+    /**
      * Retrieves the profile of the student with the given name.
      *
      * @param name Student's name
@@ -179,13 +199,17 @@ public class ProfileManager implements Serializable {
      */
     private PlayerProfile getProfile(String name) throws IllegalArgumentException {
 
-        int index = findProfileIndex(name, this.studentInformation);  // Find the profile's index in the list of profiles
+        // Search for student in the list of profiles by name
+        for (PlayerProfile studentProfile : this.studentInformation) {  // Iterate through list of profiles
 
-        if (index == -1) {
-            throw new IllegalArgumentException("Student with the entered name does not exist.");
+            if (studentProfile.getName().equals(name)) {  // Student's profile found
+                return studentProfile;
+            }
+
         }
 
-        return this.studentInformation.get(index);   // Return profile found
+        // Checked entire list and student not found
+        throw new IllegalArgumentException("Student with the entered name does not exist.");
 
     }
 
@@ -199,7 +223,7 @@ public class ProfileManager implements Serializable {
     public void addStudent(String name) throws IllegalArgumentException {
 
         // Check that a student with the entered name does not already exist
-        if (findProfileIndex(name, this.studentInformation) >= 0) {  // Index returned, indicates a student with the same name was found in the list of all students
+        if (this.exists(name)) {
             throw new IllegalArgumentException("Student with the entered name already exists.");
         }
 
@@ -222,6 +246,10 @@ public class ProfileManager implements Serializable {
      */
     public PlayerProfile removeStudent(String name) throws IllegalArgumentException {
 
+        if (!this.exists(name)) {  // Check that the student exists
+            throw new IllegalArgumentException("Student with the entered name does not exist.");
+        }
+
         PlayerProfile removedProfile = getProfile(name);  // Retrieve the profile to be removed
         this.studentInformation.remove(removedProfile);   // Remove profile from list
 
@@ -242,6 +270,10 @@ public class ProfileManager implements Serializable {
      */
     public void renameStudent(String name, String newName) throws IllegalArgumentException {
 
+        if (!this.exists(name)) {  // Check that the student exists
+            throw new IllegalArgumentException("Student with the entered name does not exist.");
+        }
+
         PlayerProfile profile = getProfile(name);   // Retrieve the profile of the student with the given name
         profile.setName(newName);   // Rename student
 
@@ -260,6 +292,10 @@ public class ProfileManager implements Serializable {
      */
     public void changeKnowledgeLevel(String name, int newKnowledgeLevel) throws IllegalArgumentException {
 
+        if (!this.exists(name)) {  // Check that the student exists
+            throw new IllegalArgumentException("Student with the entered name does not exist.");
+        }
+
         PlayerProfile profile = getProfile(name);      // Retrieve the profile of the student with the given name
         profile.setKnowledgeLevel(newKnowledgeLevel);  // Change student's knowledge level
 
@@ -277,6 +313,10 @@ public class ProfileManager implements Serializable {
      * @throws IllegalArgumentException If a student with the entered name does not exist.
      */
     public void updateHighScore(String name, int newHighScore) throws IllegalArgumentException {
+
+        if (!this.exists(name)) {  // Check that the student exists
+            throw new IllegalArgumentException("Student with the entered name does not exist.");
+        }
 
         PlayerProfile profile = getProfile(name);  // Retrieve the profile of the student with the given name
 
@@ -300,6 +340,10 @@ public class ProfileManager implements Serializable {
      * @throws IllegalArgumentException If a student with the entered name does not exist.
      */
     public void addLifetimeScore(String name, int newScore) throws IllegalArgumentException {
+
+        if (!this.exists(name)) {  // Check that the student exists
+            throw new IllegalArgumentException("Student with the entered name does not exist.");
+        }
 
         PlayerProfile profile = getProfile(name);  // Retrieve the profile of the student with the given name
         profile.setLifetimeScore(profile.getLifetimeScore() + newScore);  // Update student's lifetime score
