@@ -165,7 +165,7 @@ public class ShopScreen extends GameScreen {
     private void showPlayerInfo() {
         playerInfo = new Table();
 
-        Label playerName = new Label(currentPlayer.getPlayerProfile().getName(), skin);
+        Label playerName = new Label(currentPlayer.getPlayerProfile().getName() + "'s Account", skin);
         Label playerMoney = new Label("Current Cash Available: " + currentPlayer.getMoney(), skin);
         Label playerInvestment = new Label("Investment Account: " + currentPlayer.getInvestments() , skin);
 

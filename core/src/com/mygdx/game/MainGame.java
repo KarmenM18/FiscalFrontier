@@ -77,7 +77,11 @@ public class MainGame extends Game {
 		assets.load(config.getPlayerPath(), Texture.class);
 		assets.load(config.getPlayerFreezePath(), Texture.class);
 		assets.load(config.getBackgroundPath(), Texture.class);
+		assets.load(config.getPlayerShieldPath(), Texture.class);
 		assets.finishLoading(); // Make sure assets are loaded before continuing.
+
+		// Setup ActionTextSystem
+		ActionTextSystem.initSkin(assets.get(config.getUiPath(), Skin.class));
 
 		// Load screens
 		mainMenuScreen = new MainMenuScreen(batch, assets);
@@ -158,7 +162,7 @@ public class MainGame extends Game {
 		newGameScreen.addCreateGameStateListener(profileBoolPair -> {
 			GameState newGame;
 			try {
-				newGame = new GameState(profileBoolPair.getKey(), assets, saveScreen.getUniqueID(saveSystem), profileBoolPair.getValue());
+				newGame = new GameState(profileBoolPair.getKey(), assets, gameBoard, saveScreen.getUniqueID(saveSystem), profileBoolPair.getValue());
 			} catch (FileNotFoundException e) {
 				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
 				return;

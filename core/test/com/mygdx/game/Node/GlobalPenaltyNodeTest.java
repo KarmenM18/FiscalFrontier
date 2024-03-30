@@ -1,6 +1,5 @@
 package com.mygdx.game.Node;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
@@ -15,11 +14,11 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class EventNodeTest {
+class GlobalPenaltyNodeTest {
     private PlayerProfile profile;
     private GameState state;
     private AssetManager asset;
-    private EventNode eventNode;
+    private GlobalPenaltyNode globalPenaltyNode;
     private Player p;
     private boolean easy = false;
     private boolean hard = true;
@@ -45,9 +44,9 @@ class EventNodeTest {
         asset.finishLoading();
 
         profile = new PlayerProfile("test",0,0,0);
-        eventNode = new EventNode(0,0, asset);
+        globalPenaltyNode = new GlobalPenaltyNode(0,0, asset);
 
-        penalty = eventNode.penaltyAmount;
+        penalty = globalPenaltyNode.penaltyAmount;
 
         p = new Player(profile,asset);
         p.setMoney(penalty);
@@ -61,16 +60,16 @@ class EventNodeTest {
         boolean mode = easy;
         //test shield
         assertTrue(p.getHasShield());
-        eventNode.activate(p,null,mode);
+        globalPenaltyNode.activate(p,null,mode);
         assertFalse(p.getHasShield());
 
         //test money
         assertEquals(penalty, p.getMoney());
-        eventNode.activate(p,null,mode);
+        globalPenaltyNode.activate(p,null,mode);
         assertEquals(0, p.getMoney());
 
         //test non-negative
-        eventNode.activate(p,null,mode);
+        globalPenaltyNode.activate(p,null,mode);
         assertFalse(p.getMoney() < 0);
     }
 
@@ -79,19 +78,19 @@ class EventNodeTest {
         boolean mode = hard;
         //test shield
         assertTrue(p.getHasShield());
-        eventNode.activate(p,null,mode);
+        globalPenaltyNode.activate(p,null,mode);
         assertFalse(p.getHasShield());
 
         //test star
         assertEquals(iniStar, p.getStars());
-        eventNode.activate(p,null,mode);
+        globalPenaltyNode.activate(p,null,mode);
         assertEquals(0, p.getStars());
 
         //test money
         assertEquals(penalty, p.getMoney());
 
         //test negative
-        eventNode.activate(p,null,mode);
+        globalPenaltyNode.activate(p,null,mode);
         assertTrue(p.getMoney() < 0);
     }
 

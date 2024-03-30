@@ -11,7 +11,7 @@ public class MultiDice extends Item {
         super("MultiDice", false, skin);
     }
     public boolean use(Player player, GameState gameState, Stage stage) {
-        player.setUseMutliDice(true);
+        player.setUseMultiDice(true);
         return true;
     }
     /**

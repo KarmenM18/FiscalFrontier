@@ -111,5 +111,7 @@ public final class Utility {
         errorDialog.text(text);
         errorDialog.button("Continue", true);
         errorDialog.show(stage);
+
+        SoundSystem.getInstance().playSound("error.wav");
     }
 }

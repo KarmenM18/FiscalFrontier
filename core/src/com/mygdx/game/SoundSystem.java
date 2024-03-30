@@ -25,11 +25,9 @@ public class SoundSystem {
      * Initializer of SoundSystem
      */
     private SoundSystem() {
-        // Load all sound files into map
+        // Load music
         music = Gdx.audio.newMusic(Gdx.files.internal(Config.getInstance().getSoundsFolder() + "music.mp3"));
         music.setLooping(true);
-
-        loadSound("coldsnap.wav");
     }
 
     /**
@@ -66,11 +64,15 @@ public class SoundSystem {
     }
 
     /**
-     * Play a specific sound file
+     * Play a specific sound file. Will automatically attempt to load the file if needed.
      *
      * @param name name of the sound file
      */
     public void playSound(String name) {
+        if (soundsMap.get(name) == null) {
+            // Load the sound
+            loadSound(name);
+        }
         soundsMap.get(name).play();
     }
 

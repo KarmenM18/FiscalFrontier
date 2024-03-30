@@ -7,6 +7,7 @@ package com.mygdx.game.Node;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -102,6 +103,16 @@ public abstract class Node implements Serializable {
     public boolean activate(Player player, SpriteBatch batch, Stage stage, Skin skin, GameBoard board, boolean hardmode) {
         return false; // Returns false if the GameBoard should start the next turn automatically
     }
+
+    /**
+     * Draw the Node.
+     *
+     * @param batch the Batch to draw with
+     */
+    public void draw(Batch batch) {
+        sprite.draw(batch);
+    }
+
     /**
      * Get all Nodes reachable from this Node, exactly {@code distance} nodes away from it.
      * Returns the whole path from the current node to the reachable node.

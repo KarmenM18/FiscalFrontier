@@ -4,14 +4,13 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Config;
-import com.mygdx.game.Node.Node;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 import com.mygdx.game.Player;
 
 import java.util.Map;
 
-public class EventNode extends Node {
+public class GlobalPenaltyNode extends Node {
     // Observable must be transient as the Observer contains a reference to the GameState, creating a loop
     // Recreate observers when deserializing
     transient protected Observable<Void> callEventNode = new Observable<Void>();
@@ -19,19 +18,19 @@ public class EventNode extends Node {
     protected int penaltyAmount = 50;
     protected Texture eventTexture;
 
-    public EventNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
+    public GlobalPenaltyNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
         super(mapX, mapY, north, east, south, west, map, assets);
     }
 
 
-    public EventNode(int mapX, int mapY, AssetManager assets) {
+    public GlobalPenaltyNode(int mapX, int mapY, AssetManager assets) {
         super(mapX, mapY, assets);
     }
 
     /**
      * necessary for serialization
      */
-    private EventNode() {}
+    private GlobalPenaltyNode() {}
 
     @Override
     public void loadTextures(AssetManager assets) {
@@ -50,9 +49,6 @@ public class EventNode extends Node {
         //setting penalty amount to be double, actual activation is in GameState
         if(hardmode){
             penaltyAmount *= 2;
-        }
-        if(player.getHasShield()){
-            player.setHasShield(false);
         }
         //notify observer in GameState
         globalEvent.notifyObservers(penaltyAmount);

@@ -10,6 +10,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -23,7 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -220,25 +220,26 @@ public class GameBoard extends GameScreen {
         starsLabel = new Label("starsLabel", skin);
         moneyLabel = new Label("moneyLabel", skin);
         rollLabel = new Label("rollLabel", skin);
+        rollLabel.setColor(Color.YELLOW);
         roundLabel = new Label("-1", skin);
         rollLabel.setVisible(false);
 
         // Initialize HUD
         hudTable = new Table();
         hudTable.setBackground(skin.getDrawable("window"));
-        hudTable.add(pauseButton);
+        hudTable.add(pauseButton).growY();
         hudTable.add(currPlayerLabel).padLeft(5).uniform();
         hudTable.add(scoreLabel).padLeft(5).uniform();
         hudTable.add(starsLabel).padLeft(5).uniform();
         hudTable.add(moneyLabel).padLeft(5).uniform();
         hudTable.add(roundLabel).padLeft(5).uniform();
-        hudTable.add(rollButton).padLeft(5).uniform();
+        hudTable.add(rollButton).padLeft(25).grow();
         hudTable.add(rollLabel).padLeft(5).uniform();
         hudTable.add(nextTurnButton).padLeft(5).expandX();
         // Put the hud table into another table to align it properly with the top of the screen
         Table t = new Table();
-        t.setBounds(0, (float) (hudStage.getHeight() * .943), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));
-        t.add(hudTable).width(hudStage.getWidth());
+        t.setBounds(0, (float) (hudStage.getHeight() * 0.92) + 25, hudStage.getWidth(), (float) (hudStage.getHeight() *.08));
+        t.add(hudTable).width(hudStage.getWidth()).grow();
 
         hudStage.addActor(t);
 
@@ -257,8 +258,12 @@ public class GameBoard extends GameScreen {
                 Player currPlayer = gameState.getCurrentPlayer();
                 if (!currPlayer.canRoll()) return;
 
-                rollLabel.setText(gameState.getCurrentPlayer().rollDie(gameState.getNodeMap()));
+                rollLabel.setText("Roll: " + gameState.getCurrentPlayer().rollDie(gameState.getNodeMap()));
                 rollLabel.setVisible(true);
+
+                // Play random sound
+                int soundIndex = Utility.getRandom(1, 29);
+                SoundSystem.getInstance().playSound("rolling/dice-" + Integer.toString(soundIndex) + ".wav");
 
                 // Disable button if the player cannot roll anymore
                 checkRollButton();
@@ -379,8 +384,8 @@ public class GameBoard extends GameScreen {
                         boolean west = currentNode.getWest();
                         boolean east = currentNode.getEast();
                         nodeMap.remove(currentKey);
-                        EventNode newEvent = new EventNode(x, y, north, east, south, west, nodeMap, assets);
-                        newEvent.addEventListener(penaltyAmount -> gameState.globalEvent(penaltyAmount));
+                        GlobalPenaltyNode newEvent = new GlobalPenaltyNode(x, y, north, east, south, west, nodeMap, assets);
+                        newEvent.addEventListener(penaltyAmount -> gameState.globalPenaltyEvent(penaltyAmount));
                         nodeMap.put(currentKey, newEvent);
                     }
                 });
@@ -392,7 +397,7 @@ public class GameBoard extends GameScreen {
                 if (currentNode instanceof NormalNode) selectGroup.setChecked("Normal Tile");
                 else if (currentNode instanceof StarNode) selectGroup.setChecked("Star Tile");
                 else if (currentNode instanceof PenaltyNode) selectGroup.setChecked("Penalty Tile");
-                else if (currentNode instanceof EventNode) selectGroup.setChecked("Event Tile");
+                else if (currentNode instanceof GlobalPenaltyNode) selectGroup.setChecked("Event Tile");
 
                 Table dataTable = new Table();
                 dataTable.setFillParent(true);
@@ -475,8 +480,7 @@ public class GameBoard extends GameScreen {
         // Draw nodes
         Map<String, Node> nodeMap = gameState.getNodeMap();
         for (Node node : nodeMap.values()) {
-            Sprite sprite = node.getSprite();
-            sprite.draw(batch);
+            node.draw(batch);
         }
 
         // Render player sprites
@@ -484,10 +488,17 @@ public class GameBoard extends GameScreen {
         for (Player player : playerList) {
             Sprite sprite = player.getSprite();
             Sprite freezeSprite = player.getFreezeSprite();
+            Sprite shieldSprite = player.getShieldSprite();
 
             sprite.draw(batch);
             freezeSprite.draw(batch);
+            shieldSprite.setPosition(sprite.getX(), sprite.getY());
+            shieldSprite.draw(batch);
         }
+
+        // Render ActionTexts
+        ActionTextSystem.render(batch, Gdx.graphics.getDeltaTime());
+
         batch.end();
 
         // Update HUD and draw on top of the game
@@ -592,7 +603,10 @@ public class GameBoard extends GameScreen {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    Player player = gameState.getCurrentPlayer();
                     boolean delete = item.use(gameState.getCurrentPlayer(), gameState, hudStage);
+                    ActionTextSystem.addText(item.getName() + " activated", player.getSprite().getX(), player.getSprite().getY() + 50, 0.5f);
+
                     if (delete) gameState.getCurrentPlayer().removeItem(item.getName());
                     checkRollButton();
                     updateItemButtons();
@@ -613,11 +627,13 @@ public class GameBoard extends GameScreen {
     public void checkRollButton() {
         if (!gameState.getCurrentPlayer().canRoll()) {
             rollButton.setVisible(false);
-            // Disable items as well TODO: intended behavior?
+            rollButton.setText("Roll");
+
             for (Button button : itemButtons) {
                 button.setVisible(false);
             }
         }
+        else if (gameState.getCurrentPlayer().getMultiDice()) rollButton.setText("Roll (Multidice enabled)");
     }
 
     /**

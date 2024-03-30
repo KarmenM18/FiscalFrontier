@@ -5,8 +5,6 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.Bike;
 import com.mygdx.game.Items.FreezeItem;
@@ -50,10 +48,11 @@ public class GameState implements Serializable {
      * Will throw error if the profileList is null or empty
      * @param profileList the list of PlayerProfiles participating in the game
      * @param assets AssetManager to use
+     * @param board GameBoard to use
      * @param id UNIQUE ID of the gameState. Used to cleanup saves after termination of a game
      * @param hardMode controls if hard mode is enabled
      */
-    public GameState(List<PlayerProfile> profileList, AssetManager assets, int id, boolean hardMode) {
+    public GameState(List<PlayerProfile> profileList, AssetManager assets, GameBoard board, int id, boolean hardMode) {
         assetMan = assets;
         this.hardMode = hardMode;
         this.id = id;
@@ -179,7 +178,7 @@ public class GameState implements Serializable {
                         nodeMap.put(ID, new PenaltyNode(j, map.length - i, north, east, south, west, nodeMap, assets));
                         break;
                     case 4:
-                        createEventNode(j, map.length - i, north, east, south, west);
+                        createGlobalPenaltyNode(j, map.length - i, north, east, south, west);
                         break;
                     default:
                         break;
@@ -219,8 +218,8 @@ public class GameState implements Serializable {
         assetMan = assets;
         for (Node node : nodeMap.values()) {
             // Restore Node Observers
-            if (node instanceof EventNode) {
-                ((EventNode)node).addEventListener(penaltyAmount -> globalEvent(penaltyAmount));
+            if (node instanceof GlobalPenaltyNode) {
+                ((GlobalPenaltyNode)node).addEventListener(penaltyAmount -> globalPenaltyEvent(penaltyAmount));
             }
             node.loadTextures(assets);
         }
@@ -328,15 +327,15 @@ public class GameState implements Serializable {
     public int getRound() { return roundNumber; }
 
     /**
-     * global event for event node, reduce all player's money
+     * global penalty event for event node, reduce all player's money
      * @param penaltyAmount
      */
-    public void globalEvent(int penaltyAmount){
+    public void globalPenaltyEvent(int penaltyAmount){
         //needs to be put here due to activation order
         for (Player p : getPlayerList()){
-            if(p.getHasShield()){
-                p.setHasShield(false);
-            }else if(hardMode){
+            if (p.useShield()) return;
+
+            if(hardMode){
                 if(p.getStars() > 0){
                     p.setStars(p.getStars() - 1);
                 }else{
@@ -415,10 +414,10 @@ public class GameState implements Serializable {
         }
     }
 
-    public void createEventNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
-        EventNode eventNode = new EventNode(x, y, north, east, south, west, nodeMap, assetMan);
-        eventNode.addEventListener(penaltyValue -> globalEvent(penaltyValue));
-        nodeMap.put(x + "," + y, eventNode);
+    public void createGlobalPenaltyNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
+        GlobalPenaltyNode globalPenaltyNode = new GlobalPenaltyNode(x, y, north, east, south, west, nodeMap, assetMan);
+        globalPenaltyNode.addEventListener(penaltyValue -> globalPenaltyEvent(penaltyValue));
+        nodeMap.put(x + "," + y, globalPenaltyNode);
     }
 
     /**

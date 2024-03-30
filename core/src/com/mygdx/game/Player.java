@@ -79,6 +79,11 @@ public class Player implements Serializable {
     private Sprite freezeSprite;
 
     /**
+     * Sprite to render over Player when they have a shield
+     */
+    private Sprite shieldSprite;
+
+    /**
      * Board movement variables
      */
     private int dieRoll;
@@ -141,6 +146,9 @@ public class Player implements Serializable {
         freezeSprite = new Sprite((Texture) assets.get(Config.getInstance().getPlayerFreezePath()));
         freezeSprite.setSize(100, 100);
         freezeSprite.setAlpha(0.0f); // Starts invisible
+        shieldSprite = new Sprite((Texture) assets.get(Config.getInstance().getPlayerShieldPath()));
+        shieldSprite.setSize(35, 35);
+        shieldSprite.setAlpha(0.0f);
 
         loadTextures(assets);
     }
@@ -163,6 +171,7 @@ public class Player implements Serializable {
     public void loadTextures(AssetManager assets) {
         sprite.setTexture(assets.get(profile.getSpritePath()));
         freezeSprite.setTexture(assets.get(Config.getInstance().getPlayerFreezePath()));
+        shieldSprite.setTexture(assets.get(Config.getInstance().getPlayerShieldPath()));
 
         // Load textures for all items
         Config config = Config.getInstance();
@@ -350,16 +359,42 @@ public class Player implements Serializable {
         this.stars++;
     }
 
-    public void setUseMutliDice(boolean use){
+    /**
+     * Set whether the Player has multidice or not
+     *
+     * @param use true or false
+     */
+    public void setUseMultiDice(boolean use){
         this.useMultiDice = use;
     }
+    public boolean getMultiDice() { return useMultiDice; }
+
+    /**
+     * Set whether the Player has the shield or not
+     *
+     * @param has true or false
+     */
+    public void setHasShield(boolean has){
+        this.hasShield = has;
+
+        if (has) {
+            SoundSystem.getInstance().playSound("shield.mp3");
+            shieldSprite.setPosition(sprite.getX() - 10, sprite.getY() - 10);
+            shieldSprite.setAlpha(0.8f);
+        }
+        else {
+            SoundSystem.getInstance().playSound("shieldDrop.mp3");
+            shieldSprite.setAlpha(0);
+        }
+    }
+
+    /**
+     * @return hasShield
+     */
     public boolean getHasShield(){
         return hasShield;
     }
-    public void setHasShield(boolean has){
-        this.hasShield = has;
-    }
-    // TODO: Confirm score formula
+
 
     /**
      * Calculates and sets the player's score.
@@ -512,12 +547,19 @@ public class Player implements Serializable {
     }
 
     /**
+     * @return Sprite for shield icon
+     */
+    public Sprite getShieldSprite() {
+        return shieldSprite;
+    }
+
+    /**
      * FreezeItem the Player for a turn. Their next turn is skipped
      */
     public void setFrozen(boolean t) {
         frozen = t;
         if (frozen) {
-            if (hasShield) return; // Resistant to freezing
+            if (useShield()) return; // Resistant to freezing
 
             // Play sound effect
             SoundSystem.getInstance().playSound("coldsnap.wav");
@@ -529,6 +571,22 @@ public class Player implements Serializable {
         }
     }
     public boolean isFrozen() { return frozen; }
+
+
+    /**
+     * Call this function when the shield could be used. If the shield is active, it will return true.
+     *
+     * @return true if the shield is active or false otherwise
+     */
+    public boolean useShield() {
+        if (hasShield) {
+            ActionTextSystem.addText("Used Shield", sprite.getX(), sprite.getY() + 50, 0.5f);
+            setHasShield(false);
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * @return all stocks that the player has invested in
@@ -549,6 +607,8 @@ public class Player implements Serializable {
             this.stocks.get(stockNum).add(newInvestment);
             this.investments += newInvestment.getPrice();
             this.money -= newInvestment.getPrice();
+
+            SoundSystem.getInstance().playSound("buy.wav");
         }
     }
 
@@ -563,6 +623,8 @@ public class Player implements Serializable {
             this.stocks.get(stockNum).remove(0);
             this.investments -= stock.getPrice();
             this.money += stock.getPrice();
+
+            SoundSystem.getInstance().playSound("buy.wav");
         }
     }
 

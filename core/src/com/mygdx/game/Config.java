@@ -8,7 +8,7 @@ public class Config {
     private String uiPath = "ui/clean-crispy/skin/clean-crispy-ui.json"; // Path of UI skin file
     //private String uiPath = "ui/8bit/uiskin.json"; // Path of UI skin file
     private String tilePath = "kenny_block_pack/PNG/Double (128px)/tileGrass.png";
-    private String starTilePath = "starTile.jpg";
+    private String starTilePath = "star.png";
     private String penaltyTilePath = "penalty-node1.png";
     private String eventTilePath = "eventNode.png";
     private String playerPath = "player-alt.png";
@@ -21,6 +21,7 @@ public class Config {
     private String soundsFolder = "sounds/";
     private String backgroundPath = "background.jpg";
     private String playerFreezePath = "kenny_block_pack/PNG/Double (128px)/detail_snow.png";
+    private String playerShieldPath = "shield.png";
 
     public int getMaxLevel() {
         return maxLevel;
@@ -72,6 +73,10 @@ public class Config {
 
     public String getPlayerFreezePath() {
         return playerFreezePath;
+    }
+
+    public String getPlayerShieldPath() {
+        return playerShieldPath;
     }
 
     /**

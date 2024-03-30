@@ -2,14 +2,14 @@ package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.mygdx.game.Config;
-import com.mygdx.game.GameBoard;
+import com.mygdx.game.*;
 import com.mygdx.game.Observer.Observable;
-import com.mygdx.game.Player;
 
 import java.awt.*;
 import java.util.Map;
@@ -22,17 +22,17 @@ public class StarNode extends Node {
     private Dialog buyStarDialog;
     private Dialog starDialog;
 
-    Texture starTexture;
+    transient private Sprite starSprite; // Visible if there is a star on the node
 
 
     public StarNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
         super(mapX, mapY, north, east, south, west, map, assets);
-        checkStar();
+        loadTextures(assets);
     }
 
     public StarNode(int mapX, int mapY, AssetManager assets) {
         super(mapX, mapY, assets);
-        checkStar();
+        loadTextures(assets);
     }
     /**
      * necessary for serialization
@@ -41,9 +41,14 @@ public class StarNode extends Node {
 
     @Override
     public void loadTextures(AssetManager assets) {
+        super.loadTextures(assets);
+
         Config config = Config.getInstance();
-        tileTexture = assets.get(config.getTilePath());
-        starTexture = assets.get(config.getStarTilePath());
+        starSprite = new Sprite((Texture) assets.get(Config.getInstance().getStarTilePath()));
+        starSprite.setTexture(assets.get(Config.getInstance().getStarTilePath()));
+        starSprite.setPosition(sprite.getX() + 12.5f, sprite.getY() + 12.5f);
+        starSprite.setSize(75, 75);
+
         checkStar();
     }
 
@@ -111,6 +116,17 @@ public class StarNode extends Node {
     }
 
     /**
+     * Draw the star on top of the sprite.
+     *
+     * @param batch the Batch to draw with
+     */
+    @Override
+    public void draw(Batch batch) {
+        sprite.draw(batch);
+        starSprite.draw(batch);
+    }
+
+    /**
      * hardmode higher price
      * @param player
      * @param buy
@@ -121,17 +137,21 @@ public class StarNode extends Node {
             player.addStar();
             player.setMoney(player.getMoney() - starCost);
             checkStar();
+
+            // Feedback
+            SoundSystem.getInstance().playSound("gainedStar.mp3");
+            ActionTextSystem.addText("+1 Star", player.getSprite().getX(), player.getSprite().getY() + 50, 0.5f);
         }
     }
     /**
-     * Changes texture to a regular tile if the star was grabbed.
+     * Hide star if it was grabbed.
      */
     public void checkStar() {
         if (hasStar) {
-            sprite.setTexture(starTexture);
+            starSprite.setAlpha(1.0f);
         }
         else {
-            sprite.setTexture(tileTexture);
+            starSprite.setAlpha(0.0f);
         }
     }
 }

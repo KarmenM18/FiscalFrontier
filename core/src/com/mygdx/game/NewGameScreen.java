@@ -116,6 +116,7 @@ public class NewGameScreen extends GameScreen {
                 // Only show delete button if there are players to remove
                 if (selectedPlayerNames.size < 1) {
                     deleteSelectedButton.setVisible(false);
+                    return;
                 }
 
                 // Re-add name to selectables
