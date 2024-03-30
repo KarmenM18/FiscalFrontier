@@ -56,15 +56,11 @@ public class ManageStudentsScreen extends GameScreen {
 
 
     /** Responsible for storing and managing student profiles. */
-    private ProfileManager profileManager;
+    private final ProfileManager profileManager;
     /** List of all student profiles. */
     private ArrayList<PlayerProfile> studentProfiles;
 
 
-    /** Button to exit manage students mode.  */
-    private TextButton backButton;
-    /** Button to add a new student. */
-    private TextButton addStudentButton;
     /** Buttons to select each student to be edited or removed. */
     private ArrayList<TextButton> studentButtons = new ArrayList<TextButton>();
     /** Button to edit the name and knowledge level of an existing student.<br><br>
@@ -162,10 +158,12 @@ public class ManageStudentsScreen extends GameScreen {
         table.row();
 
         // Initialize buttons
-        this.addStudentButton = new TextButton("Add Student", this.skin);         // Add a new student
+        /** Button to add a new student. */
+        TextButton addStudentButton = new TextButton("Add Student", this.skin);         // Add a new student
         this.editStudentButton = new TextButton("Edit Student", this.skin);       // Edit existing student name and knowledge level
         this.removeStudentButton = new TextButton("Remove Student", this.skin);   // Remove existing student
-        this.backButton = new TextButton("Back", this.skin);                      // Return to instructor dashboard
+        /** Button to exit manage students mode.  */
+        TextButton backButton = new TextButton("Back", this.skin);                      // Return to instructor dashboard
 
         this.editStudentButton.setTouchable(Touchable.disabled);    // Disable clicking until a student is selected
         this.removeStudentButton.setTouchable(Touchable.disabled);  // TODO: Should somehow make these grayed out, so it doesn't look like you can click them
@@ -303,7 +301,7 @@ public class ManageStudentsScreen extends GameScreen {
 
 
         // Add button listeners
-        this.addStudentButton.addListener(new ChangeListener() {
+        addStudentButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
 
@@ -333,7 +331,7 @@ public class ManageStudentsScreen extends GameScreen {
 
             }
         });
-        this.backButton.addListener(new ChangeListener() {
+        backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 instructorDashboardEvent.notifyObservers(null);  // Return to instructor dashboard
@@ -361,10 +359,10 @@ public class ManageStudentsScreen extends GameScreen {
         table.row();
 
         // Display each action button
-        buttonTable.add(this.addStudentButton);
+        buttonTable.add(addStudentButton);
         buttonTable.add(this.editStudentButton);
         buttonTable.add(this.removeStudentButton);
-        buttonTable.add(this.backButton);
+        buttonTable.add(backButton);
         table.add(buttonTable).colspan(3).expandX();
 
     }
@@ -377,8 +375,13 @@ public class ManageStudentsScreen extends GameScreen {
      */
     private void newStudentButton(PlayerProfile student) {
 
+        // Retrieve student's current information
+        String studentName = student.getName();
+        int knowledgeLevel = student.getKnowledgeLevel();
+
         // Create button for the student
-        TextButton button = new TextButton(student.getName(), this.skin);
+        String displayText =  studentName + "\n (Knowledge Level: " + Integer.toString(knowledgeLevel) + ")";  // Text displayed in the student's button
+        TextButton button = new TextButton(displayText, this.skin);
         this.studentButtons.add(button);  // Add button to list of buttons
 
         // Link edit and remove buttons to the student when selected
@@ -386,10 +389,6 @@ public class ManageStudentsScreen extends GameScreen {
 
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
-                // Retrieve student's current information
-                String studentName = student.getName();
-                int knowledgeLevel = student.getKnowledgeLevel();
 
                 // Allow edit and remove buttons to be clicked once student is selected
                 editStudentButton.setTouchable(Touchable.enabled);
@@ -412,7 +411,7 @@ public class ManageStudentsScreen extends GameScreen {
                         String newName = editNameInput.getText();
                         String newKnowledgeLevel = editKnowledgeLevelInput.getText();
 
-                        // Handle empty inputs
+                        // Handle empty inputs by replacing with current values
                         if (newName.isEmpty()) {
                             newName = studentName;
                         }
@@ -422,8 +421,13 @@ public class ManageStudentsScreen extends GameScreen {
 
                         try {
 
-                            // Ensure an integer was entered for knowledge level
-                            int inputCheck = Integer.parseInt(newKnowledgeLevel);
+
+                            // Ensure a valid knowledge level was entered
+                            int inputCheck = Integer.parseInt(newKnowledgeLevel);  // Integer value
+
+                            if (inputCheck < 0) {  // Non-negative integer
+                                throw new NumberFormatException();
+                            }
 
                             // Ensure a different student with the same name does not already exist
                             if (!(newName.equals(studentName))) {
@@ -446,7 +450,7 @@ public class ManageStudentsScreen extends GameScreen {
 
                         }
                         catch (NumberFormatException e) {
-                            editSubtext.setText("Invalid knowledge level.");  // Display error message
+                            editSubtext.setText("Invalid knowledge level. Must be a non-negative integer.");  // Display error message
                         }
                         catch (IllegalArgumentException e) {
                             editSubtext.setText(e.getMessage());  // Display error message
@@ -509,24 +513,24 @@ public class ManageStudentsScreen extends GameScreen {
      * Assigns an observer to listen for the event to return to the instructor dashboard.
      * @param ob Observer.
      */
-    void addBackListener(Observer<Void> ob) { this.instructorDashboardEvent.addObserver(ob); }
+    public void addBackListener(Observer<Void> ob) { this.instructorDashboardEvent.addObserver(ob); }
 
     /**
      * Assigns an observer to listen for the event to add a new student.
      * @param ob Observer.
      */
-    void addAddStudentListener(Observer<String> ob) { this.addStudentEvent.addObserver(ob); }
+    public void addAddStudentListener(Observer<String> ob) { this.addStudentEvent.addObserver(ob); }
 
     /**
      * Assigns an observer to listen for the event to edit an existing student.
      * @param ob Observer.
      */
-    void addEditStudentListener(Observer<String> ob) { this.editStudentEvent.addObserver(ob); }
+    public void addEditStudentListener(Observer<String> ob) { this.editStudentEvent.addObserver(ob); }
 
     /**
      * Assigns an observer to listen for the event to remove a student.
      * @param ob Observer.
      */
-    void addRemoveStudentListener(Observer<String> ob) { this.removeStudentEvent.addObserver(ob); }
+    public void addRemoveStudentListener(Observer<String> ob) { this.removeStudentEvent.addObserver(ob); }
 
 }

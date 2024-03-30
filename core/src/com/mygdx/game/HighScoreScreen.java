@@ -173,4 +173,5 @@ public class HighScoreScreen extends GameScreen {
      * @param ob Observer
      */
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
+
 }
