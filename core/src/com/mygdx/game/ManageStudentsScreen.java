@@ -10,6 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -399,7 +402,7 @@ public class ManageStudentsScreen extends GameScreen {
                 removeStudentButton.setColor(Color.WHITE);
 
                 // Set remove student confirmation to display the name of the selected player
-                removeStudentNameText.setText(studentName);
+                removeStudentNameText.setText(studentName + "\n");
 
                 // Fill edit information fields with student's current name and knowledge level
                 editNameInput.setText(studentName);
@@ -415,15 +418,20 @@ public class ManageStudentsScreen extends GameScreen {
                         String newName = editNameInput.getText();
                         String newKnowledgeLevel = editKnowledgeLevelInput.getText();
 
-                        // Handle empty inputs by replacing with current values
-                        if (newName.isEmpty()) {
-                            newName = studentName;
-                        }
-                        if (newKnowledgeLevel.isEmpty()) {
-                            newKnowledgeLevel = Integer.toString(knowledgeLevel);
-                        }
-
                         try {
+
+                            // Prevent errors caused by renaming a student currently in a saved game
+                            if (inGame(studentName)) {
+                                throw new IllegalArgumentException("Cannot edit a student that is currently in a game. Please try again once game has finished.");
+                            }
+
+                            // Handle empty inputs by replacing with current values
+                            if (newName.isEmpty()) {
+                                newName = studentName;
+                            }
+                            if (newKnowledgeLevel.isEmpty()) {
+                                newKnowledgeLevel = Integer.toString(knowledgeLevel);
+                            }
 
 
                             // Ensure a valid knowledge level was entered
@@ -468,9 +476,21 @@ public class ManageStudentsScreen extends GameScreen {
                     @Override
                     public void changed(ChangeListener.ChangeEvent event, Actor actor) {
 
-                        studentButtons.remove(button);                    // Remove button from dashboard
-                        removeStudentEvent.notifyObservers(studentName);  // Remove student from database
-                        removeSubtext.setText("");                        // Clear any error messages that occurred
+                        try {
+
+                            // Prevent errors caused by renaming a student currently in a saved game
+                            if (inGame(studentName)) {
+                                throw new IllegalArgumentException("Cannot delete a student that is currently in a game. Please try again once game has finished.");
+                            }
+
+                            studentButtons.remove(button);                    // Remove button from dashboard
+                            removeStudentEvent.notifyObservers(studentName);  // Remove student from database
+                            removeSubtext.setText("");                        // Clear any error messages that occurred
+
+                        }
+                        catch (IllegalArgumentException e) {
+                            removeSubtext.setText(e.getMessage());  // Display error message
+                        }
 
                     }
                 });
@@ -511,6 +531,43 @@ public class ManageStudentsScreen extends GameScreen {
         this.stage.addActor(actionConfirmation);  // Display dialog
 
     }
+
+
+    /**
+     * Checks if the student is currently in a saved game.
+     *
+     * @param studentName Student's name
+     * @return True if the student is currently in a game, false if otherwise
+     */
+    private boolean inGame(String studentName) {
+
+        // Open folder of saves
+        File saveFolder = new File("saves");
+        File[] fileList = saveFolder.listFiles();
+
+        if (fileList != null) {  // Saved games exist
+
+            // Check each saved game
+            SaveSystem saves = new SaveSystem();
+            for (File file : fileList) {
+
+                GameState gs = saves.readGameState(file.getName(), this.assets);  // Load game state
+
+                // Check each player in the game save file
+                for (Player player : gs.getPlayerList()) {
+                    if (player.getPlayerProfile().getName().equals(studentName)) {  // Student found in game
+                        return true;
+                    }
+
+                }
+            }
+
+        }
+
+        return false;  // No saved games exist or checked all save files and student not found
+
+    }
+
 
 
     /**

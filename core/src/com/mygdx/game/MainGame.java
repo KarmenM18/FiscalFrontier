@@ -145,8 +145,8 @@ public class MainGame extends Game {
             }
         });
 		endScreen.addUpdateScoreListener(profile -> {
+
 			// Modify the PlayerProfile based on what happened in the game
-			// TODO: Handle renames and removals of profiles
 			this.profileManager.changeKnowledgeLevel(profile.getName(), profile.getKnowledgeLevel());
 			this.profileManager.updateHighScore(profile.getName(), profile.getHighScore());
 			this.profileManager.addLifetimeScore(profile.getName(), profile.getLifetimeScore());
