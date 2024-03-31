@@ -12,6 +12,7 @@ public class Book extends Item{
      *
      */
     public Book(Skin skin) {
+
         super("Book", false, skin);
     }
     public boolean use(Player player, GameState gameState, Stage stage) {
