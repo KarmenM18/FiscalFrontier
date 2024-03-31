@@ -2,7 +2,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -55,6 +54,11 @@ public class ActionText {
         return Utility.epsilonEqual(label.getColor().a, 0f, 0.001f);
     }
 
+    /**
+     * Set the color of the text Label.
+     *
+     * @param color LibGDX Color
+     */
     public void setColor(Color color) {
         label.setColor(color);
     }
