@@ -119,13 +119,4 @@ public class Item {
      * @param stage
      * @return True if the item was added to cart, false otherwise
      */
-    public boolean addToCart(Player player, GameState state, Stage stage) {
-        if use(player, state, stage) = true {
-            return true;
-        }
-
-        else {
-            return false;
-        }
-    }
 }
