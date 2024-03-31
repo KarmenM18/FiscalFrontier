@@ -324,10 +324,12 @@ public class Player implements Serializable {
 
     /**
      * Increase Player level by one, as long as the Player is not already at the max level.
+     * Also updates the player's knowledge level from the player database.
      */
     public void levelUp(){
         if(this.level < Config.getInstance().getMaxLevel()){
             this.level++;
+            this.getPlayerProfile().updateKnowledgeLevel();
         }
     }
 
