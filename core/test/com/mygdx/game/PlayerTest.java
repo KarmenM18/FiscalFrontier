@@ -3,7 +3,6 @@ package com.mygdx.game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.*;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,22 +55,6 @@ class PlayerTest {
     }
 
 
-
-    @Test
-    void endTurn() {
-    }
-
-    @Test
-    void startTurn() {
-    }
-
-    @Test
-    void rollDie() {
-    }
-
-    @Test
-    void move() {
-    }
 
     @Test
     void getPlayerProfile() {
@@ -270,6 +253,30 @@ class PlayerTest {
 
     }
 
+    @Test
+    void useShieldTrue() {
+
+        // Create player with a shield
+        Player player = new Player(profile, assets, 0, 0, 0, null, 0, null, false, false, true, null);
+
+        // Use player's shield
+        boolean used = player.useShield();
+        assertTrue(used);  // Verify that the shield was used and is active
+
+    }
+
+    @Test
+    void useShieldFalse() {
+
+        // Create player without a shield
+        Player player = new Player(profile, assets, 0, 0, 0, null, 0, null, false, false, false, null);
+
+        // Attempt to use a shield
+        boolean used = player.useShield();
+        assertFalse(used);  // Verify that the shield was unable to be used and is not active
+
+    }
+
 
     @Test
     void isFrozen() {
@@ -421,22 +428,68 @@ class PlayerTest {
     @Test
     void getDieRoll() {
 
+        Player player = new Player(profile, assets);    // Create basic player with no items
+        assertEquals(0, player.getDieRoll());  // Verify die roll value was initialized correctly
+
     }
 
     @Test
     void canMove() {
+
+        Player player = new Player(profile, assets);  // Create basic player with no items
+        assertTrue(player.canMove());                 // Verify moves remaining was initialized correctly
+
     }
 
     @Test
     void canRoll() {
+
+        Player player = new Player(profile, assets);  // Create basic player with no items
+        assertTrue(player.canRoll());                 // Verify rolls remaining was initialized correctly
+
     }
 
     @Test
     void setRollsLeft() {
+
+        Player player = new Player(profile, assets);  // Create basic player with no items
+
+        // Set the number of rolls remaining to a positive value
+        player.setRollsLeft(5);
+        assertTrue(player.canRoll());  // Verify rolls remaining was set correctly (player has rolls remaining)
+
     }
 
     @Test
+    void setNoRollsLeft() {
+
+        Player player = new Player(profile, assets);  // Create basic player with no items
+
+        // Set the number of rolls remaining to zero
+        player.setRollsLeft(0);
+        assertFalse(player.canRoll());  // Verify rolls remaining was set correctly (player has no rolls remaining)
+
+    }
+
+
+    @Test
     void getReachablePaths() {
+    }
+
+    @Test
+    void endTurn() {
+    }
+
+    @Test
+    void startTurn() {
+    }
+
+    @Test
+    void rollDie() {
+    }
+
+    @Test
+    void move() {
     }
 
     @Test
@@ -451,10 +504,6 @@ class PlayerTest {
     void getShieldSprite() {
     }
 
-
-    @Test
-    void useShield() {
-    }
 
     @Test
     void getCurrentInvestments() {
@@ -475,4 +524,5 @@ class PlayerTest {
     @Test
     void getInvestments() {
     }
+
 }
