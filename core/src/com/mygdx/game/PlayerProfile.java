@@ -184,7 +184,7 @@ public class PlayerProfile {
      * @return Number of tips unlocked
      */
     public int getTipCount() {
-        return this.learned.size();
+        return this.knowledgeLevel*5;
     }
 
 }
