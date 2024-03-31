@@ -2,39 +2,37 @@ package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.mygdx.game.Config;
-import com.mygdx.game.Node.Node;
+import com.mygdx.game.*;
 import com.mygdx.game.Observer.Observable;
-import com.mygdx.game.Player;
-import com.mygdx.game.Utility;
-import sun.nio.ch.Util;
 
 import java.awt.*;
 import java.util.Map;
 
 
 public class StarNode extends Node {
-    int starCost = 10;
+    int starCost;
     public boolean hasStar = true;
     private Observable<Void> starEvent = new Observable<Void>();
     private Dialog buyStarDialog;
     private Dialog starDialog;
 
-    Texture starTexture;
+    transient protected Sprite starSprite; // Visible if there is a star on the node
 
 
     public StarNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
         super(mapX, mapY, north, east, south, west, map, assets);
-        checkStar();
+        loadTextures(assets);
     }
 
     public StarNode(int mapX, int mapY, AssetManager assets) {
         super(mapX, mapY, assets);
-        checkStar();
+        loadTextures(assets);
     }
     /**
      * necessary for serialization
@@ -43,9 +41,13 @@ public class StarNode extends Node {
 
     @Override
     public void loadTextures(AssetManager assets) {
-        Config config = Config.getInstance();
-        tileTexture = assets.get(config.getTilePath());
-        starTexture = assets.get(config.getStarTilePath());
+        super.loadTextures(assets);
+
+        starSprite = new Sprite((Texture) assets.get(Config.getInstance().getStarTilePath()));
+        starSprite.setTexture(assets.get(Config.getInstance().getStarTilePath()));
+        starSprite.setPosition(sprite.getX() + 12.5f, sprite.getY() + 12.5f);
+        starSprite.setSize(75, 75);
+
         checkStar();
     }
 
@@ -56,23 +58,34 @@ public class StarNode extends Node {
 
     /**
      * activate the star purchase dialog,
-     * TODO add a delay to move cam until player confirms action
-     * @param player
-     * @param batch
-     * @param stage
-     * @param skin
+     *
+     * @param player the Player who landed on the Node
+     * @param batch the SpriteBatch to draw on
+     * @param stage the GameBoard's Stage
+     * @param skin the GameBoard's Skin
+     * @param board the GameBoard executing the function
+     * @param hardmode whether the gameState is in hard mode
+     * @return true if the Node will handle changing the turn, false otherwise
      */
-    public void activate(Player player, SpriteBatch batch, Stage stage, Skin skin, boolean hardmode) {
+    public boolean activate(Player player, SpriteBatch batch, Stage stage, Skin skin, GameBoard board, boolean hardmode) {
+        if(!hardmode){
+            starCost = 100;
+        }else {
+            starCost = 250;
+        }
         if(hasStar){
             if(player.getMoney() >= starCost){
                 buyStarDialog = new Dialog("Buying Star", skin) {
                     @Override
                     protected void result(Object object) {
                         if ((Boolean) object) {
-                            starMod(player, true, hardmode);
+                            starMod(player, true);
                         }else{
-                            starMod(player, false, hardmode);
+                            starMod(player, false);
                         }
+
+                        // Inform GameState to change the turn
+                        board.turnChange();
                     }
                 };
                 //TODO add Y/N keyboard shortcut for purchase confirmation
@@ -86,6 +99,8 @@ public class StarNode extends Node {
                     @Override
                     protected void result(Object object) {
                         if ((Boolean) object) {
+                            // Inform GameState to change the turn
+                            board.turnChange();
                         }
                     }
                 };
@@ -95,40 +110,47 @@ public class StarNode extends Node {
                 //TODO dialog for purchasing
             }
         }
+
+        return true;
+    }
+
+    /**
+     * Draw the star on top of the sprite.
+     *
+     * @param batch the Batch to draw with
+     */
+    @Override
+    public void draw(Batch batch) {
+        sprite.draw(batch);
+        starSprite.draw(batch);
     }
 
     /**
      * hardmode higher price
      * @param player
      * @param buy
-     * @param hardmode
      */
-    private void starMod(Player player, boolean buy, boolean hardmode){
-        if(hardmode){
-
-        }
+    private void starMod(Player player, boolean buy){
         if(buy){
             this.hasStar = false;
-            player.addStar();
+            player.setStars( player.getStars() + 1 );
             player.setMoney(player.getMoney() - starCost);
             checkStar();
-        }else{
-            this.hasStar = true;
-            checkStar();
+
+            // Feedback
+            SoundSystem.getInstance().playSound("gainedStar.mp3");
+            ActionTextSystem.addText("+1 Star", player.getSprite().getX(), player.getSprite().getY() + 50, 0.5f);
         }
     }
     /**
-     * Changes texture to a regular tile if the star was grabbed.
+     * Hide star if it was grabbed.
      */
     public void checkStar() {
         if (hasStar) {
-            sprite.setTexture(starTexture);
+            starSprite.setAlpha(1.0f);
         }
         else {
-            sprite.setTexture(tileTexture);
+            starSprite.setAlpha(0.0f);
         }
-    }
-    public int getStarCost(){
-        return starCost;
     }
 }

@@ -1,14 +1,19 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.mygdx.game.Observer.Observer;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -20,6 +25,8 @@ import java.util.List;
  */
 public class MainGame extends Game {
 	SpriteBatch batch;
+
+	//All Screens needed for the game
 	private GameBoard gameBoard;
 	private PauseScreen pauseScreen;
 	private ShopScreen shopScreen;
@@ -31,25 +38,43 @@ public class MainGame extends Game {
 	private EndScreen endScreen;
 	private HighScoreScreen highScoreScreen;
 	private NewGameScreen newGameScreen;
+	private TutorialScreen tutorialScreen;
+	private AgilityTestScreen agilityTestScreen;
 
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
 
 	private ProfileManager profileManager;
+
+	private boolean debugMode = false; // Indicates that we are in debug mode.
 	
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
 		// Load assets
 		Config config = Config.getInstance();
+
+		// Set renderClear color
+		Gdx.gl.glClearColor(135/255f, 206/255f, 235/255f, 1);
+
+		// Support TTF fonts
+		assets.setLoader(Skin.class, new FreeTypeSkinLoader(assets.getFileHandleResolver()));
+
 		assets.load(config.getUiPath(), Skin.class);
 		assets.load(config.getTilePath(), Texture.class);
 		assets.load(config.getStarTilePath(), Texture.class);
 		assets.load(config.getEventTilePath(), Texture.class);
 		assets.load(config.getPenaltyTilePath(), Texture.class);
 		assets.load(config.getPlayerPath(), Texture.class);
-		assets.load("background.jpeg", Texture.class);
-		assets.finishLoading(); // Make sure assets are loaded before continuing;
+		assets.load(config.getPlayerFreezePath(), Texture.class);
+		assets.load(config.getBackgroundPath(), Texture.class);
+		assets.load(config.getPlayerShieldPath(), Texture.class);
+		assets.load(config.getMapArrowPath(), Texture.class);
+		assets.load(config.getAgilityTilePath(), Texture.class);
+		assets.finishLoading(); // Make sure assets are loaded before continuing.
+
+		// Setup ActionTextSystem
+		ActionTextSystem.initSkin(assets.get(config.getUiPath(), Skin.class));
 
 		// Load screens
 		mainMenuScreen = new MainMenuScreen(batch, assets);
@@ -58,18 +83,18 @@ public class MainGame extends Game {
 		shopScreen = new ShopScreen(batch, assets);
 		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
 		saveScreen = new SaveScreen(batch, assets);
+		tutorialScreen = new TutorialScreen(batch, assets);
+		endScreen = new EndScreen(batch, assets);
+		agilityTestScreen = new AgilityTestScreen(batch, assets);
 
-		ClassLoader CL = getClass().getClassLoader();
 		profileManager = new ProfileManager("studentInformation.json", "highScoreTable.json", "lifetimeScoreTable.json");
 		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets, this.profileManager);
 		manageStudentsScreen = new ManageStudentsScreen(batch, assets, this.profileManager);
-		endScreen = new EndScreen(batch, assets);
 		highScoreScreen = new HighScoreScreen(batch, assets, this.profileManager);
 		newGameScreen = new NewGameScreen(batch, assets, profileManager);
 
-		// Set starting screen
+		//Set starting screen
 		setScreen(mainMenuScreen);
-
 		// Set GameBoard observers
 		gameBoard.addShopListener(v -> {
 			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
@@ -82,12 +107,21 @@ public class MainGame extends Game {
 			endScreen.setGameState(gameState);
 			setScreen(endScreen);
 		});
+		gameBoard.addAgilityTestListener(v -> {
+			SoundSystem.getInstance().stopMusic();
+			SoundSystem.getInstance().playAgilityMusic();
+			agilityTestScreen.setHardMode(gameBoard.getGameState().getHardMode());
+			setScreen(agilityTestScreen);
+		});
 
+		//For back to screen buttons
 		knowledgeListScreen.addBackToPause(v -> setScreen(pauseScreen));
+		tutorialScreen.addBackToMenu(v -> setScreen(mainMenuScreen));
 
 		// Set PauseScreen observers
 		pauseScreen.addSaveGameListener(saveName -> saveGameState(gameBoard.getGameState(), saveName));
 		pauseScreen.addMenuListener(v -> {
+			SoundSystem.getInstance().stopMusic();
 			setScreen(mainMenuScreen);
 		});
 		pauseScreen.addBoardListener(v -> setScreen(gameBoard));
@@ -98,7 +132,10 @@ public class MainGame extends Game {
 		});
 
 		// Set EndScreen observers
-		endScreen.addMenuListener(v -> setScreen(mainMenuScreen));
+		endScreen.addMenuListener(v -> {
+			SoundSystem.getInstance().stopMusic();
+			setScreen(mainMenuScreen);
+		});
 		endScreen.addDeleteSavesListener(id -> {
 			// Delete all saves related to the completed game
             try {
@@ -108,11 +145,15 @@ public class MainGame extends Game {
             }
         });
 		endScreen.addUpdateScoreListener(profile -> {
+
 			// Modify the PlayerProfile based on what happened in the game
-			// TODO: Handle renames and removals of profiles
-			profileManager.updateHighScore(profile.getName(), profile.getHighScore());
-			profileManager.addLifetimeScore(profile.getName(), profile.getLifetimeScore());
-			// TODO: must check that game profile's lifetime score is synchronized with profile manager in the case of several save files
+			this.profileManager.changeKnowledgeLevel(profile.getName(), profile.getKnowledgeLevel());
+			this.profileManager.updateHighScore(profile.getName(), profile.getHighScore());
+			this.profileManager.addLifetimeScore(profile.getName(), profile.getLifetimeScore());
+
+			// Reload all screens involving scores and levels to reflect changes
+			this.reloadScoreScreens();
+
 		});
 
 		// Set HighScoreScreen observers
@@ -128,7 +169,10 @@ public class MainGame extends Game {
 				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
 				return;
 			}
+			newGame.setDebugMode(debugMode);
 			gameBoard.setGameState(newGame);
+			SoundSystem.getInstance().playMusic();
+
 			setScreen(gameBoard);
 		});
 
@@ -141,18 +185,24 @@ public class MainGame extends Game {
 		saveScreen.addMenuListener(v -> setScreen(mainMenuScreen));
 		saveScreen.addLoadSaveListener(savePath -> {
 			GameState gs = loadGameState(savePath);
+			gs.setDebugMode(debugMode);
 			gameBoard.setGameState(gs);
+			SoundSystem.getInstance().playMusic();
+
 			setScreen(gameBoard);
 		});
 
 		// Set MainMenuScreen observers
 		mainMenuScreen.addStartGameListener(v -> setScreen(newGameScreen));
 		mainMenuScreen.addContinueGameListener(v -> {
-			GameState gs;
-			// TODO: load LAST save. Should check modified time of save files
-			// TODO inform the user that there is no save to continue from
-		});
-
+            try {
+                saveScreen.loadLatestSave(mainMenuScreen.stage, mainMenuScreen.skin);
+            } catch (FileNotFoundException e) {
+				Utility.showErrorDialog("Error; saves folder not found", mainMenuScreen.stage, mainMenuScreen.skin);
+            }
+        });
+		//Adding tutorial screen
+		mainMenuScreen.addTutorialScreenListener(v -> setScreen(tutorialScreen));
 		// Set InstructorDashboardScreen observers
 		mainMenuScreen.addLoadGameListener(v -> {
 			setScreen(saveScreen);
@@ -164,11 +214,15 @@ public class MainGame extends Game {
 		mainMenuScreen.addInstructorDashboardListener(v -> {
 			setScreen(instructorDashboardScreen);  // Open instructor dashboard from main menu
 		});
+		mainMenuScreen.addDebugListener(v -> {
+			debugMode = true;
+		});
+
 		instructorDashboardScreen.addMenuListener(v -> {
 			setScreen(mainMenuScreen);  // Return to main menu
 		});
 		instructorDashboardScreen.addManageStudentsListener(v -> {
-			setScreen(manageStudentsScreen);       // Enter manage students mode in instructor dashboard
+			setScreen(manageStudentsScreen);  // Enter manage students mode in instructor dashboard
 		});
 
 		// Set ManageStudentsScreen observers
@@ -180,9 +234,11 @@ public class MainGame extends Game {
 			// Add new student to database
 			profileManager.addStudent(studentName);
 
-			// Reload dashboard screens to reflect changes
-			instructorDashboardScreen.loadDashboard();
-			manageStudentsScreen.loadDashboard();
+			// Reload all screens involving scores and levels to reflect changes
+			this.reloadScoreScreens();
+
+			// Display confirmation of action
+			manageStudentsScreen.showConfirmation("Student added successfully!");
 
 		});
 		manageStudentsScreen.addEditStudentListener(inputString -> {
@@ -198,9 +254,11 @@ public class MainGame extends Game {
 			this.profileManager.changeKnowledgeLevel(currentName, newKnowledgeLevel);  // FIXME: Since players stored as references, may be better to just use the getProfile() and PlayerProfile getters/setters directly?
 			this.profileManager.renameStudent(currentName, newName);
 
-			// Reload dashboard screens to reflect changes
-			manageStudentsScreen.loadDashboard();
-			instructorDashboardScreen.loadDashboard();
+			// Reload all screens involving scores and levels to reflect changes
+			this.reloadScoreScreens();
+
+			// Display confirmation of action
+			manageStudentsScreen.showConfirmation("Student edited successfully!");
 
 		});
 		manageStudentsScreen.addRemoveStudentListener(studentName -> {
@@ -208,34 +266,84 @@ public class MainGame extends Game {
 			// Remove student from student database
 			profileManager.removeStudent(studentName);
 
-			// Reload dashboard screens to reflect changes
-			manageStudentsScreen.loadDashboard();
-			instructorDashboardScreen.loadDashboard();
+			// Reload all screens involving scores and levels to reflect changes
+			this.reloadScoreScreens();
 
+			// Display confirmation of action
+			manageStudentsScreen.showConfirmation("Student removed successfully!");
+
+		});
+
+		// Agility test screen listeners
+		agilityTestScreen.addBoardListener(earnings -> {
+			Player player = gameBoard.getGameState().getCurrentPlayer();
+			player.setMoney(player.getMoney() + earnings);
+			gameBoard.turnChange();
+			SoundSystem.getInstance().stopAgilityMusic();
+			SoundSystem.getInstance().playMusic();
+			setScreen(gameBoard);
 		});
 	}
 
 	@Override
 	public void render() {
 		super.render(); // Render current screen
+
+		// Render debug text and debugdraw if we are in debug mode
+		if (debugMode) {
+			Stage stage = ((GameScreen)getScreen()).stage;
+			stage.setDebugAll(true);
+
+			Batch debugBatch = stage.getBatch();
+			BitmapFont font = assets.get(Config.getInstance().getUiPath(), Skin.class).getFont("font");
+			font.setColor(Color.RED);
+
+			debugBatch.begin();
+			font.draw(debugBatch, "DEBUG MODE ENABLED", 1520, 1080);
+			debugBatch.end();
+		}
 	}
 	
 	@Override
 	public void dispose() {
 		mainMenuScreen.dispose();
 		gameBoard.dispose();
+		pauseScreen.dispose();
+		shopScreen.dispose();
+		mainMenuScreen.dispose();
+		knowledgeListScreen.dispose();
+		saveScreen.dispose();
+		instructorDashboardScreen.dispose();
+		manageStudentsScreen.dispose();
+		endScreen.dispose();
+		highScoreScreen.dispose();
+		newGameScreen.dispose();
+		tutorialScreen.dispose();
+
 		batch.dispose();
 		assets.dispose();
 		super.dispose();
 	}
 
 	/**
-	 * Save a GameState to file.
+	 * Save a GameState to file and update the student database and high score tables.
 	 *
 	 * @param gs the GameState to save
 	 */
 	public void saveGameState(GameState gs, String saveName) {
+
+		// Save game state
 		saveSystem.saveGameState(gs, saveName);
+
+		// Update the level of each player in the game
+		for (Player player : gs.getPlayerList()) {
+			String studentName = player.getPlayerProfile().getName();
+			this.profileManager.changeKnowledgeLevel(studentName, player.getLevel());
+		}
+
+		// Reload all screens involving scores and levels to reflect changes
+		this.reloadScoreScreens();
+
 	}
 
 	/**
@@ -246,4 +354,18 @@ public class MainGame extends Game {
 	public GameState loadGameState(String path) {
 		return saveSystem.readGameState(path, assets);
 	}
+
+
+	/**
+	 * Reloads all screens involving student levels and scores (the instructor dashboard and high score screens) to
+	 * reflect the most updated data in the player profile manager.
+	 */
+	private void reloadScoreScreens() {
+
+		this.instructorDashboardScreen.loadDashboard();
+		this.manageStudentsScreen.loadDashboard();
+		this.highScoreScreen.loadTables();
+
+	}
+
 }

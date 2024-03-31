@@ -6,11 +6,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Config;
 import com.mygdx.game.Node.Node;
 import com.mygdx.game.Player;
+import com.mygdx.game.SoundSystem;
 
 import java.util.Map;
 
 public class PenaltyNode extends Node {
-    protected int penaltyAmount = 5;
+    protected int penaltyAmount = 50;
     protected Texture penaltyTexture;
 
     public PenaltyNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
@@ -43,13 +44,22 @@ public class PenaltyNode extends Node {
      */
     @Override
     public void activate(Player player, SpriteBatch batch, boolean hardmode) {
-        if(player.getHasShield()){
-            //do nothing
-        }else if(player.getMoney() >= penaltyAmount){
-            //maybe add logic on the penalty graphic
+        if (player.useShield()) return;
+
+        if(!hardmode){
             player.setMoney(player.getMoney() - penaltyAmount);
-        }else if(player.getStars() > 0){
-            player.setStars(player.getStars() - 1);
+
+            if (player.getMoney() < 0) {
+                player.setMoney(0);
+            }
+        }else {
+            if (player.getStars() > 0) {
+                player.setStars(player.getStars() - 1);
+            } else {
+                player.setMoney(player.getMoney() - penaltyAmount);
+            }
         }
+
+        SoundSystem.getInstance().playSound("damage.mp3");
     }
 }

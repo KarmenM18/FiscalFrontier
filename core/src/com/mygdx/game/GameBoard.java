@@ -10,6 +10,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,8 +28,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Items.Item;
-import com.mygdx.game.Node.Node;
-import com.mygdx.game.Node.StarNode;
+import com.mygdx.game.Node.*;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
@@ -44,6 +44,7 @@ public class GameBoard extends GameScreen {
     private Observable<PlayerProfile> pauseEvent = new Observable<PlayerProfile>();
     private Observable<Void> shopEvent = new Observable<Void>();
     private Observable<GameState> endEvent = new Observable<GameState>();
+    public Observable<Void> agilityTestEvent = new Observable<>();
 
     private Texture background;
     private InputMultiplexer inputMultiplexer;
@@ -61,9 +62,15 @@ public class GameBoard extends GameScreen {
     private Label starsLabel;
     private Label rollLabel;
     private Label roundLabel;
+    private Label levelLabel;
 
-    transient private ArrayList<Item> playerItems; // Transient as it will be regenerated when the state is deserialized
-    transient private ArrayList<TextButton> itemButtons;
+    // Debugmode stuff
+    private TextButton modifyPlayer;
+    private TextButton modifyTile;
+
+    private Texture tileArrow; // Arrow shown for each possible direction from a tile.
+
+    transient private ArrayList<TextButton> itemButtons; // HUD buttons used to activate Items. Regenerated every turn
 
     private GameState gameState;
     private int width = 1920;
@@ -87,14 +94,17 @@ public class GameBoard extends GameScreen {
 
         itemButtons = new ArrayList<>();
 
-        assets.load("background.jpg", Texture.class);
+        assets.load(Config.getInstance().getBackgroundPath(), Texture.class);
         assets.finishLoading();
 
         // Initialize background
-        background = assets.get("background.jpg");
+        background = assets.get(Config.getInstance().getBackgroundPath());
         Image backgroundImage = new Image(background);
         backgroundImage.setSize(width, height);
         stage.addActor(backgroundImage);
+
+        // Initialize tileArrow
+        tileArrow = assets.get(Config.getInstance().getMapArrowPath());
 
         // Setup keyboard shortcuts
         stage.addListener(new InputListener() {
@@ -109,6 +119,9 @@ public class GameBoard extends GameScreen {
                else if (keycode == Input.Keys.I) {
                    // Go to shop screen
                    shopEvent.notifyObservers(null);
+               }
+               else if (keycode == Input.Keys.SPACE) {
+                   rollButton.fire(new ChangeListener.ChangeEvent());
                }
                else if (ctrl && keycode == Input.Keys.NUMPAD_ADD) { cameraZoomIn = true; }
                else if (ctrl && keycode == Input.Keys.NUMPAD_SUBTRACT) { cameraZoomOut = true; }
@@ -145,7 +158,24 @@ public class GameBoard extends GameScreen {
                // Get position of the click
                Vector3 touchPoint = new Vector3(screenX, screenY, 0);
                camera.unproject(touchPoint);
-            //TODO add spacebar shortcut as roll
+
+               // Debug movement; the play can go anywhere
+               if (gameState.isDebugMode() && (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT))) {
+                   for (Node node : gameState.getNodeMap().values()) {
+                       if (node.getSprite().getBoundingRectangle().contains(touchPoint.x, touchPoint.y)) {
+                           // Create new "path" to the node
+                           currPlayer.getReachablePaths().add(new ArrayList<String>(Arrays.asList(currPlayer.getCurrentTile(), node.getID())));
+
+                           currPlayer.move(node.getID(), gameState.getNodeMap(), batch, gameState.getHardMode());
+                           if (!gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin, GameBoard.this, gameState.getHardMode())) {
+                               turnChange();
+                           }
+
+                           return true;
+                       }
+                   }
+               }
+
                Map<String, Node> nodeMap = gameState.getNodeMap();
                for (ArrayList<String> path : currPlayer.getReachablePaths()) {
                    String nodeID = path.get(path.size() - 1);
@@ -153,11 +183,13 @@ public class GameBoard extends GameScreen {
                    if (sprite.getBoundingRectangle().contains(touchPoint.x, touchPoint.y)) {
                        // Player selected a reachable node, we update their position and activate the node
                        currPlayer.move(nodeID, nodeMap, batch, gameState.getHardMode());
-                       gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin, gameState.getHardMode());
 
+                       // Attempt to call Node's activate using the GameBoard's activate function. If it returns false, automatically change the turn.
+                       // Otherwise, let the Node handle turn changing.
+                       if (!gameState.getNodeMap().get(currPlayer.getCurrentTile()).activate(currPlayer, batch, hudStage, skin, GameBoard.this, gameState.getHardMode())) {
+                           turnChange();
+                       }
 
-                       turnChange();
-                       moveCameraPlayer();
                        return true;
                    }
                }
@@ -185,37 +217,41 @@ public class GameBoard extends GameScreen {
      * Load and layout HUD elements
      */
     private void initializeHUD() {
-        hudStage.setDebugAll(false);
         // Initialize buttons and labels
         pauseButton = new TextButton("Pause", skin);
         nextTurnButton = new TextButton("Next Turn", skin);
         rollButton = new TextButton("Roll", skin);
         currPlayerLabel = new Label("currPlayerLabel", skin);
         scoreLabel = new Label("scoreLabel", skin);
-        starsLabel = new Label("starsLabel", skin);
+        starsLabel = new Label("starsL", skin);
         moneyLabel = new Label("moneyLabel", skin);
         rollLabel = new Label("rollLabel", skin);
+        rollLabel.setColor(Color.YELLOW);
         roundLabel = new Label("-1", skin);
         rollLabel.setVisible(false);
+        levelLabel = new Label("knowledgelevelLabel", skin);
 
         // Initialize HUD
         hudTable = new Table();
         hudTable.setBackground(skin.getDrawable("window"));
-        hudTable.add(pauseButton);
-        hudTable.add(currPlayerLabel).padLeft(5).uniform();
-        hudTable.add(scoreLabel).padLeft(5).uniform();
-        hudTable.add(starsLabel).padLeft(5).uniform();
-        hudTable.add(moneyLabel).padLeft(5).uniform();
-        hudTable.add(roundLabel).padLeft(5).uniform();
-        hudTable.add(rollButton).padLeft(5).uniform();
-        hudTable.add(rollLabel).padLeft(5).uniform();
-        hudTable.add(nextTurnButton).padLeft(5).expandX();
+        hudTable.add(pauseButton).growY().left();
+        hudTable.add(currPlayerLabel).padRight(50).fill().left();
+        //hudTable.add(scoreLabel).padRight(5).uniform();
+        hudTable.add(starsLabel).padRight(50).fill().left();
+        hudTable.add(moneyLabel).padRight(50).fill().left();
+        hudTable.add(levelLabel).padRight(50).fill().left();
+        hudTable.add(roundLabel).padRight(50).fill().left();
+        hudTable.add(rollButton).padRight(50).growX().right();
+        hudTable.add(rollLabel).padRight(50).fill().right();
+
+        //hudTable.add(nextTurnButton).padLeft(5).expandX();
         // Put the hud table into another table to align it properly with the top of the screen
         Table t = new Table();
-        t.setBounds(0, (float) (hudStage.getHeight() * .943), hudStage.getWidth(), (float) (hudStage.getHeight() *.1));
-        t.add(hudTable).width(hudStage.getWidth());
+        t.setBounds(0, (float) (hudStage.getHeight() * 0.92) + 25, hudStage.getWidth(), (float) (hudStage.getHeight() *.08));
+        t.add(hudTable).width(hudStage.getWidth()).grow();
 
         hudStage.addActor(t);
+
 
         // Add listeners
         pauseButton.addListener(new ChangeListener() {
@@ -231,13 +267,175 @@ public class GameBoard extends GameScreen {
                 Player currPlayer = gameState.getCurrentPlayer();
                 if (!currPlayer.canRoll()) return;
 
-                rollLabel.setText(gameState.getCurrentPlayer().rollDie(gameState.getNodeMap()));
+                rollLabel.setText("Roll: " + gameState.getCurrentPlayer().rollDie(gameState.getNodeMap()));
                 rollLabel.setVisible(true);
+
+                // Play random sound
+                int soundIndex = Utility.getRandom(1, 29);
+                SoundSystem.getInstance().playSound("rolling/dice-" + Integer.toString(soundIndex) + ".wav");
 
                 // Disable button if the player cannot roll anymore
                 checkRollButton();
             }
         });
+
+        // Setup debugmode
+        modifyPlayer = new TextButton("(DEBUG) Modify Player", skin);
+        modifyPlayer.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Dialog playerModDialog = new Dialog("(DEBUG) Modify Player", skin);
+                Table dataTable = new Table();
+                dataTable.setFillParent(true);
+
+                TextField moneyField = new TextField(Integer.toString(gameState.getCurrentPlayer().getMoney()), skin);
+                TextField starField = new TextField(Integer.toString(gameState.getCurrentPlayer().getStars()), skin);
+                TextField levelField = new TextField(Integer.toString(gameState.getCurrentPlayer().getLevel()), skin);
+                TextButton applyButton = new TextButton("Apply", skin);
+                applyButton.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        gameState.getCurrentPlayer().setMoney(Integer.parseInt(moneyField.getText()));
+                        gameState.getCurrentPlayer().setStars(Integer.parseInt(starField.getText()));
+                        int desiredLevel = Integer.parseInt(levelField.getText());
+                        try {
+                            gameState.getCurrentPlayer().setLevel(desiredLevel);
+                        } catch (IllegalArgumentException e) {
+                            levelField.setText(Integer.toString(gameState.getCurrentPlayer().getLevel()));
+                        }
+                    }
+                });
+
+                dataTable.add(new Label("Money: ", skin));
+                dataTable.add(moneyField);
+                dataTable.row();
+                dataTable.add(new Label("Stars: ", skin));
+                dataTable.add(starField);
+                dataTable.row();
+                dataTable.add(new Label("Level: ", skin));
+                dataTable.add(levelField);
+                dataTable.row();
+                dataTable.add(applyButton);
+
+                playerModDialog.getContentTable().add(dataTable);
+                playerModDialog.button("Close");
+
+                playerModDialog.show(hudStage);
+            }
+        });
+        modifyTile = new TextButton("(DEBUG) Modify Tile", skin);
+        modifyTile.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Dialog modifyDialog = new Dialog("(DEBUG) Modify Tile", skin);
+
+                Map<String, Node> nodeMap = gameState.getNodeMap();
+                Node currentNode = nodeMap.get(gameState.getCurrentPlayer().getCurrentTile());
+
+                TextButton normalTile = new TextButton("Normal Tile", skin);
+                normalTile.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        String currentKey = currentNode.getID();
+                        int x = currentNode.getMapX();
+                        int y = currentNode.getMapY();
+                        boolean north = currentNode.getNorth();
+                        boolean south = currentNode.getSouth();
+                        boolean west = currentNode.getWest();
+                        boolean east = currentNode.getEast();
+                        nodeMap.remove(currentKey);
+                        NormalNode newNormal = new NormalNode(x, y, north, east, south, west, nodeMap, assets);
+                        nodeMap.put(currentKey, newNormal);
+                    }
+                });
+                TextButton starTile = new TextButton("Star Tile", skin);
+                starTile.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        String currentKey = currentNode.getID();
+                        int x = currentNode.getMapX();
+                        int y = currentNode.getMapY();
+                        boolean north = currentNode.getNorth();
+                        boolean south = currentNode.getSouth();
+                        boolean west = currentNode.getWest();
+                        boolean east = currentNode.getEast();
+                        nodeMap.remove(currentKey);
+                        StarNode newStar = new StarNode(x, y, north, east, south, west, nodeMap, assets);
+                        nodeMap.put(currentKey, newStar);
+                    }
+                });
+                TextButton penaltyTile = new TextButton("Penalty Tile", skin);
+                penaltyTile.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        String currentKey = currentNode.getID();
+                        int x = currentNode.getMapX();
+                        int y = currentNode.getMapY();
+                        boolean north = currentNode.getNorth();
+                        boolean south = currentNode.getSouth();
+                        boolean west = currentNode.getWest();
+                        boolean east = currentNode.getEast();
+                        nodeMap.remove(currentKey);
+                        PenaltyNode newPenal = new PenaltyNode(x, y, north, east, south, west, nodeMap, assets);
+                        nodeMap.put(currentKey, newPenal);
+                    }
+                });
+
+                TextButton eventTile = new TextButton("Event Tile", skin);
+                eventTile.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        String currentKey = currentNode.getID();
+                        int x = currentNode.getMapX();
+                        int y = currentNode.getMapY();
+                        boolean north = currentNode.getNorth();
+                        boolean south = currentNode.getSouth();
+                        boolean west = currentNode.getWest();
+                        boolean east = currentNode.getEast();
+                        nodeMap.remove(currentKey);
+                        GlobalPenaltyNode newEvent = new GlobalPenaltyNode(x, y, north, east, south, west, nodeMap, assets);
+                        newEvent.addEventListener(penaltyAmount -> gameState.globalPenaltyEvent(penaltyAmount));
+                        nodeMap.put(currentKey, newEvent);
+                    }
+                });
+
+                // Setup ButtonGroup
+                // TODO does nothing?
+                ButtonGroup selectGroup = new ButtonGroup(normalTile, starTile, penaltyTile, eventTile);
+                selectGroup.setMaxCheckCount(1);
+                if (currentNode instanceof NormalNode) selectGroup.setChecked("Normal Tile");
+                else if (currentNode instanceof StarNode) selectGroup.setChecked("Star Tile");
+                else if (currentNode instanceof PenaltyNode) selectGroup.setChecked("Penalty Tile");
+                else if (currentNode instanceof GlobalPenaltyNode) selectGroup.setChecked("Event Tile");
+
+                Table dataTable = new Table();
+                dataTable.setFillParent(true);
+
+                dataTable.add(new Label("Select Tile Type:", skin));
+                dataTable.row();
+                dataTable.add(normalTile).fillX().uniform();
+                dataTable.row();
+                dataTable.add(starTile).fillX().uniform();
+                dataTable.row();
+                dataTable.add(penaltyTile).fillX().uniform();
+                dataTable.row();
+                dataTable.add(eventTile).fillX().uniform();
+
+                modifyDialog.getContentTable().add(dataTable);
+                modifyDialog.button("Close");
+
+                modifyDialog.show(hudStage);
+            }
+        });
+
+        // Layout debug stuff
+        modifyPlayer.setVisible(false);
+        modifyPlayer.setPosition(hudStage.getWidth() - modifyPlayer.getWidth(), 0);
+        modifyTile.setWidth(modifyPlayer.getWidth());
+        modifyTile.setVisible(false);
+        modifyTile.setPosition(hudStage.getWidth() - modifyTile.getWidth(), modifyPlayer.getHeight()); // Put on top of the other button
+        hudStage.addActor(modifyPlayer);
+        hudStage.addActor(modifyTile);
 
         // Setup input multiplexer so all input handlers work at the same time
         inputMultiplexer = new InputMultiplexer();
@@ -264,6 +462,12 @@ public class GameBoard extends GameScreen {
             throw new IllegalStateException("Switched to GameBoard without a GameState set");
         }
 
+        if (gameState.isDebugMode()) {
+            hudStage.setDebugAll(true); // Enable draw debug if we are in debug mode
+            modifyPlayer.setVisible(true);
+            modifyTile.setVisible(true);
+        }
+
         moveCameraPlayer();
         updateItemButtons();
         Gdx.input.setInputProcessor(inputMultiplexer);
@@ -282,19 +486,55 @@ public class GameBoard extends GameScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        // Draw nodes
+        // Draw nodes and arrows indicating possible directions
+        // Arrows drawn first so they are below everything else
         Map<String, Node> nodeMap = gameState.getNodeMap();
+        Color c = batch.getColor();
+        batch.setColor(c.r, c.g, c.b, 0.5f); //set alpha to 50%
         for (Node node : nodeMap.values()) {
-            Sprite sprite = node.getSprite();
-            sprite.draw(batch);
+            if (node.getNorth()) {
+                batch.draw(tileArrow, node.getXPos(), node.getYPos() + 65, tileArrow.getWidth() / 2.0f,
+                        tileArrow.getHeight() / 2.0f, tileArrow.getWidth(), tileArrow.getHeight(), 0.4f,
+                        0.4f, 0, 0, 0, 100, 100, false, false);
+            }
+            if (node.getEast()) {
+                batch.draw(tileArrow, node.getXPos() + 75, node.getYPos(), tileArrow.getWidth() / 2.0f,
+                        tileArrow.getHeight() / 2.0f, tileArrow.getWidth(), tileArrow.getHeight(), 0.4f,
+                        0.4f, 270, 0, 0, 100, 100, false, false);
+            }
+            if (node.getSouth()) {
+                batch.draw(tileArrow, node.getXPos(), node.getYPos() - 90, tileArrow.getWidth() / 2.0f,
+                        tileArrow.getHeight() / 2.0f, tileArrow.getWidth(), tileArrow.getHeight(), 0.4f,
+                        0.4f, 180, 0, 0, 100, 100, false, false);
+            }
+            if (node.getWest()) {
+                batch.draw(tileArrow, node.getXPos() - 75, node.getYPos(), tileArrow.getWidth() / 2.0f,
+                        tileArrow.getHeight() / 2.0f, tileArrow.getWidth(), tileArrow.getHeight(), 0.4f,
+                        0.4f, 90, 0, 0, 100, 100, false, false);
+            }
+        }
+        batch.setColor(c.r, c.g, c.b, 1f); //set alpha back to normal
+
+        for (Node node : nodeMap.values()) {
+            node.draw(batch);
         }
 
         // Render player sprites
         List<Player> playerList = gameState.getPlayerList();
         for (Player player : playerList) {
             Sprite sprite = player.getSprite();
+            Sprite freezeSprite = player.getFreezeSprite();
+            Sprite shieldSprite = player.getShieldSprite();
+
             sprite.draw(batch);
+            freezeSprite.draw(batch);
+            shieldSprite.setPosition(sprite.getX(), sprite.getY());
+            shieldSprite.draw(batch);
         }
+
+        // Render ActionTexts
+        ActionTextSystem.render(batch, Gdx.graphics.getDeltaTime());
+
         batch.end();
 
         // Update HUD and draw on top of the game
@@ -303,6 +543,7 @@ public class GameBoard extends GameScreen {
         scoreLabel.setText("Score: " + currPlayer.getScore());
         starsLabel.setText("Stars: " + currPlayer.getStars());
         moneyLabel.setText("Money: $" + currPlayer.getMoney());
+        levelLabel.setText("Knowledge Level: " + currPlayer.getLevel());
 
         roundLabel.setText("Round: " + gameState.getRound());
 
@@ -322,8 +563,8 @@ public class GameBoard extends GameScreen {
 
         // Camera logic - handle WASD input
         if (cameraMoveUp || cameraMoveRight || cameraMoveDown || cameraMoveLeft) {
-            newCameraX += 4f * (cameraMoveRight ? 1 : 0) + -4f * (cameraMoveLeft ? 1 : 0);
-            newCameraY += 4f * (cameraMoveUp ? 1 : 0) + -4f * (cameraMoveDown ? 1 : 0);
+            newCameraX += 8f * (cameraMoveRight ? 1 : 0) + -8f * (cameraMoveLeft ? 1 : 0);
+            newCameraY += 8f * (cameraMoveUp ? 1 : 0) + -8f * (cameraMoveDown ? 1 : 0);
             // Recalculate angle
             newCameraAngle = MathUtils.atan2(newCameraY - camera.position.y, newCameraX - camera.position.x);
         }
@@ -370,7 +611,6 @@ public class GameBoard extends GameScreen {
         }
         itemButtons.clear();
 
-        // TODO: we might want to enable buttons even if the player can move
         if (!gameState.getCurrentPlayer().canMove()) {
             return;
         }
@@ -399,8 +639,13 @@ public class GameBoard extends GameScreen {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    Player player = gameState.getCurrentPlayer();
                     boolean delete = item.use(gameState.getCurrentPlayer(), gameState, hudStage);
-                    if (delete) gameState.getCurrentPlayer().removeItem(item.getName());
+
+                    if (delete) {
+                        gameState.getCurrentPlayer().removeItem(item.getName());
+                        ActionTextSystem.addText(item.getName() + " activated", player.getSprite().getX(), player.getSprite().getY() + 50, 0.5f);
+                    }
                     checkRollButton();
                     updateItemButtons();
                 }
@@ -420,11 +665,13 @@ public class GameBoard extends GameScreen {
     public void checkRollButton() {
         if (!gameState.getCurrentPlayer().canRoll()) {
             rollButton.setVisible(false);
-            // Disable items as well TODO: intended behavior?
+            rollButton.setText("Roll");
+
             for (Button button : itemButtons) {
                 button.setVisible(false);
             }
         }
+        else if (gameState.getCurrentPlayer().getMultiDice()) rollButton.setText("Roll (Multidice enabled)");
     }
 
     /**
@@ -441,32 +688,36 @@ public class GameBoard extends GameScreen {
         camera.zoom = 1f; // Set to default
     }
 
-    private void turnChange() {
+    /**
+     * Finish the turn of the GameState and go to the next one.
+     */
+    public void turnChange() {
         rollButton.setVisible(true);
         rollLabel.setVisible(false);
         gameState.nextTurn();
 
         // Check for end of game
         if (gameState.isGameOver()) {
-                Dialog goToEnd = new Dialog("End Game", skin) {
-                    @Override
-                    protected void result(Object object) {
-                        if ((Boolean) object) {
-                            endEvent.notifyObservers(gameState);
-                        }
+            SoundSystem.getInstance().playSound("success_bell.mp3");
+
+            Dialog goToEnd = new Dialog("End Game", skin) {
+                @Override
+                protected void result(Object object) {
+                    if ((Boolean) object) {
+                        endEvent.notifyObservers(gameState);
                     }
-                };
-                goToEnd.text("Game is over.");
-                goToEnd.button("Continue", true);
-                goToEnd.show(hudStage);
-                goToEnd.setScale(2f);
+                }
+            };
+            goToEnd.text("Game is over.");
+            goToEnd.button("Continue", true);
+            goToEnd.show(hudStage);
 
-                return;
-            }
+            return;
+        }
 
-            moveCameraPlayer();
-            // Update items to the new player
-            updateItemButtons();
+        moveCameraPlayer();
+        // Update items to the new player
+        updateItemButtons();
     }
 
 
@@ -482,4 +733,5 @@ public class GameBoard extends GameScreen {
     public void addPauseListener(Observer<PlayerProfile> ob) { pauseEvent.addObserver(ob); }
     public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
     public void addEndListener(Observer<GameState> ob) { endEvent.addObserver(ob); }
+    public void addAgilityTestListener(Observer<Void> ob) { agilityTestEvent.addObserver(ob); }
 }

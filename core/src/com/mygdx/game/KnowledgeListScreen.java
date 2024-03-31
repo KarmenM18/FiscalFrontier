@@ -21,7 +21,6 @@ import java.util.LinkedList;
 public class KnowledgeListScreen extends GameScreen{
     private Observable<Void> pauseScreenEvent = new Observable<>();
 
-    private Label title;
     private Table background;
     private Table table;
     private ScrollPane scroller;
@@ -35,9 +34,6 @@ public class KnowledgeListScreen extends GameScreen{
     public KnowledgeListScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
-        title = new Label("learned Knowledge", skin);
-        this.stage.addActor(title);
-
         //Listening for return to pause screen
         stage.addListener(new InputListener() {
             @Override
@@ -49,10 +45,7 @@ public class KnowledgeListScreen extends GameScreen{
                     background.remove();
                     pauseScreenEvent.notifyObservers(null); // Moving back to pause screen
                 }
-                else {
-                    return false;
-                }
-
+                else {return false;}
                 return true;
             }
         });
@@ -75,16 +68,17 @@ public class KnowledgeListScreen extends GameScreen{
     public void updateTable () {
 
         table = new Table();
+
         for (int i = 0; i < playerKnowledge.size(); i++) {
             String s = playerKnowledge.get(i);
             Label text = new Label((i+1) +": "+ s, skin);
-            text.setAlignment(Align.top);
+            text.setAlignment(Align.left);
             text.setWrap(true);
-            table.add(text).fillX().expandX();
+            table.add(text).left().fillX().expandX();
             table.row();
         }
 
-        scroller = new ScrollPane(table);
+        scroller = new ScrollPane(table, skin);
 
         background = new Table();
         background.setFillParent(true);

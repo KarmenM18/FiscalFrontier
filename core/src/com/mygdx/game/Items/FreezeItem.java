@@ -1,5 +1,3 @@
-// TODO: Do Freezes stack? Should it be possible to freeze a player for two turns by freezing twice?
-
 package com.mygdx.game.Items;
 
 import com.badlogic.gdx.Gdx;
@@ -10,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.game.GameState;
 import com.mygdx.game.Player;
+import com.mygdx.game.SoundSystem;
 
 import java.util.ArrayList;
 
@@ -17,7 +16,6 @@ import java.util.ArrayList;
  * This Item allows a Player to freeze another Player for a turn
  */
 public class FreezeItem extends Item {
-    // TODO What happens if the game is saved while the dialog box is up? We should probably disallow this somehow.
     transient GameState gameState; // Transient, only set when use() is activated and used in the dialog
 
     public FreezeItem(Skin skin) {

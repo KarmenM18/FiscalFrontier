@@ -40,6 +40,8 @@ public class NewGameScreen extends GameScreen {
     private Array<String> selectablePlayerNames;
     private SelectBox<String> playerSelector; // SelectBox widget to select Players
     private TextButton startButton;
+
+    private TextButton returnButton;
     private CheckBox hardModeCheckBox;
     /**
      * Constructor initializes the screen.
@@ -63,6 +65,7 @@ public class NewGameScreen extends GameScreen {
                     menuEvent.notifyObservers(null);
                 }
                 else if (keycode == Input.Keys.FORWARD_DEL) {
+                    // Delete the currently selected Player
                     deleteSelectedButton.fire(new ChangeListener.ChangeEvent());
                 }
                 else return false;
@@ -110,10 +113,7 @@ public class NewGameScreen extends GameScreen {
         deleteSelectedButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // Only show delete button if there are players to remove
-                if (selectedPlayerNames.size < 1) {
-                    deleteSelectedButton.setVisible(false);
-                }
+                if (selectedPlayerNames.size < 1) return;
 
                 // Re-add name to selectables
                 selectablePlayerNames.add(selectedPlayersBox.getSelected());
@@ -122,6 +122,11 @@ public class NewGameScreen extends GameScreen {
                 // Remove the currently selected player from the list
                 selectedPlayerNames.removeIndex(selectedPlayersBox.getSelectedIndex());
                 selectedPlayersBox.setItems(selectedPlayerNames);
+
+                // Only show delete button if there are players to remove
+                if (selectedPlayerNames.size < 1) {
+                    deleteSelectedButton.setVisible(false);
+                }
             }
         });
 
@@ -147,6 +152,16 @@ public class NewGameScreen extends GameScreen {
 
         hardModeCheckBox = new CheckBox("Hard mode", skin);
 
+        returnButton = new TextButton("Return to Main Menu", skin);
+
+        returnButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                menuEvent.notifyObservers(null);
+            }
+        });
+
+
         // Layout GUI
         table.add(leftTable).left().grow();
         table.add(rightTable).right().grow();
@@ -162,6 +177,8 @@ public class NewGameScreen extends GameScreen {
         rightTable.add(startButton).growX().height(100);
         rightTable.row();
         rightTable.add(hardModeCheckBox);
+        rightTable.row();
+        rightTable.add(returnButton).padTop(100);
 
         stage.addActor(table);
     }
@@ -171,9 +188,9 @@ public class NewGameScreen extends GameScreen {
         // Add list of player profiles to the selector
         selectablePlayerNames.clear();
         profilesMap.clear();
-        selectablePlayerNames.add(""); // Add blank value to indicate "nothing selected"
+        selectablePlayerNames.add("Select Players"); // Add value which indicates "nothing selected"
         for (PlayerProfile profile : profileManager.getStudentProfiles()) {
-            assert !profile.getName().equals("");
+            assert !profile.getName().equals("Select Players");
 
             profilesMap.put(profile.getName(), profile);
             selectablePlayerNames.add(profile.getName());

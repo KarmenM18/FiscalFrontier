@@ -69,7 +69,7 @@ public class HighScoreScreen extends GameScreen {
         lifetimeHighScoreTable.defaults().pad(10);
 
         // Add screen title
-        Label title = new Label("High Score Screen", skin);
+        Label title = new Label("High Score Screen", skin, "menu");
         title.setAlignment(Align.center);
         table.add(title).colspan(2).fillX();
         table.row();
@@ -142,26 +142,23 @@ public class HighScoreScreen extends GameScreen {
         TextButton menuButton = new TextButton("Return to Main Menu", skin);
         table.add(menuButton).colspan(2);
 
-        // Set shortcuts
-        stage.addListener(new InputListener() {
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE) {
-                    menuEvent.notifyObservers(null);
-                }
-                else {
-                    return false;
-                }
-
-                return true;
-            }
-        });
-
         // Add button listeners
         menuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 menuEvent.notifyObservers(null);
+            }
+        });
+
+        // Setup keyboard shortcuts
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    menuEvent.notifyObservers(null);
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -173,4 +170,5 @@ public class HighScoreScreen extends GameScreen {
      * @param ob Observer
      */
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
+
 }

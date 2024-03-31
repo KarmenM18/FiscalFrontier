@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
@@ -18,7 +19,6 @@ public class PauseScreen extends GameScreen {
     private Observable<Void> knowledgeEvent = new Observable<Void>();
 
     private Table table;
-    private Label title;
     private Dialog confirmMenuDialog;
     private Dialog saveGameDialog;
     private Button menuButton;
@@ -35,24 +35,28 @@ public class PauseScreen extends GameScreen {
     public PauseScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
-        title = new Label("PauseScreen", skin);
-        stage.addActor(title);
-
         // Setup GUI
         table = new Table();
         stage.addActor(table);
-        saveGameButton = new TextButton("Save Current Game", skin);
+
+        table.row().pad(25);
+        Label title = new Label("Pause", skin, "menu");
+        title.setAlignment(Align.center);
+        table.add(title).colspan(2).fillX();
+        table.row();
+
+        saveGameButton = new TextButton("Save Game", skin);
         viewKnowledgeButton = new TextButton("View Knowledge Catalog", skin);
         resumeButton = new TextButton("Resume Game", skin);
         menuButton = new TextButton("Exit To Main Menu", skin);
 
         // Layout GUI
         table.setFillParent(true); // Size table to stage
+        table.add(resumeButton).fillX();
+        table.row();
         table.add(saveGameButton).fillX();
         table.row();
         table.add(viewKnowledgeButton).fillX();
-        table.row();
-        table.add(resumeButton).fillX();
         table.row();
         table.add(menuButton).fillX();
 
@@ -61,6 +65,8 @@ public class PauseScreen extends GameScreen {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.P) {
+                    confirmMenuDialog.hide();
+                    saveGameDialog.hide();
                     boardEvent.notifyObservers(null);
                 }
                 else {
@@ -80,7 +86,7 @@ public class PauseScreen extends GameScreen {
                 }
             }
         };
-        confirmMenuDialog.text("Are you sure you want to exit to menu? Game progress will NOT be saved.");
+        confirmMenuDialog.text("Are you sure you want to exit to menu?\n Game progress will NOT be saved automatically.");
         confirmMenuDialog.button("Yes", true);
         confirmMenuDialog.button("No", false);
 
@@ -97,7 +103,7 @@ public class PauseScreen extends GameScreen {
         };
         saveGameDialog.text("Enter save name:");
         saveGameDialog.getContentTable().row();
-        saveGameDialog.getContentTable().add(saveNameInput);
+        saveGameDialog.getContentTable().add(saveNameInput).fill();
         saveGameDialog.button("Continue", true);
 
 
@@ -111,6 +117,8 @@ public class PauseScreen extends GameScreen {
         resumeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                confirmMenuDialog.hide();
+                saveGameDialog.hide();
                 boardEvent.notifyObservers(null);
             }
         });

@@ -5,6 +5,11 @@ package com.mygdx.game.Observer;
 
 import java.util.ArrayList;
 
+/**
+ * Implementation of the Observer Pattern - The Observable can notify all Observers
+ *
+ * @param <T> The value type to pass to the Observers
+ */
 public class Observable<T> {
     private ArrayList<Observer<T>> observerList = new ArrayList<Observer<T>>();
 

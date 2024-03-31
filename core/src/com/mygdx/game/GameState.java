@@ -5,8 +5,6 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.Bike;
 import com.mygdx.game.Items.FreezeItem;
@@ -29,8 +27,7 @@ public class GameState implements Serializable {
     private Stock [] stocks;
 
     /**
-     * TODO: check if roundNumber is 26, end game and change to score screen if so
-     * maybe add warning at round 24 25??
+     * TODO: maybe add warning at round 24 25??
      */
     private int roundNumber;
     private HashMap<String, Node> nodeMap;
@@ -43,11 +40,15 @@ public class GameState implements Serializable {
     private int currentPen;
     private boolean gameOver = false; // Set to true when roundNumber exceeds the round maximum. Should be checked by GameBoard
     private boolean hardMode = false; // Hard mode changes the game mechanics to be less forgiving.
+    transient private boolean debugMode = false; // Not saved; set to true whenever debugMode is enabled
+
     /**
      * Constructor
      * Will throw error if the profileList is null or empty
-     *
-     * @param profileList The profile list of players in the game
+     * @param profileList the list of PlayerProfiles participating in the game
+     * @param assets AssetManager to use
+     * @param id UNIQUE ID of the gameState. Used to cleanup saves after termination of a game
+     * @param hardMode controls if hard mode is enabled
      */
     public GameState(List<PlayerProfile> profileList, AssetManager assets, int id, boolean hardMode) {
         assetMan = assets;
@@ -81,12 +82,12 @@ public class GameState implements Serializable {
             }
         }
         int map[][] = { {1,1,2,1,1,3,1,1,0,0},
-                        {1,0,0,0,0,0,0,1,0,0},
-                        {1,0,1,1,1,1,1,1,1,2},
+                        {5,0,0,0,0,0,0,1,0,0},
+                        {1,0,1,1,1,5,1,1,1,2},
                         {1,0,1,0,1,0,0,1,0,1},
                         {1,1,1,0,1,0,0,1,0,1},
                         {0,0,1,0,1,0,0,3,0,1},
-                        {0,0,4,1,1,0,0,1,0,1},
+                        {0,0,4,1,1,0,0,1,0,5},
                         {0,0,0,0,1,1,1,1,1,1}};
         /*
         0 = wall
@@ -175,7 +176,10 @@ public class GameState implements Serializable {
                         nodeMap.put(ID, new PenaltyNode(j, map.length - i, north, east, south, west, nodeMap, assets));
                         break;
                     case 4:
-                        nodeMap.put(ID, new EventNode(j, map.length - i, north, east, south, west, nodeMap, assets));
+                        createGlobalPenaltyNode(j, map.length - i, north, east, south, west);
+                        break;
+                    case 5:
+                        nodeMap.put(ID, new AgilityTestNode(j, map.length - i, north, east, south, west, nodeMap, assets));
                         break;
                     default:
                         break;
@@ -215,8 +219,8 @@ public class GameState implements Serializable {
         assetMan = assets;
         for (Node node : nodeMap.values()) {
             // Restore Node Observers
-            if (node instanceof EventNode) {
-                ((EventNode)node).addEventListener(penaltyAmount -> globalEvent(penaltyAmount));
+            if (node instanceof GlobalPenaltyNode) {
+                ((GlobalPenaltyNode)node).addEventListener(penaltyAmount -> globalPenaltyEvent(penaltyAmount));
             }
             node.loadTextures(assets);
         }
@@ -234,6 +238,14 @@ public class GameState implements Serializable {
         if(turnNumber % playerList.size() == 0 && turnNumber != 0){
             roundNumber++;
 
+            //Paying out dividend for safe and medium risk stocks for all players
+            for (Player p : getPlayerList()) {
+                payoutDividend(p, 0);
+                payoutDividend(p, 1);
+                payoutDividend(p, 3);
+                payoutDividend(p, 4);
+            }
+
             //Updating Safe and Medium Risk Stocks
             stocks[0].updatePrice();
             stocks[1].updatePrice();
@@ -250,7 +262,7 @@ public class GameState implements Serializable {
                 gameOver = true;
             }
         }
-        if(roundNumber > 0 && roundNumber % 3 == 0){
+        if(roundNumber > 0 && roundNumber % 2 == 0){ //Play level increases every other round
             for (Player p : getPlayerList()){
                 p.levelUp();
             }
@@ -262,6 +274,7 @@ public class GameState implements Serializable {
      * End the current Player's turn, and start the next Player's turn
      */
     public void nextTurn() {
+
         // Wipe Player's calculated turn values
         getCurrentPlayer().endTurn(nodeMap);
         removeStar(nodeMap);
@@ -269,7 +282,6 @@ public class GameState implements Serializable {
         checkPenalty(nodeMap);
         currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
         if (getCurrentPlayer().isFrozen()) {
-            // TODO Inform that player was frozen
             getCurrentPlayer().setFrozen(false);
             // Skip turn
             currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
@@ -278,12 +290,14 @@ public class GameState implements Serializable {
         getCurrentPlayer().startTurn(nodeMap);
         turnNumber++;
 
-        //Paying dividends from high risk stocks
-
+        //Paying out stocks that payout dividends every turn
+        this.payoutDividend(getCurrentPlayer(), 2);
+        this.payoutDividend(getCurrentPlayer(), 2);
 
         //Updating high risk stocks
         this.stocks[2].updatePrice();
         this.stocks[5].updatePrice();
+
 
         nextRound(); // Check current round;
     }
@@ -313,18 +327,26 @@ public class GameState implements Serializable {
     public int getRound() { return roundNumber; }
 
     /**
-     * global event for event node, reduce all player's money
+     * global penalty event for event node, reduce all player's money
      * @param penaltyAmount
      */
-    public void globalEvent(int penaltyAmount){
-        //TODO adjust Money penalty logic for hardmode
+    public void globalPenaltyEvent(int penaltyAmount){
+        //needs to be put here due to activation order
         for (Player p : getPlayerList()){
-            if(p.getHasShield()){
-                //do nothing
-            }else if(p.getStars() > 0){
-                p.setStars(p.getStars() - 1);
-            }else if(p.getMoney() > 0){
-                p.setMoney(p.getMoney() - penaltyAmount);
+            if (p.useShield()) continue;
+
+            if(hardMode){
+                if(p.getStars() > 0){
+                    p.setStars(p.getStars() - 1);
+                }else{
+                    p.setMoney(p.getMoney() - penaltyAmount);
+                }
+            }else {
+                if(p.getMoney() > 0){
+                    p.setMoney(p.getMoney() - penaltyAmount);
+                }else{
+                    p.setMoney(0);
+                }
             }
         }
     }
@@ -372,7 +394,7 @@ public class GameState implements Serializable {
 
     /**
      * make taken star node back to normal node
-     * @param nodeMap
+     * @param nodeMap the map of nodes on the board
      */
     public void removeStar(HashMap<String, Node> nodeMap){
         Node currentNode = nodeMap.get(getCurrentPlayer().getCurrentTile());
@@ -392,10 +414,10 @@ public class GameState implements Serializable {
         }
     }
 
-    public void createEventNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
-        EventNode eventNode = new EventNode(x, y, north, east, south, west, nodeMap, assetMan);
-        eventNode.addEventListener(penaltyValue -> globalEvent(penaltyValue));
-        nodeMap.put(x + "," + y, eventNode);
+    public void createGlobalPenaltyNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
+        GlobalPenaltyNode globalPenaltyNode = new GlobalPenaltyNode(x, y, north, east, south, west, nodeMap, assetMan);
+        globalPenaltyNode.addEventListener(penaltyValue -> globalPenaltyEvent(penaltyValue));
+        nodeMap.put(x + "," + y, globalPenaltyNode);
     }
 
     /**
@@ -463,7 +485,9 @@ public class GameState implements Serializable {
         //SAFE GROWTH STOCK
         tickerName = "SGS";
         description = "Safe Growth Stock for the risk adverse with low risk low rewards and low dividend pay\n" +
-                "Growth: 0.5% to 2% every ROUND\n" +
+                "                 \n" +
+                "KEY INFROMATION: \n" +
+                "Growth: 0.5% to 2% every ROUND \n" +
                 "Decline: 0.1% to 1% every ROUND\n" +
                 "Risk: 20% Chance to Decline\n" +
                 "Dividend Pay: Every 5 Rounds\n" +
@@ -481,6 +505,8 @@ public class GameState implements Serializable {
         //MEDIUM RISK GROWTH STOCK
         tickerName ="MGS";
         description = "A Stock with good growth and slightly higher risk. Dividends are payed more frequently.\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "Growth: 2% to 10% every ROUND\n" +
                 "Decline: 1% to 3% every ROUND\n" +
                 "Risk: 40% Chance to decline\n" +
@@ -497,12 +523,14 @@ public class GameState implements Serializable {
         //HIGH RISK GROWTH STOCK "Penny Stock"
         tickerName ="HRGS";
         description = "High Risk Stock. Which Changes every turn instead of every Round Not advisable in most cases\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "Growth: 10% to 25% every TURN\n" +
                 "Decline: 15% to 20% every TURN\n" +
                 "Risk: 70% Chance to decline\n" +
                 "Dividend Pay: Every 5 Rounds\n" +
                 "Dividend Change: No Change. Constant 1%";
-        price = 1;
+        price = 20;
         divPay = 1;
         minG = 10;
         maxG = 25;
@@ -514,6 +542,8 @@ public class GameState implements Serializable {
         //SAFE RISK Dividend STOCK
         tickerName ="SDS";
         description = "Safe Consistent Dividend Stock. Low Stock Price change but more consistent income\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "This stock focuses on income rather than stock price growth\n" +
                 "Growth: 1% to 2% every Round\n" +
                 "Decline: 0.1% to 0.5% every ROUND\n" +
@@ -533,8 +563,10 @@ public class GameState implements Serializable {
 
         //Medium RISK Dividend STOCK
         tickerName ="MRDS";
-        description = "Increased payout with a higher risk for a decline in dividend pay\n" +
+        description = "Increased payout with a higher risk for a decline in dividend pay " +
                 "This stock focuses on income per turn rather than stock price increase\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "Growth: 1% to 2% every Round\n" +
                 "Decline: 0.1% to 0.5% every ROUND\n" +
                 "Risk: 20% Chance to decline in stock value\n" +
@@ -542,12 +574,15 @@ public class GameState implements Serializable {
                 "Dividend payout: every ROUND\n" +
                 "Dividend decrease: 2% decrease in pay or 10% pay increase";
         divRisk = 3;
+        divPay = 20; //Dividend pay of 20% per round
         stocks[4] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
 
         //HIGH RISK Dividend STOCK
         tickerName ="HRDS";
-        description = "Highest dividend payout with extreme payout inconsistency however, dividends are paid out every turn\n" +
+        description = "Highest dividend payout with extreme payout inconsistency however, dividends are paid out every turn. " +
                 "This stock focuses on income per turn rather than stock price increase\n" +
+                "                 \n" +
+                "KEY INFORMATION: \n" +
                 "Growth: 1% to 2% every TURN\n" +
                 "Decline: 0.1% to 0.5% every TURN\n" +
                 "Risk: 20% Chance to decline in stock value\n" +
@@ -555,26 +590,45 @@ public class GameState implements Serializable {
                 "Dividend payout: every TURN\n" +
                 "Dividend decrease: 50% decrease in pay or 30% pay increase";
         divRisk = 5;
+        divPay = 80; //80% div pay per turn
         stocks[5] = new Stock(tickerName, price, description, minG, minD, maxG, maxD, divPay, risk, divRisk);
     }
 
     /**
      * @return true if the game is over, otherwise false
      */
-    public boolean isGameOver() {
-        return gameOver;
-    }
+    public boolean isGameOver() {return gameOver;}
 
     /**
      * @return integer GameState's ID
      */
-    public int getID() {
-        return id;
+    public int getID() {return id;}
+
+    private void payoutDividend (Player player, int stockID) {
+
+        //Finding how much of each stock that the player owns
+        int owned = player.getCurrentInvestments().get(stockID).size();
+
+        int playMoney = player.getMoney();
+        int divPay = this.stocks[stockID].dividendPay();
+
+        //Paying out dividend:
+        //Amount player has + how much the stock pays per share * how many shares the player owns.
+        player.setMoney(playMoney + (divPay*owned));
     }
-    public static void starDialog(String text, Stage stage, Skin skin) {
-        Dialog errorDialog = new Dialog("Star", skin);
-        errorDialog.text(text);
-        errorDialog.button("Buy Star", true);
-        errorDialog.show(stage);
+
+
+    /**
+     * @return debugMode
+     */
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    /**
+     * @param debugMode boolean flag
+     */
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
     }
 }

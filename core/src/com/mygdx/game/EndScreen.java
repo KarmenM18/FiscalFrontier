@@ -89,7 +89,7 @@ public class EndScreen extends GameScreen {
         // Add players to table and get the winner - we sort the table by score
         // TODO: If we are weighting other things than score, this is where that logic should go
 
-        finalGameState.getPlayerList().sort((o1, o2) -> o1.getScore() - o2.getScore());
+        finalGameState.getPlayerList().sort((o1, o2) -> o2.getScore() - o1.getScore());
         Player winner = finalGameState.getPlayerList().get(0);
         for (Player player : finalGameState.getPlayerList()) {
             scoreTable.add(new Label(player.getPlayerProfile().getName(), skin)).padLeft(50).padRight(50);
@@ -110,6 +110,8 @@ public class EndScreen extends GameScreen {
         // Update Player Profiles
         for (Player player : finalGameState.getPlayerList()) {
             PlayerProfile profile = player.getPlayerProfile();
+
+            profile.setKnowledgeLevel(player.getLevel());
             profile.setLifetimeScore(player.getScore());
             if (profile.getHighScore() < player.getScore()) profile.setHighScore(player.getScore());
 

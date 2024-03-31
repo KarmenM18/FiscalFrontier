@@ -1,14 +1,13 @@
 package com.mygdx.game;
-
 import java.util.Random;
 
 /**
- * A safe growth stock option. With low risk low reward
+ * Holds the logic for simulating the stock market fluctuation
  */
 public class Stock {
 
     private String tickerName;  //Name of the stock
-    private int price;       //Stock Buy Price per QTY
+    private int price;          //Stock Buy Price per QTY
     private String description; //Description outlining the risks and reward
     private double priceChange; //Price Change since last round as a %
     private double divPayChange;//Dividend Pay Change as a %
@@ -21,9 +20,10 @@ public class Stock {
     private double maxChangeDecline;
     private int risk;
     private int divRisk;
+    private Random rand;
 
     /**
-     * Constructor with preset stock price of $50.00
+     * Constructor for preset stocks
      */
     public Stock(String name, int price, String description,
                  double mincg, double mincd, double maxchg, double maxcd, double divPay, int risk, int divRisk) {
@@ -38,22 +38,30 @@ public class Stock {
         this.divPay = divPay;
         this.risk = risk;
         this.divRisk = divRisk;
+        this.rand = new Random();
     }
 
     /**
      * Private no-arg constructor for serialization.
      */
-    private Stock() {}
+    private Stock() {
+        rand = new Random();
+    }
 
     /**
-     * @return dividen payout every 5 rounds
+     * @return dividend payout every 5 rounds. Also rounds the number up
      */
-    public int dividenPay() {return (int) (this.price * (this.divPay/100));}
+    public int dividendPay() {return (int) Math.ceil(this.price * (this.divPay/100));}
 
     /**
      * @return the stock's current price
      */
     public int getPrice(){return this.price;}
+
+    /**
+     * @return returns dividend payout information in %
+     */
+    public double getDivPay() {return divPay;}
 
     /**
      * @return Description about the stock
@@ -89,18 +97,15 @@ public class Stock {
      * divRisk 5 -> 50% chance to decrease divPay. 30% increase in divPay or 50% divPay decrease
      */
     public void updatePrice(){
-        Random rand = new Random();
         int prob = rand.nextInt(10) + 1; //Picks a number from 1 to 10 for stock price growth
         int div = rand.nextInt(10) + 1; //Picks a number from 1 to 10 for dividend decline
-
         //For Stock Price change
         if (prob > this.risk) { //Growth
             this.priceChange = rand.nextDouble(this.maxChangeGrowth) + this.minChangeGrowth;
-            this.price += this.price * (this.priceChange/100);
         } else { //Decreasing
-            this.priceChange = -rand.nextDouble(this.maxChangeDecline) + this.minChangeDecline;
-            this.price += this.price *(this.priceChange/100);
+            this.priceChange = -(rand.nextDouble(this.maxChangeDecline) + this.minChangeDecline);
         }
+        this.price += (int) (this.price * (this.priceChange/100));
 
         if (this.price <= 0) this.price = 0; //Price of stock can't dip below 0
 
@@ -111,7 +116,7 @@ public class Stock {
                 case 3 : this.divPay += this.divPay*0.1; this.divPayChange = 10; break;
                 case 5 : this.divPay += this.divPay*0.3; this.divPayChange = 30; break;
             }
-        } else { //Decreasing dividend pay
+        } else if (this.divRisk != 0){ //Decreasing dividend pay
             switch (this.divRisk) {
                 case 1 : this.divPay -= this.divPay*0.005; this.divPayChange = -0.5; break;
                 case 3 : this.divPay -= this.divPay*0.02; this.divPayChange = -2; break;

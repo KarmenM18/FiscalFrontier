@@ -1,50 +1,59 @@
 package com.mygdx.game;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProfileManagerTest {
 
-    static ProfileManager profileManager;
+    /** Object instance used in each test. */
+    private static ProfileManager profileManager;
 
-    static String studentFile;
 
-    static String highScoreFile;
-
+    /** File storing student database to use in testing. */
+    private static String studentFile;
+    /** File storing individual game high score table to use in testing. */
+    private static String highScoreFile;
+    /** File storing overall lifetime high score table to use in testing. */
     static String lifetimeScoreFile;
 
+
+    /** Contents of the student database used to restore the file after each test. */
     static String studentDatabase;
-
+    /** Contents of the individual game high score table used to restore the file after each test. */
     static String highScoreDatabase;
-
+    /** Contents of the overall lifetime high score table used to restore the file after each test. */
     static String lifetimeScoreDatabase;
-
+    /** Number of students in test student database. */
+    static int numStudents;
 
 
     @BeforeAll
     static void setUpClass() {
 
+        String test = System.getProperty("user.dir");
+
         try {
 
-            // Define filepaths to each database
-            studentFile = "TestingDatabases/studentDatabase1.json";
-            highScoreFile = "TestingDatabases/highScoreDatabase1.json";
-            lifetimeScoreFile = "TestingDatabases/lifetimeScoreDatabase1.json";
+            // Define filepath to each database
+            studentFile = test + "/TestingDatabases/TestingDatabases/studentDatabase1.json";
+            highScoreFile = test + "/TestingDatabases/TestingDatabases/highScoreDatabase1.json";
+            lifetimeScoreFile = test + "/TestingDatabases/TestingDatabases/lifetimeScoreDatabase1.json";
 
             // Store database contents to be restored after each test
             studentDatabase = Files.readString(Path.of(studentFile));
             highScoreDatabase = Files.readString(Path.of(highScoreFile));
             lifetimeScoreDatabase = Files.readString(Path.of(lifetimeScoreFile));
+
+            // Define expected values in all tests
+            numStudents = 8;
 
         }
         catch (IOException e) {
@@ -84,14 +93,13 @@ class ProfileManagerTest {
     }
 
 
-
     @Test
     void numberStudentProfiles() {
 
         ArrayList<PlayerProfile> studentProfiles = profileManager.getStudentProfiles();
 
         // Verify correct number of students were returned
-        assertEquals(studentProfiles.size(), 8);
+        assertEquals(studentProfiles.size(), numStudents);
 
     }
 
@@ -117,6 +125,73 @@ class ProfileManagerTest {
     }
 
 
+    /**
+     * Checks if a list of scores is sorted from highest to lowest.
+     * @param list List of scores
+     * @return True if the list is sorted from highest to lowest, false if otherwise
+     */
+    private boolean isSorted(ArrayList<Integer> list) {
+
+        for (int i = 0; i < list.size() - 1; i++) {
+            if (list.get(i).compareTo(list.get(i + 1)) < 0) {  // Next item is larger than it
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Test
+    void getHighScoreList() {
+
+        ArrayList<PlayerProfile> highScoreList = profileManager.getHighScoreList();  // High score list, loaded from file
+
+        // Verify that all 5 students were loaded
+        assertEquals(5, highScoreList.size());
+
+        // Verify that the high score list was saved in the correct order
+        ArrayList<Integer> scores = new ArrayList<Integer>();
+        for (PlayerProfile student : highScoreList) {
+            scores.add(student.getHighScore());
+        }
+        assertTrue(isSorted(scores));
+
+        // Verify that one student was loaded from file as expected, in the correct position
+        PlayerProfile lastStudent = highScoreList.get(4);
+        assertEquals("Student3", lastStudent.getName());
+        assertEquals(7, lastStudent.getKnowledgeLevel());
+        assertEquals(4, lastStudent.getHighScore());
+        assertEquals(60, lastStudent.getLifetimeScore());
+
+    }
+
+    @Test
+    void getLifetimeHighScoreList() {
+
+        ArrayList<PlayerProfile> lifetimeHighScoreList = profileManager.getLifetimeHighScoreList();  // Lifetime high score list, loaded from file
+
+        // Verify that all 5 students were loaded
+        assertEquals(5, lifetimeHighScoreList.size());
+
+        // Verify that the lifetime high score list was saved in the correct order
+        ArrayList<Integer> scores = new ArrayList<Integer>();
+        for (PlayerProfile student : lifetimeHighScoreList) {
+            scores.add(student.getLifetimeScore());
+        }
+        assertTrue(isSorted(scores));
+
+
+        // Verify that one student was loaded from file as expected, in the correct position
+        PlayerProfile lastStudent = lifetimeHighScoreList.get(4);
+        assertEquals("Student5", lastStudent.getName());
+        assertEquals(12, lastStudent.getKnowledgeLevel());
+        assertEquals(13, lastStudent.getHighScore());
+        assertEquals(46, lastStudent.getLifetimeScore());
+
+
+    }
+
+
     @Test
     void addDuplicateStudent() {
         // Attempt to add a student with a name that is already taken in the database
@@ -129,45 +204,259 @@ class ProfileManagerTest {
         profileManager.addStudent("NewStudent");  // Add a new student to the database
 
         // Confirm student was added to the list of profiles
-        PlayerProfile lastStudent = profileManager.getStudentProfiles().get(-1);
+        assertEquals(numStudents + 1, profileManager.getStudentProfiles().size());
+        PlayerProfile lastStudent = profileManager.getStudentProfiles().get(numStudents);
         assertEquals("NewStudent", lastStudent.getName());
+
+        // Load the database with another profile manager instance to confirm changes were written to file
+        ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
+        PlayerProfile fileLastStudent = secondManager.getStudentProfiles().get(numStudents);
+        assertEquals("NewStudent", fileLastStudent.getName());
+
+        // Verify that the high score lists remained the correct length
+        assertEquals(5, secondManager.getHighScoreList().size());
+        assertEquals(5, secondManager.getLifetimeHighScoreList().size());
+
+    }
+
+
+    @Test
+    void removeFakeStudent() {
+        // Attempt to remove a student that does not exist
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.removeStudent("FakeStudent");});
+    }
+
+    @Test
+    void removeStudentListUpdates() {
+
+        // Remove an existing student from the database
+        String studentName = "Student3";  // Name of student to remove
+        PlayerProfile removed = profileManager.removeStudent(studentName);
+
+        // Confirm student was removed from the list of profiles
+        assertEquals(removed.getName(), studentName);                                        // Confirm correct student was found and returned
+        assertEquals(numStudents - 1, profileManager.getStudentProfiles().size());  // Confirm that a student was removed from the list
+        assertNotEquals(studentName, profileManager.getStudentProfiles().get(2).getName());  // Confirm a different student is now in the removed student's place
+
+        // Confirm high score lists were updated
+        assertNotEquals(studentName, profileManager.getHighScoreList().get(4).getName());  // Confirm a different student is now in the removed student's place
+        assertEquals(5, profileManager.getHighScoreList().size());                // Confirm that another student was added to fill the list
+
+        assertNotEquals(studentName, profileManager.getHighScoreList().get(3).getName());  // Confirm a different student is now in the removed student's place
+        assertEquals(5, profileManager.getHighScoreList().size());                // Confirm that another student was added to fill the list
+
+    }
+
+    @Test
+    void removeStudentFileUpdates() {
+
+        // Remove an existing student from the database
+        String studentName = "Student3";  // Name of student to remove
+        profileManager.removeStudent(studentName);
+
+        // Load the database with another profile manager instance to confirm changes were written to file
+        ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
+
+        // Confirm student database file was written to
+        assertNotEquals(studentName, secondManager.getStudentProfiles().get(2).getName());  // Confirm a different student is now in the removed student's place
+
+        // Confirm high score databases were updated
+        assertNotEquals(studentName, secondManager.getHighScoreList().get(4).getName());  // Confirm a different student is now in the removed student's place
+        assertEquals(5, secondManager.getHighScoreList().size());                // Confirm that another student was added to fill the list
+
+        assertNotEquals(studentName, secondManager.getHighScoreList().get(3).getName());  // Confirm a different student is now in the removed student's place
+        assertEquals(5, secondManager.getHighScoreList().size());                // Confirm that another student was added to fill the list
+
+        // Confirm that the high score lists remained in order
+        ArrayList<Integer> highScores = new ArrayList<Integer>();
+        for (PlayerProfile student : secondManager.getHighScoreList()) {
+            highScores.add(student.getHighScore());
+        }
+        assertTrue(isSorted(highScores));
+
+        ArrayList<Integer> lifetimeScores = new ArrayList<Integer>();
+        for (PlayerProfile student : secondManager.getLifetimeHighScoreList()) {
+            lifetimeScores.add(student.getLifetimeScore());
+        }
+        assertTrue(isSorted(lifetimeScores));
+
+    }
+
+
+    @Test
+    void renameFakeStudent() {
+        // Attempt to rename a student that does not exist
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.renameStudent("FakeStudent", "NewName");});
+    }
+
+    @Test
+    void renameStudentListUpdates() {
+
+        // Rename an existing student from the database
+        String newName = "NewName";  // Name of student to remove
+        profileManager.renameStudent("Student4", newName);
+
+        // Confirm student was renamed in each list
+        assertEquals(newName, profileManager.getStudentProfiles().get(3).getName());        // Renamed in list of all student profiles
+        assertEquals(newName, profileManager.getHighScoreList().get(0).getName());          // Renamed in high score list
+        assertEquals(newName, profileManager.getLifetimeHighScoreList().get(2).getName());  // Renamed in lifetime high score list
+
+    }
+
+    @Test
+    void renameStudentFileUpdates() {
+
+        // Rename an existing student from the database
+        String newName = "NewName";  // Name of student to remove
+        profileManager.renameStudent("Student4", newName);
 
         // Load the database with another instance to confirm changes were written to file
         ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
-        PlayerProfile fileLastStudent = secondManager.getStudentProfiles().get(-1);
-        assertEquals("NewStudent", fileLastStudent.getName());
+
+        // Confirm each database file was written
+        assertEquals(newName, secondManager.getStudentProfiles().get(3).getName());        // Renamed in student profiles database
+        assertEquals(newName, secondManager.getHighScoreList().get(0).getName());          // Renamed in high score database
+        assertEquals(newName, secondManager.getLifetimeHighScoreList().get(2).getName());  // Renamed in lifetime high score database
+
+    }
+
+
+    @Test
+    void changeKnowledgeLevelFakeStudent() {
+        // Attempt to change the knowledge level of a student that does not exist
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.changeKnowledgeLevel("FakeStudent", 5);});
+    }
+
+    @Test
+    void changeKnowledgeLevelNegative() {
+        // Attempt to change a student's knowledge level to an invalid value: negative integer
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.changeKnowledgeLevel("Student1", -10);});
+    }
+
+    @Test
+    void changeKnowledgeLevelListUpdates() {
+
+        // Change an existing student's knowledge level to a valid value (positive integer)
+        int knowledgeLevel = 20;  // New knowledge level
+        profileManager.changeKnowledgeLevel("Student2", knowledgeLevel);
+
+        // Confirm change was made in each list
+        assertEquals(knowledgeLevel, profileManager.getStudentProfiles().get(1).getKnowledgeLevel());        // Changed in list of all student profiles
+        assertEquals(knowledgeLevel, profileManager.getHighScoreList().get(1).getKnowledgeLevel());          // Changed in high score list
+        assertEquals(knowledgeLevel, profileManager.getLifetimeHighScoreList().get(0).getKnowledgeLevel());  // Changed in lifetime high score list
 
     }
 
     @Test
-    void removeStudent() {
+    void changeKnowledgeLevelFileUpdates() {
+
+        // Rename an existing student from the database
+        int knowledgeLevel = 20;  // New knowledge level
+        profileManager.changeKnowledgeLevel("Student2", knowledgeLevel);
+
+        // Load the database with another instance to confirm changes were written to file
+        ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
+
+        // Confirm each database file was written
+        assertEquals(knowledgeLevel, secondManager.getStudentProfiles().get(1).getKnowledgeLevel());         // Changed in student profiles database
+        assertEquals(knowledgeLevel, secondManager.getHighScoreList().get(1).getKnowledgeLevel());           // Changed in high score database
+        assertEquals(knowledgeLevel, secondManager.getLifetimeHighScoreList().get(0).getKnowledgeLevel());   // Changed in lifetime high score database
+
+    }
+
+
+    @Test
+    void updateHighScoreFakeStudent() {
+        // Attempt to update the individual game high score of a student that does not exist
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.updateHighScore("FakeStudent", 100);});
     }
 
     @Test
-    void renameStudent() {
+    void updateHighScoreNoUpdate() {
+
+        // Attempt to set a high score lower than the student's current high score
+        int newHighScore = 5;
+        profileManager.updateHighScore("Student2", newHighScore);
+
+        // Check that no updates were made
+        assertNotEquals(newHighScore, profileManager.getStudentProfiles().get(1).getHighScore());
+        assertNotEquals(newHighScore, profileManager.getHighScoreList().get(1).getHighScore());
+        assertNotEquals(newHighScore, profileManager.getLifetimeHighScoreList().get(0).getHighScore());
+
     }
 
     @Test
-    void changeKnowledgeLevel() {
+    void updateHighScoreListUpdates() {
+
+        // Set new high score which is higher than the student's current score
+        int newHighScore = 35;
+        profileManager.updateHighScore("Student2", newHighScore);
+
+        // Check that all lists were updated
+        assertEquals(newHighScore, profileManager.getStudentProfiles().get(1).getHighScore());
+        assertEquals(newHighScore, profileManager.getHighScoreList().get(1).getHighScore());
+        assertEquals(newHighScore, profileManager.getLifetimeHighScoreList().get(0).getHighScore());
+
     }
 
     @Test
-    void updateHighScore() {
+    void updateHighScoreFileUpdates() {
+
+        // Set new high score which is higher than the student's current score
+        int newHighScore = 35;
+        profileManager.updateHighScore("Student2", newHighScore);
+
+        // Load the database with another instance to confirm changes were written to file
+        ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
+
+        // Confirm each database file was written
+        assertEquals(newHighScore, secondManager.getStudentProfiles().get(1).getHighScore());         // Changed in student profiles database
+        assertEquals(newHighScore, secondManager.getHighScoreList().get(1).getHighScore());           // Changed in high score database
+        assertEquals(newHighScore, secondManager.getLifetimeHighScoreList().get(0).getHighScore());   // Changed in lifetime high score database
+
+    }
+
+
+    @Test
+    void addLifetimeScoreFakeStudent() {
+        // Attempt to update the lifetime score of a student that does not exist
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.addLifetimeScore("FakeStudent", 100);});
     }
 
     @Test
-    void updateLifetimeScore() {
+    void addLifetimeScoreListUpdates() {
+
+        // Add to the student's overall lifetime score
+        int initialValue = 60;  // Lifetime score before updates
+        int toAdd = 7;          // Amount to add
+
+        profileManager.addLifetimeScore("Student3", toAdd);
+
+        // Check that all lists were updated
+        assertEquals(initialValue + toAdd, profileManager.getStudentProfiles().get(2).getLifetimeScore());
+        assertEquals(initialValue + toAdd, profileManager.getHighScoreList().get(4).getLifetimeScore());
+        assertEquals(initialValue + toAdd, profileManager.getLifetimeHighScoreList().get(3).getLifetimeScore());
+
     }
 
     @Test
-    void updateHighScores() {
+    void addLifetimeScoreFileUpdates() {
+
+        // Add to the student's overall lifetime score
+        int initialValue = 60;  // Lifetime score before updates
+        int toAdd = 7;          // Amount to add
+
+        profileManager.addLifetimeScore("Student3", toAdd);
+
+        // Load the database with another instance to confirm changes were written to file
+        ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
+
+        // Confirm each database file was written
+        assertEquals(initialValue + toAdd, secondManager.getStudentProfiles().get(2).getLifetimeScore());         // Changed in student profiles database
+        assertEquals(initialValue + toAdd, secondManager.getHighScoreList().get(4).getLifetimeScore());           // Changed in high score database
+        assertEquals(initialValue + toAdd, secondManager.getLifetimeHighScoreList().get(3).getLifetimeScore());   // Changed in lifetime high score database
+
+
     }
 
-    @Test
-    void getHighScoreList() {
-    }
-
-    @Test
-    void getLifetimeHighScoreList() {
-    }
 }

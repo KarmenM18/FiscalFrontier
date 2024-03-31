@@ -37,6 +37,7 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://jitpack.io" }
     }
+
 }
 
 project(":desktop") {
@@ -58,6 +59,7 @@ project(":desktop") {
     dependencies {
         implementation project(":core")
         implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        implementation 'com.github.raeleus.stripe:freetype:1.4.5'
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
@@ -96,13 +98,14 @@ project(":core") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
         testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.11.0'
         testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
+        implementation 'com.github.raeleus.stripe:freetype:1.4.5'
     }
-
 }
 
 tasks.withType(Test) {
