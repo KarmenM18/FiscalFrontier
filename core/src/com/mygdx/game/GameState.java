@@ -27,8 +27,7 @@ public class GameState implements Serializable {
     private Stock [] stocks;
 
     /**
-     * TODO: check if roundNumber is 26, end game and change to score screen if so
-     * maybe add warning at round 24 25??
+     * TODO: maybe add warning at round 24 25??
      */
     private int roundNumber;
     private HashMap<String, Node> nodeMap;
@@ -280,7 +279,6 @@ public class GameState implements Serializable {
         checkPenalty(nodeMap);
         currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
         if (getCurrentPlayer().isFrozen()) {
-            // TODO Inform that player was frozen
             getCurrentPlayer().setFrozen(false);
             // Skip turn
             currPlayerTurn = (currPlayerTurn + 1) % playerList.size();

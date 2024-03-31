@@ -113,11 +113,7 @@ public class NewGameScreen extends GameScreen {
         deleteSelectedButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // Only show delete button if there are players to remove
-                if (selectedPlayerNames.size < 1) {
-                    deleteSelectedButton.setVisible(false);
-                    return;
-                }
+                if (selectedPlayerNames.size < 1) return;
 
                 // Re-add name to selectables
                 selectablePlayerNames.add(selectedPlayersBox.getSelected());
@@ -126,6 +122,11 @@ public class NewGameScreen extends GameScreen {
                 // Remove the currently selected player from the list
                 selectedPlayerNames.removeIndex(selectedPlayersBox.getSelectedIndex());
                 selectedPlayersBox.setItems(selectedPlayerNames);
+
+                // Only show delete button if there are players to remove
+                if (selectedPlayerNames.size < 1) {
+                    deleteSelectedButton.setVisible(false);
+                }
             }
         });
 

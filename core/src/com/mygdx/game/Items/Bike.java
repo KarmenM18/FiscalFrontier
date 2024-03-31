@@ -9,7 +9,6 @@ import com.mygdx.game.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-//TODO make sure to auto next turn after use
 public class Bike extends Item {
     public Bike(Skin skin) {
         super("Bike", false, skin);

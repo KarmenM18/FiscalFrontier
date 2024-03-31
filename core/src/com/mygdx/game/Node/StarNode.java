@@ -59,7 +59,6 @@ public class StarNode extends Node {
 
     /**
      * activate the star purchase dialog,
-     * TODO add a delay to move cam until player confirms action
      * @param player the Player who landed on the Node
      * @param batch the SpriteBatch to draw on
      * @param stage the GameBoard's Stage

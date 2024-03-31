@@ -247,8 +247,6 @@ public class Player implements Serializable {
         ArrayList<String> validPath = null;
         for (ArrayList<String> path : reachablePaths) {
             if (path.get(path.size() - 1).equals(tileID)) {
-                // TODO: Selects first valid path. if there are multiple, it's possible the player would want to choose
-                //  the path themselves.
                 validPath = path;
                 break;
             }

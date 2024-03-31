@@ -1,6 +1,3 @@
-/**
- * TODO Just a dummy class for now
- */
 package com.mygdx.game.Items;
 
 import com.badlogic.gdx.Gdx;

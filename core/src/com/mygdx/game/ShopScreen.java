@@ -156,6 +156,7 @@ public class ShopScreen extends GameScreen {
         scroller.setHeight(500);
         scroller.setScrollBarPositions(false,true);
         scroller.setScrollbarsVisible(true);
+        stage.setScrollFocus(scroller);
 
         investmentsList = new Table();
         investmentsList.setHeight(800);

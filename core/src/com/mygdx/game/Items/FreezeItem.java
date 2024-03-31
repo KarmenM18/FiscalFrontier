@@ -1,5 +1,3 @@
-// TODO: Do Freezes stack? Should it be possible to freeze a player for two turns by freezing twice?
-
 package com.mygdx.game.Items;
 
 import com.badlogic.gdx.Gdx;

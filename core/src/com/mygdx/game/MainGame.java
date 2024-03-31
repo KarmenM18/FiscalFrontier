@@ -144,7 +144,6 @@ public class MainGame extends Game {
 			// TODO: Handle renames and removals of profiles
 			profileManager.updateHighScore(profile.getName(), profile.getHighScore());
 			profileManager.addLifetimeScore(profile.getName(), profile.getLifetimeScore());
-			// TODO: must check that game profile's lifetime score is synchronized with profile manager in the case of several save files
 		});
 
 		// Set HighScoreScreen observers

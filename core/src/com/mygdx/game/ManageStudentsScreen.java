@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -166,8 +167,9 @@ public class ManageStudentsScreen extends GameScreen {
         TextButton backButton = new TextButton("Back", this.skin);                      // Return to instructor dashboard
 
         this.editStudentButton.setTouchable(Touchable.disabled);    // Disable clicking until a student is selected
-        this.removeStudentButton.setTouchable(Touchable.disabled);  // TODO: Should somehow make these grayed out, so it doesn't look like you can click them
-
+        this.editStudentButton.setColor(Color.GRAY);
+        this.removeStudentButton.setTouchable(Touchable.disabled);
+        this.removeStudentButton.setColor(Color.GRAY);
 
         // Initialize dialog prompt to add a new student
         this.addStudentDialog = new Dialog("Add Student", this.skin);
@@ -392,7 +394,9 @@ public class ManageStudentsScreen extends GameScreen {
 
                 // Allow edit and remove buttons to be clicked once student is selected
                 editStudentButton.setTouchable(Touchable.enabled);
+                editStudentButton.setColor(Color.WHITE);
                 removeStudentButton.setTouchable(Touchable.enabled);
+                removeStudentButton.setColor(Color.WHITE);
 
                 // Set remove student confirmation to display the name of the selected player
                 removeStudentNameText.setText(studentName);

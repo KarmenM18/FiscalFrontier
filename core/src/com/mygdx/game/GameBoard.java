@@ -610,7 +610,6 @@ public class GameBoard extends GameScreen {
         }
         itemButtons.clear();
 
-        // TODO: we might want to enable buttons even if the player can't move
         if (!gameState.getCurrentPlayer().canMove()) {
             return;
         }
