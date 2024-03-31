@@ -110,6 +110,8 @@ public class EndScreen extends GameScreen {
         // Update Player Profiles
         for (Player player : finalGameState.getPlayerList()) {
             PlayerProfile profile = player.getPlayerProfile();
+
+            profile.setKnowledgeLevel(player.getLevel());
             profile.setLifetimeScore(player.getScore());
             if (profile.getHighScore() < player.getScore()) profile.setHighScore(player.getScore());
 

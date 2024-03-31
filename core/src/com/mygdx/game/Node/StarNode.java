@@ -133,7 +133,7 @@ public class StarNode extends Node {
     private void starMod(Player player, boolean buy){
         if(buy){
             this.hasStar = false;
-            player.addStar();
+            player.setStars( player.getStars() + 1 );
             player.setMoney(player.getMoney() - starCost);
             checkStar();
 

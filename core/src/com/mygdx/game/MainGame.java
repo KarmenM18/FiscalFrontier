@@ -46,9 +46,6 @@ public class MainGame extends Game {
 	private ProfileManager profileManager;
 
 	private boolean debugMode = false; // Indicates that we are in debug mode.
-
-	/** Password to enter instructor dashboard. */
-	private static String instructorPassword;
 	
 	@Override
 	public void create() {
@@ -142,8 +139,13 @@ public class MainGame extends Game {
 		endScreen.addUpdateScoreListener(profile -> {
 			// Modify the PlayerProfile based on what happened in the game
 			// TODO: Handle renames and removals of profiles
-			profileManager.updateHighScore(profile.getName(), profile.getHighScore());
-			profileManager.addLifetimeScore(profile.getName(), profile.getLifetimeScore());
+			this.profileManager.changeKnowledgeLevel(profile.getName(), profile.getKnowledgeLevel());
+			this.profileManager.updateHighScore(profile.getName(), profile.getHighScore());
+			this.profileManager.addLifetimeScore(profile.getName(), profile.getLifetimeScore());
+
+			// Reload all screens involving scores and levels to reflect changes
+			this.reloadScoreScreens();
+
 		});
 
 		// Set HighScoreScreen observers
@@ -224,9 +226,8 @@ public class MainGame extends Game {
 			// Add new student to database
 			profileManager.addStudent(studentName);
 
-			// Reload dashboard screens to reflect changes
-			instructorDashboardScreen.loadDashboard();
-			manageStudentsScreen.loadDashboard();
+			// Reload all screens involving scores and levels to reflect changes
+			this.reloadScoreScreens();
 
 			// Display confirmation of action
 			manageStudentsScreen.showConfirmation("Student added successfully!");
@@ -245,9 +246,8 @@ public class MainGame extends Game {
 			this.profileManager.changeKnowledgeLevel(currentName, newKnowledgeLevel);  // FIXME: Since players stored as references, may be better to just use the getProfile() and PlayerProfile getters/setters directly?
 			this.profileManager.renameStudent(currentName, newName);
 
-			// Reload dashboard screens to reflect changes
-			manageStudentsScreen.loadDashboard();
-			instructorDashboardScreen.loadDashboard();
+			// Reload all screens involving scores and levels to reflect changes
+			this.reloadScoreScreens();
 
 			// Display confirmation of action
 			manageStudentsScreen.showConfirmation("Student edited successfully!");
@@ -258,9 +258,8 @@ public class MainGame extends Game {
 			// Remove student from student database
 			profileManager.removeStudent(studentName);
 
-			// Reload dashboard screens to reflect changes
-			manageStudentsScreen.loadDashboard();
-			instructorDashboardScreen.loadDashboard();
+			// Reload all screens involving scores and levels to reflect changes
+			this.reloadScoreScreens();
 
 			// Display confirmation of action
 			manageStudentsScreen.showConfirmation("Student removed successfully!");
@@ -309,12 +308,24 @@ public class MainGame extends Game {
 	}
 
 	/**
-	 * Save a GameState to file.
+	 * Save a GameState to file and update the student database and high score tables.
 	 *
 	 * @param gs the GameState to save
 	 */
 	public void saveGameState(GameState gs, String saveName) {
+
+		// Save game state
 		saveSystem.saveGameState(gs, saveName);
+
+		// Update the level of each player in the game
+		for (Player player : gs.getPlayerList()) {
+			String studentName = player.getPlayerProfile().getName();
+			this.profileManager.changeKnowledgeLevel(studentName, player.getLevel());
+		}
+
+		// Reload all screens involving scores and levels to reflect changes
+		this.reloadScoreScreens();
+
 	}
 
 	/**
@@ -325,4 +336,18 @@ public class MainGame extends Game {
 	public GameState loadGameState(String path) {
 		return saveSystem.readGameState(path, assets);
 	}
+
+
+	/**
+	 * Reloads all screens involving student levels and scores (the instructor dashboard and high score screens) to
+	 * reflect the most updated data in the player profile manager.
+	 */
+	private void reloadScoreScreens() {
+
+		this.instructorDashboardScreen.loadDashboard();
+		this.manageStudentsScreen.loadDashboard();
+		this.highScoreScreen.loadTables();
+
+	}
+
 }
