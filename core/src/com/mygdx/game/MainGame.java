@@ -46,9 +46,6 @@ public class MainGame extends Game {
 	private ProfileManager profileManager;
 
 	private boolean debugMode = false; // Indicates that we are in debug mode.
-
-	/** Password to enter instructor dashboard. */
-	private static String instructorPassword;
 	
 	@Override
 	public void create() {
