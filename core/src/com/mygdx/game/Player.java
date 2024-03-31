@@ -11,6 +11,7 @@ import com.mygdx.game.Node.Node;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -106,42 +107,63 @@ public class Player implements Serializable {
     /**
      * Constructor creates a player with existing game data.
      *
-     * @param profile     Player's profile. Links the player to their persistent, out-of-game profile.
-     * @param stars       Player's stars
-     * @param money       Player's money
-     * @param score       Player's score
-     * @param items       Player's item inventory
-     * @param currentTile Player's current tile ID
+     * @param profile       Player's profile. Links the player to their persistent, out-of-game profile.
+     * @param stars         Player's stars
+     * @param money         Player's money
+     * @param investments   Player's investment account
+     * @param stocks        Player's stocks owned
+     * @param score         Player's score
+     * @param items         Player's item inventory
+     * @param frozen        Player's frozen state
+     * @param hasMultidice  If the player has a multidice item
+     * @param hasShield     If the player has a shield item
+     * @param currentTile   Player's current tile ID
      */
-    public Player(PlayerProfile profile, AssetManager assets, int stars, int money, int score, ArrayList<Item> items, String currentTile) {
+    public Player(PlayerProfile profile, AssetManager assets, int stars, int money, int investments, ArrayList<ArrayList<Stock>> stocks, int score, ArrayList<Item> items, boolean frozen, boolean hasMultidice, boolean hasShield, String currentTile) {
 
-        // Initialize all player attributes
+        /* Initialize all player attributes */
+
+        // Student data
         this.profile = profile;
         this.level = this.profile.getKnowledgeLevel();
+
+        // Score and money
         this.stars = stars;
         this.money = money;
-        this.investments = 0;
         this.score = score;
+        this.investments = investments;
+
+        if (Objects.isNull(this.stocks)) {  // Initialize stock list if none given
+            stocks = new ArrayList<>();
+            for (int i = 0; i < 6; i++) {
+                stocks.add(new ArrayList<>());
+            }
+        }
+        this.stocks = stocks;
+
+
+
+        // Items
+        if (Objects.isNull(items)) {  // Initialize item inventory if none given
+            items = new ArrayList<Item>();
+        }
         this.items = items;
-        this.frozen = false;
+
+        this.frozen = frozen;
+        this.useMultiDice = hasMultidice;
+        this.hasShield = hasShield;
+
+        // Board movement
         this.currentTile = currentTile;
         this.dieRoll = 0;
         this.maxMoves = 1;
         this.movesLeft = maxMoves;
         this.maxRolls = 1;
         this.rollsLeft = maxRolls;
-        this.useMultiDice = false;
-        this.hasShield = false;
         this.reachablePaths = new ArrayList<>();
         this.previousPath = new ArrayList<>();
 
-        // Initialize stocks owned with the 6 beginning stocks
-        this.stocks = new ArrayList<>();
-        for (int i = 0; i < 6; i++)
-            stocks.add(new ArrayList<>());
-
-        // Initialize player's sprite
-        Config config = Config.getInstance();
+        // Load player's sprite
         sprite = new Sprite((Texture) assets.get(profile.getSpritePath()));
         sprite.setSize(100, 100);
         sprite.setPosition(0, 0);
@@ -163,7 +185,8 @@ public class Player implements Serializable {
      * @param profile Player profile. Links the in-game player with their out-of-game profile
      */
     public Player(PlayerProfile profile, AssetManager assets) {
-        this(profile, assets, 0, 500, 0, new ArrayList<Item>(), null);
+
+        this(profile, assets, 0, 500, 0, null, 0, null, false, false, false, null);
     }
 
     /**
@@ -374,9 +397,14 @@ public class Player implements Serializable {
      * @throws IllegalArgumentException If the level is invalid
      */
     public void setLevel(int level) throws IllegalArgumentException {
-        if (level < 0 || level > Config.getInstance().getMaxLevel()) throw new IllegalArgumentException();
-        // Else
+
+        if (!validLevel(level)) {  // Check that the new level is valid
+            throw new IllegalArgumentException();
+        }
+
         this.level = level;
+        this.profile.setKnowledgeLevel(level);
+
     }
 
     /**
@@ -385,9 +413,9 @@ public class Player implements Serializable {
      * and is less than the maximum level.
      */
     public void levelUp(){
-        if(this.level < Config.getInstance().getMaxLevel()){
+        if(validLevel(level + 1)){  // Check that player's new level will be a valid level
             this.level++;
-            this.getPlayerProfile().updateKnowledgeLevel();
+            this.profile.updateKnowledgeLevel();
         }
 
     }

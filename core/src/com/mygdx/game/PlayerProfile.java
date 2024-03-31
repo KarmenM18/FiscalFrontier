@@ -128,10 +128,11 @@ public class PlayerProfile {
     }
 
     /**
-     * Purpose: sets the Player's knowledgeLevel
+     * Purpose: sets the Player's knowledgeLevel and updates the knowledge base.
      */
     public void setKnowledgeLevel(int newLevel) {
         this.knowledgeLevel = newLevel;
+        this.updateKnowledgeBase();
     }
 
      /** @return the file path of the Player's Sprite
