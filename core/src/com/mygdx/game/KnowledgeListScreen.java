@@ -72,13 +72,13 @@ public class KnowledgeListScreen extends GameScreen{
         for (int i = 0; i < playerKnowledge.size(); i++) {
             String s = playerKnowledge.get(i);
             Label text = new Label((i+1) +": "+ s, skin);
-            text.setAlignment(Align.top);
+            text.setAlignment(Align.left);
             text.setWrap(true);
-            table.add(text).fillX().expandX();
+            table.add(text).left().fillX().expandX();
             table.row();
         }
 
-        scroller = new ScrollPane(table);
+        scroller = new ScrollPane(table, skin);
 
         background = new Table();
         background.setFillParent(true);
