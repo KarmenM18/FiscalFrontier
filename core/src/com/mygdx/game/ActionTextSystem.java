@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -59,6 +60,20 @@ public class ActionTextSystem {
      */
     public static void addText(String text, float x, float y, float lifespan) {
         texts.add(new ActionText(text, x, y, lifespan, skin));
+    }
+
+    /**
+     * Add a new ActionText to the list, and set the color
+     *
+     * @param text text of the ActionText
+     * @param x x position
+     * @param y y position
+     * @param lifespan lifespan in terms of LibGDX delta time
+     * @param color Color to write text
+     */
+    public static void addText(String text, float x, float y, float lifespan, Color color) {
+        texts.addFirst(new ActionText(text, x, y, lifespan, skin));
+        texts.getFirst().setColor(color);
     }
 
     /**

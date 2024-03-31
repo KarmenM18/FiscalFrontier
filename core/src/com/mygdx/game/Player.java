@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,6 +13,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
+
+import static java.lang.Math.abs;
 
 
 /**
@@ -360,7 +363,17 @@ public class Player implements Serializable {
      *
      * @param amount New value for player's money.
      */
-    public void setMoney(int amount) {this.money = amount;}
+    public void setMoney(int amount) {
+        //int prevMoney = money;
+        this.money = amount;
+
+        /*
+        int difference = money - prevMoney;
+        if (difference == 0) return;
+        else if (prevMoney > money) ActionTextSystem.addText("-$" + Integer.toString(abs(difference)), sprite.getX(), sprite.getY() + 50, 0.5f, Color.RED);
+        else ActionTextSystem.addText("+$" + Integer.toString(difference), sprite.getX(), sprite.getY() + 50, 0.5f, Color.GREEN);
+        */
+    }
 
 
     /**

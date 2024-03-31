@@ -39,6 +39,7 @@ public class MainGame extends Game {
 	private HighScoreScreen highScoreScreen;
 	private NewGameScreen newGameScreen;
 	private TutorialScreen tutorialScreen;
+	private AgilityTestScreen agilityTestScreen;
 
 	private AssetManager assets = new AssetManager();
 	private SaveSystem saveSystem = new SaveSystem();
@@ -69,6 +70,7 @@ public class MainGame extends Game {
 		assets.load(config.getBackgroundPath(), Texture.class);
 		assets.load(config.getPlayerShieldPath(), Texture.class);
 		assets.load(config.getMapArrowPath(), Texture.class);
+		assets.load(config.getAgilityTilePath(), Texture.class);
 		assets.finishLoading(); // Make sure assets are loaded before continuing.
 
 		// Setup ActionTextSystem
@@ -82,17 +84,17 @@ public class MainGame extends Game {
 		knowledgeListScreen = new KnowledgeListScreen(batch, assets);
 		saveScreen = new SaveScreen(batch, assets);
 		tutorialScreen = new TutorialScreen(batch, assets);
+		endScreen = new EndScreen(batch, assets);
+		agilityTestScreen = new AgilityTestScreen(batch, assets);
 
 		profileManager = new ProfileManager("studentInformation.json", "highScoreTable.json", "lifetimeScoreTable.json");
 		instructorDashboardScreen = new InstructorDashboardScreen(batch, assets, this.profileManager);
 		manageStudentsScreen = new ManageStudentsScreen(batch, assets, this.profileManager);
-		endScreen = new EndScreen(batch, assets);
 		highScoreScreen = new HighScoreScreen(batch, assets, this.profileManager);
 		newGameScreen = new NewGameScreen(batch, assets, profileManager);
 
 		//Set starting screen
 		setScreen(mainMenuScreen);
-
 		// Set GameBoard observers
 		gameBoard.addShopListener(v -> {
 			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
@@ -104,6 +106,12 @@ public class MainGame extends Game {
 		gameBoard.addEndListener(gameState -> {
 			endScreen.setGameState(gameState);
 			setScreen(endScreen);
+		});
+		gameBoard.addAgilityTestListener(v -> {
+			SoundSystem.getInstance().stopMusic();
+			SoundSystem.getInstance().playAgilityMusic();
+			agilityTestScreen.setHardMode(gameBoard.getGameState().getHardMode());
+			setScreen(agilityTestScreen);
 		});
 
 		//For back to screen buttons
@@ -264,6 +272,16 @@ public class MainGame extends Game {
 			// Display confirmation of action
 			manageStudentsScreen.showConfirmation("Student removed successfully!");
 
+		});
+
+		// Agility test screen listeners
+		agilityTestScreen.addBoardListener(earnings -> {
+			Player player = gameBoard.getGameState().getCurrentPlayer();
+			player.setMoney(player.getMoney() + earnings);
+			gameBoard.turnChange();
+			SoundSystem.getInstance().stopAgilityMusic();
+			SoundSystem.getInstance().playMusic();
+			setScreen(gameBoard);
 		});
 	}
 

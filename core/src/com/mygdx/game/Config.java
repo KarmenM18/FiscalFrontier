@@ -23,6 +23,7 @@ public class Config {
     private String playerFreezePath = "kenny_block_pack/PNG/Double (128px)/detail_snow.png";
     private String playerShieldPath = "shield.png";
     private String mapArrowPath = "arrow.png";
+    private String agilityTilePath = "math.png";
 
     public int getMaxLevel() {
         return maxLevel;
@@ -82,6 +83,10 @@ public class Config {
 
     public String getMapArrowPath() {
         return mapArrowPath;
+    }
+
+    public String getAgilityTilePath() {
+        return agilityTilePath;
     }
 
     /**

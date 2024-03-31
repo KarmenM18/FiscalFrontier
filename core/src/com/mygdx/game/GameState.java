@@ -82,12 +82,12 @@ public class GameState implements Serializable {
             }
         }
         int map[][] = { {1,1,2,1,1,3,1,1,0,0},
-                        {1,0,0,0,0,0,0,1,0,0},
-                        {1,0,1,1,1,1,1,1,1,2},
+                        {5,0,0,0,0,0,0,1,0,0},
+                        {1,0,1,1,1,5,1,1,1,2},
                         {1,0,1,0,1,0,0,1,0,1},
                         {1,1,1,0,1,0,0,1,0,1},
                         {0,0,1,0,1,0,0,3,0,1},
-                        {0,0,4,1,1,0,0,1,0,1},
+                        {0,0,4,1,1,0,0,1,0,5},
                         {0,0,0,0,1,1,1,1,1,1}};
         /*
         0 = wall
@@ -177,6 +177,9 @@ public class GameState implements Serializable {
                         break;
                     case 4:
                         createGlobalPenaltyNode(j, map.length - i, north, east, south, west);
+                        break;
+                    case 5:
+                        nodeMap.put(ID, new AgilityTestNode(j, map.length - i, north, east, south, west, nodeMap, assets));
                         break;
                     default:
                         break;

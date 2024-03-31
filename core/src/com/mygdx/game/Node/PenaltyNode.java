@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Config;
 import com.mygdx.game.Node.Node;
 import com.mygdx.game.Player;
+import com.mygdx.game.SoundSystem;
 
 import java.util.Map;
 
@@ -58,5 +59,7 @@ public class PenaltyNode extends Node {
                 player.setMoney(player.getMoney() - penaltyAmount);
             }
         }
+
+        SoundSystem.getInstance().playSound("damage.mp3");
     }
 }
