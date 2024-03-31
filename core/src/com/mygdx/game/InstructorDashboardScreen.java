@@ -1,8 +1,11 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
@@ -132,6 +135,19 @@ public class InstructorDashboardScreen extends GameScreen{
             public void changed(ChangeEvent event, Actor actor) {
                 menuEvent.notifyObservers(null);
             }
+        });
+
+        // Setup keyboard shortcuts
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    menuEvent.notifyObservers(null);  // Return to instructor dashboard
+                    return true;
+                }
+                return false;
+            }
+
         });
 
     }

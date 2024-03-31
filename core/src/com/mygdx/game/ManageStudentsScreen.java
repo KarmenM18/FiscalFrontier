@@ -1,18 +1,19 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -323,7 +324,6 @@ public class ManageStudentsScreen extends GameScreen {
                 // Prompt to enter new information for selected student
                 editStudentDialog.show(stage).setSize(dialogWidth, dialogHeight);
                 editStudentDialog.setPosition(stage.getWidth()/2, stage.getHeight()/2, Align.center);  // Center in the middle of the screen
-
             }
         });
         this.removeStudentButton.addListener(new ChangeListener() {
@@ -342,6 +342,7 @@ public class ManageStudentsScreen extends GameScreen {
                 instructorDashboardEvent.notifyObservers(null);  // Return to instructor dashboard
             }
         });
+
 
         // Display each student
         for (int i = 0; i < this.studentButtons.size(); i++) {
@@ -369,6 +370,19 @@ public class ManageStudentsScreen extends GameScreen {
         buttonTable.add(this.removeStudentButton);
         buttonTable.add(backButton);
         table.add(buttonTable).colspan(3).expandX();
+
+        // Setup keyboard shortcuts
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    instructorDashboardEvent.notifyObservers(null);  // Return to instructor dashboard
+                    return true;
+                }
+                return false;
+            }
+
+        });
 
     }
 
