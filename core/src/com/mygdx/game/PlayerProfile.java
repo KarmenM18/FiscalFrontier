@@ -52,7 +52,6 @@ public class PlayerProfile {
 
         Config config = Config.getInstance();
         spritePath = config.getPlayerPath();
-
     }
 
     /**

@@ -99,6 +99,10 @@ public class ShopScreen extends GameScreen {
     private void showAvailableInvestments() {
         System.out.println("Entered Investments");
         investments = new Table();
+        Label blank = new Label(" ", skin);
+
+        investments.add(blank);
+        investments.row();
 
         //UI implementation for all stocks
         for (int i = 0; i < 6; i++) {
@@ -149,6 +153,8 @@ public class ShopScreen extends GameScreen {
             investments.add(stockDivPay).width(500).height(30).left();
             investments.row();
             investments.add(lineBreak).width(500).height(30).left();
+            investments.row();
+            investments.add(space).width(600).height(30).left();
             investments.row();
         }
 
