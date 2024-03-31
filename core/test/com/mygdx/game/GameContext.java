@@ -45,6 +45,7 @@ public class GameContext {
         asset.load(config.getBackgroundPath(), Texture.class);
         asset.load(config.getPlayerShieldPath(), Texture.class);
         asset.load(config.getMapArrowPath(), Texture.class);
+        asset.load(config.getAgilityTilePath(), Texture.class);
         asset.load("background.jpeg", Texture.class);
         asset.finishLoading();
 

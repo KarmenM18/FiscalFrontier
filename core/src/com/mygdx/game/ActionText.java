@@ -35,6 +35,8 @@ public class ActionText {
      * @param deltaTime time passed since last render
      */
     public void render(Batch batch, float deltaTime) {
+        timeLeft -= deltaTime;
+
         if (timeLeft <= 0) {
             // Slowly climb and fade away
             label.setY(label.getY() + deltaTime * 40f);
@@ -42,9 +44,7 @@ public class ActionText {
             color.a -= deltaTime * 0.5f;
             if (color.a < 0.0) color.a = 0.0f;
         }
-        else {
-            timeLeft -= deltaTime;
-        }
+
         label.draw(batch, 1.0f);
     }
 
@@ -52,6 +52,10 @@ public class ActionText {
      * @return true only if the Label is invisible (alpha = 0)
      */
     public boolean expired() {
-        return (label.getColor().a <= 0.0f);
+        return Utility.epsilonEqual(label.getColor().a, 0f, 0.001f);
+    }
+
+    public void setColor(Color color) {
+        label.setColor(color);
     }
 }

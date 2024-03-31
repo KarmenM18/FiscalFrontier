@@ -13,6 +13,7 @@ import java.util.HashMap;
 public class SoundSystem {
     private HashMap<String, Sound> soundsMap = new HashMap<>();
     private Music music;
+    private Music agileMusic;
 
     /**
      * Contains the static Singleton.
@@ -28,6 +29,9 @@ public class SoundSystem {
         // Load music
         music = Gdx.audio.newMusic(Gdx.files.internal(Config.getInstance().getSoundsFolder() + "music.mp3"));
         music.setLooping(true);
+        // TODO
+        //agileMusic = Gdx.audio.newMusic(Gdx.files.internal(Config.getInstance().getSoundsFolder() + "agileMusic.mp3"));
+        //agileMusic.setLooping(true);
     }
 
     /**
@@ -61,6 +65,16 @@ public class SoundSystem {
      */
     public void stopMusic() {
         music.stop();
+    }
+
+    public void playAgilityMusic() {
+        // TODO
+        //agileMusic.play();
+    }
+
+    public void stopAgilityMusic() {
+        // TODO
+        //agileMusic.stop();
     }
 
     /**

@@ -43,7 +43,6 @@ public class StarNode extends Node {
     public void loadTextures(AssetManager assets) {
         super.loadTextures(assets);
 
-        Config config = Config.getInstance();
         starSprite = new Sprite((Texture) assets.get(Config.getInstance().getStarTilePath()));
         starSprite.setTexture(assets.get(Config.getInstance().getStarTilePath()));
         starSprite.setPosition(sprite.getX() + 12.5f, sprite.getY() + 12.5f);
@@ -59,6 +58,7 @@ public class StarNode extends Node {
 
     /**
      * activate the star purchase dialog,
+     *
      * @param player the Player who landed on the Node
      * @param batch the SpriteBatch to draw on
      * @param stage the GameBoard's Stage

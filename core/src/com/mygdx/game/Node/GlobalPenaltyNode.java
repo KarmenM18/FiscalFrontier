@@ -7,6 +7,7 @@ import com.mygdx.game.Config;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 import com.mygdx.game.Player;
+import com.mygdx.game.SoundSystem;
 
 import java.util.Map;
 
@@ -52,6 +53,7 @@ public class GlobalPenaltyNode extends Node {
         }
         //notify observer in GameState
         globalEvent.notifyObservers(penaltyAmount);
+        SoundSystem.getInstance().playSound("damage.mp3");
     }
     public void addEventListener(Observer<Integer> ob) {globalEvent.addObserver(ob); }
 

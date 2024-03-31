@@ -44,6 +44,7 @@ public class GameBoard extends GameScreen {
     private Observable<PlayerProfile> pauseEvent = new Observable<PlayerProfile>();
     private Observable<Void> shopEvent = new Observable<Void>();
     private Observable<GameState> endEvent = new Observable<GameState>();
+    public Observable<Void> agilityTestEvent = new Observable<>();
 
     private Texture background;
     private InputMultiplexer inputMultiplexer;
@@ -732,4 +733,5 @@ public class GameBoard extends GameScreen {
     public void addPauseListener(Observer<PlayerProfile> ob) { pauseEvent.addObserver(ob); }
     public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
     public void addEndListener(Observer<GameState> ob) { endEvent.addObserver(ob); }
+    public void addAgilityTestListener(Observer<Void> ob) { agilityTestEvent.addObserver(ob); }
 }
