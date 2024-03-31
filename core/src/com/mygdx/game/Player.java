@@ -491,6 +491,8 @@ public class Player implements Serializable {
      * Calculates and sets the player's score. <br><br>
      * The player's score is calculated from their stars and money using the formula:
      * Score = 1000 * stars + money + investments
+     *
+     * @return Player's score
      */
     public void calculateScore() {
         this.score = 1000 * this.stars + this.money + this.investments;
@@ -668,7 +670,12 @@ public class Player implements Serializable {
     public void setFrozen(boolean frozen) {
 
         if (frozen) {
-            if (useShield()) return; // Resistant to freezing
+            if (useShield()) {  // Consume shield item to prevent freezing
+                return;
+            }
+
+            // Freeze player
+            this.frozen = true;  // Set attribute
 
             // Play sound effect
             SoundSystem.getInstance().playSound("coldsnap.wav");
@@ -677,16 +684,17 @@ public class Player implements Serializable {
         }
         else {
             freezeSprite.setAlpha(0);
+            this.frozen = false; // Unfreeze player
         }
     }
 
     /**
      * Check if the player is frozen. <br><br>
-     *  When a player is frozen, they must skip their next turn, unless they possess a shield item.
+     * When a player is frozen, they must skip their next turn, unless they possess a shield item.
      *
      * @return True if the player is frozen, false if otherwise.
      */
-    public boolean isFrozen() { return frozen; }
+    public boolean isFrozen() { return this.frozen; }
 
 
     /**
