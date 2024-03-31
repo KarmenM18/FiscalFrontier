@@ -66,7 +66,7 @@ public class MainMenuScreen extends GameScreen {
         super(batch, assets);
         int textWidth = 100;
 
-        correctInstructorPassword = "password";
+        correctInstructorPassword = "CS2212";
 
         // Setup GUI
         background = new Table();

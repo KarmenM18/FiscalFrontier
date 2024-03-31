@@ -30,10 +30,6 @@ public class PlayerProfile {
     private int knowledgeLevel;
     private LinkedList<String> learned = new LinkedList<>(); //Storing all the learned knowledge from a knowledge catalog
     private String spritePath; // Path of the sprite to use when rendering the Player
-    private ArrayList<Integer> tips = new ArrayList<>();
-    private ArrayList<Item> playerItems = new ArrayList<>();
-    private int totalMoney;
-
 
     /**
      * Constructor used to load an existing player profile.
@@ -72,16 +68,6 @@ public class PlayerProfile {
     private PlayerProfile() {}
 
     /**
-     * Add score to the Player.
-     *
-     * @param score the amount of score to add
-     */
-    public void addScore(int score) {
-        this.lifetimeScore += score;
-        if (score > highScore) highScore = score;
-    }
-
-    /**
      * Increases the player's knowledge level and updates
      * their learned knowledge list
      */
@@ -102,21 +88,6 @@ public class PlayerProfile {
      */
     public void setName(String pName) {
         this.name = pName;
-    }
-
-    /**
-     * Purpose: gets the Player's list of tips
-     * @return tips the list of tips that the player has unlocked so far
-     */
-    public ArrayList<Integer> getTips() {
-        return tips;
-    }
-
-    /**
-     * Purpose: adds a new tip to the Player's list
-     */
-    public void addTip(int tipNum) {
-        tips.add(tipNum);
     }
 
     /**
@@ -177,6 +148,7 @@ public class PlayerProfile {
         //Each knowledge level grants 5 tips. Total of 65 "tips"
         //As the player levels up, more and more complicated tips are granted
         int line = this.knowledgeLevel * 5;
+        this.learned = new LinkedList<>(); //Resetting list
 
         //Reading from file
         try {
@@ -201,29 +173,12 @@ public class PlayerProfile {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
-
-    /**
-     * Gets a random tip from all learned knowledge
-     * @return Returns a String to identify a random tip to show on the pause screen
-     */
-    public String getRandomTip () {
-        int randTip = (int) (Math.random() * this.learned.size());
-        try {
-            return this.learned.get(randTip);
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
     /**
      * @return LinkedList of all knowledge learned
      */
     public LinkedList<String> getLearned () {return this.learned;}
-
 
     /**
      * Returns the number of tips unlocked.
@@ -231,15 +186,6 @@ public class PlayerProfile {
      */
     public int getTipCount() {
         return this.learned.size();
-    }
-
-    public ArrayList<Item> getPlayerItems(Player player) {
-        return this.playerItems = player.getItems();
-    }
-
-    public int viewTotalCoins(Player player) {
-        this.totalMoney = player.getMoney();
-        return totalMoney;
     }
 
 }
