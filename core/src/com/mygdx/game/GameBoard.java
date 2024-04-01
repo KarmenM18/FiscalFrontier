@@ -68,6 +68,8 @@ public class GameBoard extends GameScreen {
     private TextButton modifyPlayer;
     private TextButton modifyTile;
 
+    private TextButton endGame;
+
     private Texture tileArrow; // Arrow shown for each possible direction from a tile.
 
     transient private ArrayList<TextButton> itemButtons; // HUD buttons used to activate Items. Regenerated every turn
@@ -427,21 +429,35 @@ public class GameBoard extends GameScreen {
                 modifyDialog.show(hudStage);
             }
         });
+        endGame = new TextButton("(DEBUG) Skip to Final Round", skin);
+        endGame.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                gameState.setRound(Config.getInstance().getMaxRounds());
+            }
+        });
 
         // Layout debug stuff
-        modifyPlayer.setVisible(false);
-        modifyPlayer.setPosition(hudStage.getWidth() - modifyPlayer.getWidth(), 0);
-        modifyTile.setWidth(modifyPlayer.getWidth());
+        endGame.setVisible(false);
+        endGame.setPosition(hudStage.getWidth() - endGame.getWidth(), 0);
+        modifyTile.setWidth(endGame.getWidth());
         modifyTile.setVisible(false);
-        modifyTile.setPosition(hudStage.getWidth() - modifyTile.getWidth(), modifyPlayer.getHeight()); // Put on top of the other button
-        hudStage.addActor(modifyPlayer);
+        modifyTile.setPosition(hudStage.getWidth() - modifyTile.getWidth(), 50); // Put on top of the other button
+        modifyPlayer.setWidth(endGame.getWidth());
+        modifyPlayer.setVisible(false);
+        modifyPlayer.setPosition(hudStage.getWidth() - modifyPlayer.getWidth(), 100);  // Put on top of the other button
+
+        hudStage.addActor(endGame);
         hudStage.addActor(modifyTile);
+        hudStage.addActor(modifyPlayer);
+
 
         // Setup input multiplexer so all input handlers work at the same time
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(hudStage);
         inputMultiplexer.addProcessor(stage);
         inputMultiplexer.addProcessor(clickListener);
+
     }
 
     /**
@@ -466,6 +482,7 @@ public class GameBoard extends GameScreen {
             hudStage.setDebugAll(true); // Enable draw debug if we are in debug mode
             modifyPlayer.setVisible(true);
             modifyTile.setVisible(true);
+            endGame.setVisible(true);
         }
 
         moveCameraPlayer();

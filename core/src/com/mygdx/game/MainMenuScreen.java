@@ -54,7 +54,7 @@ public class MainMenuScreen extends GameScreen {
     private Dialog debugDialog;
 
     /** Password to enter instructor dashboard. */
-    private static String correctInstructorPassword;
+    //private static String correctInstructorPassword;
 
     /**
      * Constructor.
@@ -65,8 +65,6 @@ public class MainMenuScreen extends GameScreen {
     public MainMenuScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
         int textWidth = 100;
-
-        correctInstructorPassword = "CS2212";
 
         // Setup GUI
         background = new Table();
@@ -161,7 +159,7 @@ public class MainMenuScreen extends GameScreen {
 
             String inputPassword = password.getText();
 
-            if (inputPassword.equals(correctInstructorPassword)) {  // Correct password entered
+            if (inputPassword.equals(Config.getInstance().getInstructorPassword())) {  // Correct password entered
                 instructorPasswordDialog.hide();
                 instructorDashboardEvent.notifyObservers(null);
             }

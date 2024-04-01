@@ -18,6 +18,7 @@ public class Config {
     private String playerPath = "player-alt.png";
     private String saveFolder = "saves";
     private String debugPassword = "noclip";
+    private String instructorPassword = "CS2212";
     private String soundsFolder = "sounds/";
     private String backgroundPath = "background.jpg";
     private String playerFreezePath = "kenny_block_pack/PNG/Double (128px)/detail_snow.png";
@@ -65,6 +66,9 @@ public class Config {
 
     public String getDebugPassword() { return debugPassword; }
 
+    public String getInstructorPassword() {
+        return this.instructorPassword;
+    }
     public String getSoundsFolder() {
         return soundsFolder;
     }

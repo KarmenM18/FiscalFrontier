@@ -338,6 +338,14 @@ public class GameState implements Serializable {
     public int getRound() { return roundNumber; }
 
     /**
+     * Sets the current round.
+     * @param round Round number
+     */
+    public void setRound(int round) {
+        this.roundNumber = round;
+    }
+
+    /**
      * @return the current turnNumber
      */
     public int getTurn() { return turnNumber; }
