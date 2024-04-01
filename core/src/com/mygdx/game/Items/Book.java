@@ -6,15 +6,25 @@ import com.mygdx.game.GameState;
 import com.mygdx.game.Player;
 
 public class Book extends Item{
+    protected int price = 10;
+    protected String description = "Power Up: provides the necessary knowledge to boost player up by 1 level.";
+
     /**
-     * TODO decide if this should be an useable item (this if book is item)
-     * or in-effect right when player gets it (this will go to shop then)
-     *
+     * Constructor - sets the price of a Book and sets the associated Item description for the user to view.
+     * NOTE: inherits constructor attributes from Item class
+     * @param skin used to style the associated dialog box
      */
     public Book(Skin skin) {
-
-        super("Book", false, skin);
+        super("Book", false, skin, price, description);
     }
+
+    /**
+     * Increments the player's level by 1 after purchasing the Book from the shop
+     * @param player - player that is currently accessing the shop
+     * @param gameState - the current game state
+     * @param stage - stage to render onto
+     * @return true - if the Player has been successfully levelled up after purchasing the Book, false otherwise
+     */
     public boolean use(Player player, GameState gameState, Stage stage) {
         player.levelUp();
         return true;

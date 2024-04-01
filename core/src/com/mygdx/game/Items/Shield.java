@@ -8,9 +8,12 @@ import com.mygdx.game.Player;
 import com.mygdx.game.SoundSystem;
 
 public class Shield extends Item{
+    protected int price = 15;
+    protected String description = "Immunity: protects player from next penalty."
     public Shield(Skin skin){
-        super("Shield", false, skin);
+        super("Shield", false, skin, price, description);
     }
+
     public boolean use(Player player, GameState gameState, Stage stage) {
         if (player.getHasShield()) {
             SoundSystem.getInstance().playSound("error.wav");
