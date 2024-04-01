@@ -53,8 +53,6 @@ public class MainMenuScreen extends GameScreen {
     private Dialog instructorPasswordDialog;
     private Dialog debugDialog;
 
-    /** Password to enter instructor dashboard. */
-    //private static String correctInstructorPassword;
 
     /**
      * Constructor.

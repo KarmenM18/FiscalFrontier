@@ -8,11 +8,15 @@ import java.util.LinkedList;
 
 
 /**
- * Class to put moving text on the screen to report actions
- * Singleton Pattern
+ * Class to put moving text on the screen to report actions. Implements the singleton pattern.
+ *
+ * @author Franck Limtung (flimtung)
  */
 public class ActionTextSystem {
+
+    /** Skin used to create and render labels. */
     private static Skin skin;
+    /** List of action text items. */
     private static LinkedList<ActionText> texts = new LinkedList<ActionText>();
 
     /**
@@ -37,7 +41,7 @@ public class ActionTextSystem {
     }
 
     /**
-     * Set the Skin used to create Labels with
+     * Set the Skin used to create and render labels with
      *
      * @param newSkin LibGDX Skin to use
      */

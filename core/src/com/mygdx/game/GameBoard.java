@@ -1,11 +1,3 @@
-/*
-* Class used for the game board screen.
-* - Rolling
-* - Taking Turns
-* - Shop
-* - Events
- */
-
 package com.mygdx.game;
 
 import com.badlogic.gdx.*;
@@ -37,61 +29,134 @@ import java.util.*;
 import java.util.List;
 
 /**
- * The game board screen. Handles rendering and other game board activities.
- * Holds a GameState, which contains all the information specific to the current game being played.
+ * Represents the game board screen.
+ * <br><br>
+ * Handles rendering and other game board activities, including moving the camera, switching between players turns,
+ * rolling the die, accessing the shop, and executing event nodes. Includes an instance of GameState, which contains
+ * all information specific to the current game being played. Can adjust the camera's view of the gameboard by using the
+ * WASD keys to move around the screen and CTRL+, CTRL-, and the scroll wheel to zoom in and out.
+ * @see GameState
+ *
+ * @author Franck Limtung (flimtung)
+ * @author Kevin Chen (kchen546)
  */
 public class GameBoard extends GameScreen {
-    // Observables are used to inform about events to subscribed Observers. The Observer Pattern
+
+
+    /** Contains all information specific to the current game being played*/
+    private GameState gameState;
+
+    /* Events */
+
+    /**
+     * Event pauses the game and displays the pause screen.
+     * @see PauseScreen
+     */
     private Observable<PlayerProfile> pauseEvent = new Observable<PlayerProfile>();
-    private Observable<Array<Item>> shopEvent = new Observable<>(); // Calls event with all the available items in the GameState
+    /**
+     * Event opens the shop screen.
+     * @see ShopScreen
+     */
+    private Observable<Array<Item>> shopEvent = new Observable<>();
+    /**
+     * Event occurs at the end of the game. Displays each player's final score.
+     * @see EndScreen
+     */
     private Observable<GameState> endEvent = new Observable<GameState>();
+    /**
+     * Event opens the agility test minigame.
+     * @see AgilityTestScreen
+     */
     public Observable<Void> agilityTestEvent = new Observable<>();
 
-    private Texture background;
+
+    /* Input processing */
+
+    /** Used to process inputs from multiple sources at once. */
     private InputMultiplexer inputMultiplexer;
+    /** Polls for and processes keyboard clicks. */
     private InputAdapter clickListener;
-    private OrthographicCamera camera;
 
-    private Stage hudStage; // The stage for the HUD of the game
-    private Table hudTable;
-    private TextButton pauseButton;
-    private TextButton rollButton;
-    private TextButton nextTurnButton;
-    private Label currPlayerLabel;
-    private Label moneyLabel;
-    private Label scoreLabel;
-    private Label starsLabel;
-    private Label rollLabel;
-    private Label roundLabel;
-    private Label levelLabel;
 
-    // Debugmode stuff
-    private TextButton modifyPlayer;
-    private TextButton modifyTile;
+    /* Screen display */
 
-    private TextButton endGame;
-
-    private Texture tileArrow; // Arrow shown for each possible direction from a tile.
-
-    transient private ArrayList<TextButton> itemButtons; // HUD buttons used to activate Items. Regenerated every turn
-
-    private GameState gameState;
+    /** Screen width. */
     private int width = 1920;
+    /** Screen height. */
     private int height = 1080;
+    /** Background image. */
+    private Texture background;
+    /** Stage for HUD of the game. */
+    private Stage hudStage;
+    /** Contains all GUI elements in the HUD. */
+    private Table hudTable;
+    /** Button pauses the game. */
+    private TextButton pauseButton;
+    /** Button rolls the die. */
+    private TextButton rollButton;
+    /** Button skips to the next player's turn. */
+    private TextButton nextTurnButton;
+    /** Text displayed indicates the current player's turn. */
+    private Label currPlayerLabel;
+    /** Text displayed indicates the current player's level. */
+    private Label levelLabel;
+    /** Text displayed indicates the current player's money. */
+    private Label moneyLabel;
+    /** Text displayed indicates the current player's score. */
+    private Label scoreLabel;
+    /** Text displayed indicates the current player's stars. */
+    private Label starsLabel;
+    /** Text displayed indicates the number rolled. */
+    private Label rollLabel;
+    /** Text displayed indicates the current round number. */
+    private Label roundLabel;
+    /** Arrow shown for each possible direction to move from a tile. */
+    private Texture tileArrow;
+    /** Buttons used to activate items. Regenerated every turn. */
+    transient private ArrayList<TextButton> itemButtons;
+
+
+    /* Camera settings and control */
+
+    /** Camera for 2D scene. */
+    private OrthographicCamera camera;
+    /** Camera position x-coordinate. */
     private float newCameraX;
+    /** Camera position y-coordinate. */
     private float newCameraY;
+    /** Camera angle. */
     private float newCameraAngle;
-    // Camera control variables
+    /** Used to move the camera up when W key is pressed. */
     private boolean cameraMoveUp = false;
+    /** Used to move the camera right when D key is pressed. */
     private boolean cameraMoveRight = false;
+    /** Used to move the camera down when S key is pressed. */
     private boolean cameraMoveDown = false;
+    /** Used to move the camera left when A key is pressed. */
     private boolean cameraMoveLeft = false;
-    // These are used for button activation of camera zoom. They will apply a constant zoom speed when they are active
+    /** Used to zoom camera in when CTRL + is pressed. Will apply a constant speed when active. */
     private boolean cameraZoomOut = false;
+    /** Used to zoom camera out when CTRL - is pressed. Will apply a constant speed when active.*/
     private boolean cameraZoomIn = false;
-    // This is used for scrollwheel activation of camera zoom. Zoom speed is based on scrolling speed.
+    /** Used to zoom camera in and out with scroll wheel. Zoom speed with match scrolling speed. */
     private float zoomVel = 0f;
 
+    /* Debug mode */
+
+    /** Button to modify a player's information in debug mode. */
+    private TextButton modifyPlayer;
+    /** Button to modify a tile's type in debug mode. */
+    private TextButton modifyTile;
+    /** Button to skip to the final round in debug mode. */
+    private TextButton endGame;
+
+
+    /**
+     * Constructor initializes the gameboard.
+     *
+     * @param batch  SpriteBatch to initialize the Stage with
+     * @param assets AssetManager to load assets with
+     */
     public GameBoard(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
@@ -215,6 +280,7 @@ public class GameBoard extends GameScreen {
         // Initialize camera
         camera = new OrthographicCamera(width, height);
     }
+
 
     /**
      * Load and layout HUD elements
@@ -473,6 +539,9 @@ public class GameBoard extends GameScreen {
         newCameraAngle = MathUtils.atan2(newCameraY - camera.position.y, newCameraX - camera.position.x);
     }
 
+    /**
+     * Called when the screen switches to the gameboard screen.
+     */
     @Override
     public void show() {
         if (gameState == null) {
@@ -491,11 +560,18 @@ public class GameBoard extends GameScreen {
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
+
+    /**
+     * Renders the gameboard screen and processes gameboard logic.
+     * @param delta The time in seconds since the last render.
+     */
     @Override
     public void render(float delta) {
+
         /*
          * Rendering section
          */
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -606,11 +682,19 @@ public class GameBoard extends GameScreen {
         camera.update();
     }
 
+    /**
+     * Resizes the screen.
+     * @param width New screen width.
+     * @param height New screen height.
+     */
     @Override
     public void resize(int width, int height) {
         hudStage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Disposes of the screen's resources
+     */
     @Override
     public void dispose() {
         background.dispose();
@@ -693,8 +777,7 @@ public class GameBoard extends GameScreen {
     }
 
     /**
-     * Setter for GameState.
-     * Must be set before switching screen to GameBoard.
+     * Sets the GameState. Must be set before switching screen to GameBoard.
      * @param gameState GameState to load
      */
     public void setGameState(GameState gameState) {
@@ -707,7 +790,7 @@ public class GameBoard extends GameScreen {
     }
 
     /**
-     * Finish the turn of the GameState and go to the next one.
+     * Finish the current turn of the GameState and go to the next one.
      */
     public void turnChange() {
         rollButton.setVisible(true);
@@ -739,17 +822,37 @@ public class GameBoard extends GameScreen {
     }
 
 
-
-
     /**
-     * @return the active GameState object
+     * Returns the active game state.
+     * @return Active game state
      */
     public GameState getGameState() {
         return gameState;
     }
 
+    /**
+     * Assigns an observer to listen for the event to pause the game.
+     * @param ob Observer to listen for the event to pause the game.
+     */
     public void addPauseListener(Observer<PlayerProfile> ob) { pauseEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to open the shop screen.
+     * @param ob Observer to listen for the event to open the shop screen.
+     */
     public void addShopListener(Observer<Array<Item>> ob) { shopEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to end the game.
+     * @param ob Observer to listen for the event to end the game.
+     */
     public void addEndListener(Observer<GameState> ob) { endEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to open the agility test minigame.
+     * @param ob Observer to listen for the event to open the agility test minigame.
+     */
     public void addAgilityTestListener(Observer<Void> ob) { agilityTestEvent.addObserver(ob); }
+
+
 }

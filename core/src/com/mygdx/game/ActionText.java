@@ -7,18 +7,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 /**
  * ActionText is used to report events occurring in the game. It is rendered directly to the screen and fades out naturally.
+ *
+ * @author Franck Limtung (flimtung)
  */
 public class ActionText {
+
+    /** Label containing the text displayed by the action text. */
     private Label label;
-    private float timeLeft; // They stick on the screen for a certain amount of time
+    /** How long the text stays on the screen before beginning to fade away. */
+    private float timeLeft;
 
     /**
-     * Constructor
+     * Constructor creates an action text.
      *
-     * @param text text to write to the screen
-     * @param x x position
-     * @param y y position
-     * @param lifespan how long the text should stay on the screen before beginning to fade away
+     * @param text Text to write to the screen
+     * @param x x position to render at
+     * @param y y positionChange access modifier
+     * @param lifespan How long the text should stay on the screen before beginning to fade away
      * @param skin Skin to create label with
      */
     public ActionText(String text, float x, float y, float lifespan, Skin skin) {
@@ -48,18 +53,21 @@ public class ActionText {
     }
 
     /**
-     * @return true only if the Label is invisible (alpha = 0)
+     * Checks if the text label is invisible (alpha = 0)
+     *
+     * @return True if the label is invisible, false if otherwise
      */
     public boolean expired() {
         return Utility.epsilonEqual(label.getColor().a, 0f, 0.001f);
     }
 
     /**
-     * Set the color of the text Label.
+     * Set the color of the text label.
      *
      * @param color LibGDX Color
      */
     public void setColor(Color color) {
         label.setColor(color);
     }
+
 }

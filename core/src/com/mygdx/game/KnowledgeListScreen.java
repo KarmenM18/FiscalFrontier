@@ -23,6 +23,7 @@ public class KnowledgeListScreen extends GameScreen{
 
     /** Event to return to pause screen. */
     private Observable<Void> pauseScreenEvent = new Observable<>();
+    /** Container for each table. */
     private Table background;
     /** Container for all UI elements. */
     private Table table;
