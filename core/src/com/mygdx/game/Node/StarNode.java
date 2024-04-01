@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.*;
 import com.mygdx.game.Observer.Observable;
 
-import java.awt.*;
 import java.util.Map;
 
 
@@ -26,7 +25,7 @@ public class StarNode extends Node {
 
 
     public StarNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
-        super(mapX, mapY, north, east, south, west, map, assets);
+        super(mapX, mapY, north, east, south, west, assets);
         loadTextures(assets);
     }
 
@@ -49,11 +48,6 @@ public class StarNode extends Node {
         starSprite.setSize(75, 75);
 
         checkStar();
-    }
-
-    @Override
-    public void activate(Player player, SpriteBatch batch, boolean hardmode) {
-
     }
 
     /**
@@ -79,9 +73,7 @@ public class StarNode extends Node {
                     @Override
                     protected void result(Object object) {
                         if ((Boolean) object) {
-                            starMod(player, true);
-                        }else{
-                            starMod(player, false);
+                            starMod(player);
                         }
 
                         // Inform GameState to change the turn
@@ -126,12 +118,11 @@ public class StarNode extends Node {
     }
 
     /**
-     * hardmode higher price
-     * @param player
-     * @param buy
+     * Perform the purchasing of a star by a player
+     *
+     * @param player Player who is buying
      */
-    private void starMod(Player player, boolean buy){
-        if(buy){
+    protected void starMod(Player player){
             this.hasStar = false;
             player.setStars( player.getStars() + 1 );
             player.setMoney(player.getMoney() - starCost);
@@ -140,7 +131,6 @@ public class StarNode extends Node {
             // Feedback
             SoundSystem.getInstance().playSound("gainedStar.mp3");
             ActionTextSystem.addText("+1 Star", player.getSprite().getX(), player.getSprite().getY() + 50, 0.5f);
-        }
     }
     /**
      * Hide star if it was grabbed.

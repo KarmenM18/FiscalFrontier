@@ -15,6 +15,9 @@ import java.util.Random;
 
 import static java.lang.Math.abs;
 
+/**
+ * Various utility functions used throughout the program
+ */
 public final class Utility {
     private static final Random random = new Random();
 
@@ -27,7 +30,9 @@ public final class Utility {
      * @param min the minimum value of the range
      * @param max the maximum value of the range
      */
-    public static int getRandom(int min, int max) {
+    public static int getRandom(int min, int max) throws IllegalArgumentException {
+        if (min > max) throw new IllegalArgumentException();
+
         return min + random.nextInt((max - min) + 1);
     }
 
@@ -37,44 +42,13 @@ public final class Utility {
      * @param list List object
      */
     public static <T> void shuffle(List<T> list) {
+        if (list.size() <= 1) return; // No need to do anything
+
         for (int i = list.size() - 1; i >= 0; i--) {
             int index = getRandom(0, i);
             T temp = list.get(index);
             list.set(index, list.get(i));
             list.set(i, temp);
-        }
-    }
-
-    /**
-     * Save an object to the specified path
-     *
-     * @param object The object we are saving
-     * @param filename The path we are using to save the object
-     */
-    public static void saveObject(Object object, String filename) {
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get(filename)));
-            oos.writeObject(object);
-
-            oos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Load an object from the specified path
-     *
-     * @param filename The path we are using to load the object
-     * @return The object we read or null
-     */
-    public static Object loadObject(String filename) {
-        try {
-            ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(Paths.get(filename)));
-            return ois.readObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
     }
 

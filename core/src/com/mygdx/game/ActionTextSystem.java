@@ -1,11 +1,7 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.LinkedList;
@@ -27,10 +23,9 @@ public class ActionTextSystem {
     }
 
     /**
-     * Initializer of ActionTextSystem
+     * Private initializer to prevent instantiation of individual object
      */
-    private ActionTextSystem() {
-    }
+    private ActionTextSystem() {}
 
     /**
      * Accessor for the static Singleton.
@@ -59,7 +54,7 @@ public class ActionTextSystem {
      * @param lifespan lifespan in terms of LibGDX delta time
      */
     public static void addText(String text, float x, float y, float lifespan) {
-        texts.add(new ActionText(text, x, y, lifespan, skin));
+        texts.addFirst(new ActionText(text, x, y, lifespan, skin));
     }
 
     /**
@@ -73,7 +68,7 @@ public class ActionTextSystem {
      */
     public static void addText(String text, float x, float y, float lifespan, Color color) {
         texts.addFirst(new ActionText(text, x, y, lifespan, skin));
-        texts.getFirst().setColor(color);
+        texts.get(0).setColor(color);
     }
 
     /**

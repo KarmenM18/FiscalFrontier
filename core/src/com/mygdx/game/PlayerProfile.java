@@ -1,7 +1,3 @@
-
-/*
- * TODO Documentation
- */
 package com.mygdx.game;
 
 

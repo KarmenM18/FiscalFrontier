@@ -1,17 +1,33 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Items.*;
+import com.mygdx.game.Node.Node;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
+    static private AssetManager asset;
+    static private GameContext gameContext;
+
+    @BeforeAll
+    static void setUp() {
+        gameContext = new GameContext();
+        asset = gameContext.getAssetManager();
+    }
 
     /** Player's assets (sprites, etc.) */
     static private AssetManager assets;
@@ -335,7 +351,17 @@ class PlayerTest {
 
     @Test
     void setCurrentTile() {
+        PlayerProfile profile2 = new PlayerProfile(name, lifetimeScore, highScore, knowledgeLevel);
+        GameState gs = new GameState(List.of(profile, profile2), assets, 0, false);
+        Player player1 = gs.getCurrentPlayer();
+        gs.nextTurn();
+        Player player2 = gs.getCurrentPlayer();
 
+        // Check if Player tile can be moved to another valid tile
+        String currNode = player1.getCurrentTile();
+        String node2 = player2.getCurrentTile();
+        player1.setCurrentTile(node2, gs.getNodeMap());
+        assertEquals(node2, player1.getCurrentTile());
     }
 
     @Test
@@ -471,37 +497,111 @@ class PlayerTest {
 
     }
 
-
     @Test
     void getReachablePaths() {
+        GameState gs = new GameState(List.of(profile), assets, 0, false);
+        Player player = gs.getCurrentPlayer();
+        assertEquals(0, player.getReachablePaths().size());
+
+        // Set it to something and check
+        ArrayList<ArrayList<String>> paths = player.getReachablePaths();
+        paths.add(new ArrayList<String>(Collections.singleton("test")));
+        assertEquals(1, player.getReachablePaths().size());
     }
 
     @Test
     void endTurn() {
+        GameState gs = new GameState(List.of(profile), assets, 0, false);
+        Player player = gs.getCurrentPlayer();
+
+        // Roll and select a random node to move to
+        player.rollDie(gs.getNodeMap());
+        ArrayList<String> path = player.getReachablePaths().get(0);
+        player.move(path.get(path.size() - 1), gs.getNodeMap(), Mockito.mock(SpriteBatch.class), gs.getHardMode());
+        player.endTurn(gs.getNodeMap());
+        assertEquals(0, player.getDieRoll());
+        assertTrue(player.canMove());
+        assertTrue(player.canRoll());
+        // Check for incorrectly colored nodes
+        for (Node node : gs.getNodeMap().values()) {
+            assertEquals(Color.WHITE, node.getSprite().getColor());
+        }
     }
 
     @Test
     void startTurn() {
+        GameState gs = new GameState(List.of(profile), assets, 0, false);
+        Player player = gs.getCurrentPlayer();
+
+        // Simulate full turn movement and start a new turn
+        player.rollDie(gs.getNodeMap());
+        ArrayList<String> path = player.getReachablePaths().get(0);
+        player.move(path.get(path.size() - 1), gs.getNodeMap(), Mockito.mock(SpriteBatch.class), gs.getHardMode());
+        player.endTurn(gs.getNodeMap());
+        player.startTurn(gs.getNodeMap());
+        // Check if previous path was highlighted
+        for (String nodeID : path) {
+            assertEquals(Color.GRAY, gs.getNodeMap().get(nodeID).getSprite().getColor());
+        }
     }
 
     @Test
     void rollDie() {
+        GameState gs = new GameState(List.of(profile), assets, 0, false);
+        Player player = gs.getPlayerList().get(0);
+
+        // Simulate roll and check if a reachable path exists
+        assertNotEquals(0, player.rollDie(gs.getNodeMap()));
+        assertFalse(player.canRoll());
+        assertNotEquals(0, player.getReachablePaths().size());
+        // Check colors
+        for (ArrayList<String> path : player.getReachablePaths()) {
+            Node last = gs.getNodeMap().get(path.get(path.size() - 1));
+            assertEquals(Color.GREEN, last.getSprite().getColor());
+        }
+
+
+        // Check Multidice usage
+        assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
+            do {
+                player.endTurn(gs.getNodeMap());
+                player.setUseMultiDice(true);
+                player.rollDie(gs.getNodeMap());
+            } while (player.getDieRoll() < 5);
+        });
     }
 
     @Test
     void move() {
+        GameState gs = new GameState(List.of(profile), assets, 0, false);
+        Player player = gs.getPlayerList().get(0);
+        player.rollDie(gs.getNodeMap());
+        // Check against the impossible, going where you are already
+        assertThrows(IllegalArgumentException.class, () -> {
+            player.move(player.getCurrentTile(), gs.getNodeMap(), Mockito.mock(SpriteBatch.class), false);
+        });
+        // Check against valid movement
+        ArrayList<String> validPath = player.getReachablePaths().get(0);
+        player.move(validPath.get(validPath.size() - 1), gs.getNodeMap(), Mockito.mock(SpriteBatch.class), false);
+        assertEquals(validPath.get(validPath.size() - 1), player.getCurrentTile());
     }
 
     @Test
     void getSprite() {
+        Player player = new Player(profile, assets);
+        assertNotNull(player.getSprite());
     }
 
     @Test
     void getFreezeSprite() {
+        Player player = new Player(profile, assets);
+        assertNotNull(player.getFreezeSprite());
     }
 
     @Test
     void getShieldSprite() {
+        Player player = new Player(profile, assets);
+        assertNotNull(player.getShieldSprite());
     }
 
 

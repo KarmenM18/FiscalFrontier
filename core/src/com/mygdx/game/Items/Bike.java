@@ -9,11 +9,27 @@ import com.mygdx.game.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * The Bike allows the player to go to any tile on the map in one move.
+ */
 public class Bike extends Item {
+    /**
+     * Initializer
+     *
+     * @param skin Skin to initialize Item with
+     */
     public Bike(Skin skin) {
         super("Bike", false, skin);
     }
 
+    /**
+     * Activate the Bike on a Player
+     *
+     * @param player    Player to use Bike on
+     * @param gameState GameState containing tiles
+     * @param stage     Stage to render onto
+     * @return true, indicating that the Bike was consumed
+     */
     @Override
     public boolean use(Player player, GameState gameState, Stage stage) {
         for (String key : gameState.getNodeMap().keySet()) {

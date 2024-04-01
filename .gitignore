@@ -116,3 +116,4 @@ Thumbs.db
 ## Save files
 /assets/*.json
 /assets/saves/*.json
+/core/TestingDatabases/*

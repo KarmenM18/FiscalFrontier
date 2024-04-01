@@ -604,7 +604,7 @@ public class GameBoard extends GameScreen {
      * Creates/recreates the buttons used to activate active Items for the current Player.
      * Call every time the current Player changes or an Item was used.
      */
-    public void updateItemButtons() {
+    private void updateItemButtons() {
         // Update item activation buttons TODO do we want items to be usable on the game board? What about passive items?
         for (TextButton button : itemButtons) {
             button.addAction(Actions.removeActor());
@@ -660,9 +660,9 @@ public class GameBoard extends GameScreen {
     }
 
     /**
-     * Checks if the roll button should be visible, based on the if the player can roll
+     * Checks if the roll button should be visible, based on if the player can roll
      */
-    public void checkRollButton() {
+    private void checkRollButton() {
         if (!gameState.getCurrentPlayer().canRoll()) {
             rollButton.setVisible(false);
             rollButton.setText("Roll");

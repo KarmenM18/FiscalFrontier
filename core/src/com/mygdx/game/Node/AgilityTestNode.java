@@ -10,8 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.Config;
 import com.mygdx.game.GameBoard;
-import com.mygdx.game.Observer.Observable;
-import com.mygdx.game.Observer.Observer;
 import com.mygdx.game.Player;
 
 import java.util.Map;
@@ -23,7 +21,7 @@ public class AgilityTestNode extends Node {
     Sprite symbol;
 
     public AgilityTestNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
-        super(mapX, mapY, north, east, south, west, map, assets);
+        super(mapX, mapY, north, east, south, west, assets);
         loadTextures(assets);
     }
 

@@ -38,9 +38,17 @@ public abstract class Node implements Serializable {
 
 
     /**
-     * Constructor for Node
+     * Constructor for Node.
+     *
+     * @param mapX   X position
+     * @param mapY   Y position
+     * @param north  indicates if there is a node North on the map
+     * @param east   indicates if there's a node East on the map
+     * @param south  indicates if there's a node South on the map
+     * @param west   indicates if there's a node West on the map
+     * @param assets AssetManager to use
      */
-    public Node(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
+    public Node(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, AssetManager assets) {
         this(mapX, mapY, assets);
 
         // Set available directions
@@ -51,7 +59,11 @@ public abstract class Node implements Serializable {
     }
 
     /**
-     * Simpler constructor for Node
+     * Simpler constructor which assumes there are no linked nodes.
+     *
+     * @param mapX X position
+     * @param mapY Y position
+     * @param assets AssetManager to use
      */
     public Node(int mapX, int mapY, AssetManager assets) {
         this.nodeID = String.valueOf(mapX) + "," + String.valueOf(mapY);
@@ -72,6 +84,11 @@ public abstract class Node implements Serializable {
      */
     protected Node() {}
 
+    /**
+     * Load/reload textures. Required after deserialization.
+     *
+     * @param assets AssetManager to use
+     */
     public void loadTextures(AssetManager assets) {
         Config config = Config.getInstance();
         tileTexture = assets.get(config.getTilePath());
@@ -124,9 +141,10 @@ public abstract class Node implements Serializable {
      */
     public ArrayList<ArrayList<String>> getReachable(int distance, String prevNodeID, Map<String, Node> nodeMap) {
         ArrayList<ArrayList<String>> foundNodes = new ArrayList<>();
+        if (distance < 1) return foundNodes; // Nothing in reach
 
         ArrayList<String> path = new ArrayList<>(List.of(nodeID));
-        // Try all directions enabled directions by adding / removing 1 from the x and y coordinates
+        // Try all directions by adding / removing 1 from the x and y coordinates
         String northID = String.valueOf(x) + "," + String.valueOf(y + 1);
         String eastID = String.valueOf(x + 1) + "," + String.valueOf(y);
         String southID = String.valueOf(x) + "," + String.valueOf(y - 1);

@@ -11,16 +11,30 @@ import com.mygdx.game.SoundSystem;
 
 import java.util.Map;
 
+/**
+ * When landed on, removes money from ALL players on the board.
+ */
 public class GlobalPenaltyNode extends Node {
     // Observable must be transient as the Observer contains a reference to the GameState, creating a loop
     // Recreate observers when deserializing
-    transient protected Observable<Void> callEventNode = new Observable<Void>();
-    transient protected Observable<Integer> globalEvent = new Observable<Integer>();
+    transient protected Observable<Integer> globalEvent = new Observable<>();
     protected int penaltyAmount = 50;
     protected Texture eventTexture;
 
+    /**
+     * Initializer
+     *
+     * @param mapX
+     * @param mapY
+     * @param north
+     * @param east
+     * @param south
+     * @param west
+     * @param map
+     * @param assets
+     */
     public GlobalPenaltyNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
-        super(mapX, mapY, north, east, south, west, map, assets);
+        super(mapX, mapY, north, east, south, west, assets);
     }
 
 
