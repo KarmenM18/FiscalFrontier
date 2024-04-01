@@ -29,7 +29,7 @@ public class SoundSystem {
      */
     private SoundSystem() {
         // Load music
-        music = Gdx.audio.newMusic(Gdx.files.internal(Config.getInstance().getSoundsFolder() + "mozart.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal(Config.getInstance().getSoundsFolder() + "music2.mp3"));
         music.setLooping(true);
     }
 
@@ -56,7 +56,7 @@ public class SoundSystem {
      */
     public void playMusic() {
         music.setPosition(0);
-        music.setVolume(0.7f);
+        music.setVolume(0.5f);
         music.play();
     }
 
@@ -73,11 +73,20 @@ public class SoundSystem {
      * @param name name of the sound file
      */
     public void playSound(String name) {
+        playSound(name,1.0f);
+    }
+
+    /**
+     * more refined playSound with volume
+     * @param name
+     * @param vol
+     */
+    public void playSound(String name, float vol) {
         if (soundsMap.get(name) == null) {
             // Load the sound
             loadSound(name);
         }
-        soundsMap.get(name).play();
+        soundsMap.get(name).play(vol);
     }
 
     /**
