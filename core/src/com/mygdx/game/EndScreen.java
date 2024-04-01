@@ -11,23 +11,32 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
-import java.util.Map;
-
 /**
  * Screen displayed at the end of a game.
+ *
+ * @author Franck Limtung (flimtung)
+ * @author Kevin Chen (kchen546)
  */
 public class EndScreen extends GameScreen {
+
+    /** Event returns to main menu. */
     private Observable<Void> menuEvent = new Observable<>();
+    /** Event delete all saves for the game. */
     private Observable<Integer> deleteSavesEvent = new Observable<>();
-    private Observable<PlayerProfile> updateScoreEvent = new Observable<>(); // Updates lifetime and highscore of the player
+    /** Event updates lifetime and highscore of the player. */
+    private Observable<PlayerProfile> updateScoreEvent = new Observable<>();
 
     private Table table;
+    /** Button to return to main menu. */
     private Button menuButton;
-    private Table scoreTable; // Displays the stats of each player in the game
-    private GameState finalGameState = null; // Set when the screen is switched
+    /** Displays the stats of each player in the game. */
+    private Table scoreTable;
+    /** Set when the screen is switched. */
+    private GameState finalGameState = null;
+
 
     /**
-     * Constructor.
+     * Constructor initializes the ending game screen.
      *
      * @param batch  SpriteBatch to initialize the Stage with
      * @param assets AssetManager to load assets with
@@ -122,7 +131,21 @@ public class EndScreen extends GameScreen {
         deleteSavesEvent.notifyObservers(finalGameState.getID());
     }
 
+    /**
+     * Assigns an observer to listen for the event to return to main menu.
+     * @param ob Observer to listen for the event to return to main menu.
+     */
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to delete save file.
+     * @param ob Observer to listen for the event to delete save file.
+     */
     public void addDeleteSavesListener(Observer<Integer> ob) { deleteSavesEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to update players' high scores and lifetime scores.
+     * @param ob Observer to listen for the event to update players' high scores and lifetime scores.
+     */
     public void addUpdateScoreListener(Observer<PlayerProfile> ob) { updateScoreEvent.addObserver(ob); }
 }
