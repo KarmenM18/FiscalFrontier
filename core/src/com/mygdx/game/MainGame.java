@@ -149,7 +149,7 @@ public class MainGame extends Game {
 			// Modify the PlayerProfile based on what happened in the game
 			this.profileManager.changeKnowledgeLevel(profile.getName(), profile.getKnowledgeLevel());
 			this.profileManager.updateHighScore(profile.getName(), profile.getHighScore());
-			this.profileManager.addLifetimeScore(profile.getName(), profile.getLifetimeScore());
+			this.profileManager.updateLifetimeScore(profile.getName(), profile.getLifetimeScore());
 
 			// Reload all screens involving scores and levels to reflect changes
 			this.reloadScoreScreens();
