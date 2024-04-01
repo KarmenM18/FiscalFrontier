@@ -6,17 +6,26 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
+import com.mygdx.game.Items.Item;
 
 import java.text.DecimalFormat;
 
+/**
+ * Used to buy Stocks and Items
+ */
 public class ShopScreen extends GameScreen {
     private Observable<Void> boardEvent = new Observable<Void>();
 
@@ -32,6 +41,13 @@ public class ShopScreen extends GameScreen {
     private Button buyButtons[];
     private Button sellButtons[];
     private final DecimalFormat decformat;
+
+    // Quick item shop implementation
+    private Table shopTable;
+    private SelectBox<String> itemSelector; // SelectBox widget to select Players
+    private Array<Item> availableItems;
+    private TextButton buyButton;
+    private Label infoBox;
 
     /**
      * Constructor
@@ -72,6 +88,34 @@ public class ShopScreen extends GameScreen {
                 return true;
             }
         });
+
+        shopTable = new Table();
+        itemSelector = new SelectBox<>(skin);
+        availableItems = new Array<>();
+        buyButton = new TextButton("Buy Item", skin);
+        buyButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                attemptBuyItem(); // Buy the currently selected item
+            }
+        });
+        infoBox = new Label("Info\nPrice\nDescription", skin);
+        infoBox.setWrap(true);
+
+        shopTable.row().pad(25).expandX();
+        shopTable.add(new Label("Item Shop", skin, "menu")).center().uniformX();
+        shopTable.row().uniformX();
+        shopTable.add(itemSelector).center().uniformX();
+        shopTable.row().uniformX();
+        shopTable.add(infoBox).center().width(200);
+        shopTable.row().uniformX();
+        shopTable.add(buyButton).center().uniformX();
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        if (itemSelector.getItems().size > 0) itemSelector.setSelectedIndex(0);
     }
 
     /**
@@ -86,9 +130,10 @@ public class ShopScreen extends GameScreen {
 
         background = new Table();
         background.setFillParent(true);
-        background.add(investmentsList).top().center();
+        background.add(investmentsList).top().left().uniformX();
+        background.add(shopTable).uniformX();
         background.row();
-        background.add(playerInfo).right();
+        background.add(playerInfo).right().colspan(2);
         this.stage.addActor(background);
     }
 
@@ -135,8 +180,8 @@ public class ShopScreen extends GameScreen {
 
             //Adding each element to a table and formatting
             investments.add(ticker).width(600).height(80).left();
-            investments.add(buyButtons[i]).width(180).height(80).left();
-            investments.add(sellButtons[i]).width(180).height(80).left();
+            investments.add(buyButtons[i]).width(160).height(80).left();
+            investments.add(sellButtons[i]).width(160).height(80).left();
             investments.row();
             investments.add(space).width(600).height(30).left();
             investments.row();
@@ -214,6 +259,68 @@ public class ShopScreen extends GameScreen {
      */
     private void sellStock(int num) {
         this.currentPlayer.removeInvestment(this.stocksAvailable[num], num);
+        this.background.remove();
+        this.playerInfo.remove();
+        updateScreen();
+    }
+
+    /**
+     * Normal render, plus updating of the item shop section. Kind of like ImGui.
+     *
+     * @param delta The time in seconds since the last render.
+     */
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+
+        int index = itemSelector.getSelectedIndex();
+
+        // Check item buy button
+        if (index == 0) {
+            buyButton.setTouchable(Touchable.disabled);
+            buyButton.setColor(Color.GRAY);
+            infoBox.setText("");
+        }
+        else {
+            buyButton.setTouchable(Touchable.enabled);
+            buyButton.setColor(Color.WHITE);
+            // Put info of currently selected Item in the infobox
+            Item selectedItem = availableItems.get(index - 1);
+            infoBox.setText("Name: " + selectedItem.getName() + "\nPrice: $" + selectedItem.getPrice() + "\nDescription:\n\n" + selectedItem.getDescription());
+        }
+    }
+
+    public void setItems(Array<Item> availableItems) {
+        this.availableItems = availableItems;
+        itemSelector.clearItems();
+        Array<String> itemNames = new Array<>();
+        // Add initial not item
+        itemNames.add("Select an Item");
+        for (Item item : availableItems) {
+            itemNames.add(item.getName());
+        }
+        itemSelector.setItems(itemNames);
+        itemSelector.setSelectedIndex(0);
+    }
+
+    public void attemptBuyItem() {
+        Item currentItem = availableItems.get(itemSelector.getSelectedIndex() - 1);
+        if (currentPlayer.getMoney() > currentItem.getPrice()) {
+            currentPlayer.setMoney(currentPlayer.getMoney() - currentItem.getPrice());
+            currentPlayer.addItem(currentItem);
+            availableItems.removeIndex(itemSelector.getSelectedIndex() - 1);
+            itemSelector.setSelectedIndex(0);
+            SoundSystem.getInstance().playSound("buy.wav");
+            ActionTextSystem.addText("Bought " + currentItem.getName(), buyButton.getX(), buyButton.getY(), 0.5f);
+        }
+        else {
+            Utility.showErrorDialog("Not enough money!", stage, skin);
+            SoundSystem.getInstance().playSound("error.wav");
+        }
+
+        // Populate available items
+        setItems(availableItems);
+
         this.background.remove();
         this.playerInfo.remove();
         updateScreen();

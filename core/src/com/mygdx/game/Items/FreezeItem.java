@@ -20,6 +20,8 @@ public class FreezeItem extends Item {
 
     public FreezeItem(Skin skin) {
         super("FreezeItem", false, skin);
+        this.price = 100;
+        this.description = "Used to freeze a player for one turn.";
     }
 
     @Override

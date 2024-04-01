@@ -9,6 +9,8 @@ import com.mygdx.game.Player;
 public class MultiDice extends Item {
     public MultiDice(Skin skin){
         super("MultiDice", false, skin);
+        this.price = 50;
+        this.description = "Doubles the amount of dice, increasing the maximum roll.";
     }
     public boolean use(Player player, GameState gameState, Stage stage) {
         player.setUseMultiDice(true);

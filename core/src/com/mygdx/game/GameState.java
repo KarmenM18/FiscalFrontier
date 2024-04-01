@@ -6,6 +6,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Items.*;
 import com.mygdx.game.Items.Bike;
 import com.mygdx.game.Items.FreezeItem;
@@ -28,6 +29,9 @@ public class GameState implements Serializable {
 
     //Stocks
     private Stock [] stocks;
+
+    // Items
+    private Array<Item> items;
 
     /**
      * TODO: maybe add warning at round 24 25??
@@ -57,6 +61,7 @@ public class GameState implements Serializable {
         assetMan = assets;
         this.hardMode = hardMode;
         this.id = id;
+        this.items = new Array<Item>();
 
         if (profileList == null || profileList.isEmpty()) {
             throw new IllegalArgumentException("Player list cannot be empty");
@@ -66,23 +71,31 @@ public class GameState implements Serializable {
         turnNumber = 0;
         roundNumber = 1;
 
+        // Add items
+        Config config = Config.getInstance();
+        Skin skin = assets.get(config.getUiPath(), Skin.class);
+        // 25% CHANCE PER ADDITIONAL ITEM
+        for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
+            items.add(new Bike(skin));
+        }
+        for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
+            items.add(new MultiDice(skin));
+        }
+        for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
+            items.add(new Shield(skin));
+        }
+        for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
+            items.add(new FreezeItem(skin));
+        }
+        for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
+            items.add(new Book(skin));
+        }
+
         for (PlayerProfile playerProfile : profileList) {
             Player player = new Player(playerProfile, assets);
             // Each player gets a different color
             player.getSprite().setColor(Utility.getRandom(0, 255) / 255f, Utility.getRandom(0, 255) / 255f, Utility.getRandom(0, 255) / 255f, 1);
             this.playerList.add(player);
-
-            Config config = Config.getInstance();
-            Skin skin = assets.get(config.getUiPath(), Skin.class);
-            // TODO TESTING, 25% CHANCE PER ADDITIONAL RANDOM ITEM
-            for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
-               player.addItem(new Bike(skin));
-               player.addItem(new MultiDice(skin));
-               player.addItem(new Shield(skin));
-            }
-            for (int i = 0; i == 0; i = Utility.getRandom(0, 3)) {
-                player.addItem(new FreezeItem(skin));
-            }
         }
         //Matrix representing the map, easier to visualize and configure
         int map[][] = { {1,1,2,1,1,3,1,1,0,0},
@@ -232,6 +245,10 @@ public class GameState implements Serializable {
         for (Player player : playerList) {
             player.loadTextures(assets);
         }
+
+        for (Item item : items) {
+            item.loadTextures(assets.get(Config.getInstance().getUiPath()));
+        }
     }
 
     /**
@@ -271,11 +288,13 @@ public class GameState implements Serializable {
                 p.levelUp();
             }
         }
-        //every 5 rounds give all player a random item
+        // Every 5 rounds put random items in the shop
         if(roundNumber > 0 && roundNumber % 5 == 0){
-            for (Player p : getPlayerList()){
-                p.addItem(randItem());
-            }
+            items.add(randItem());
+            items.add(randItem());
+            items.add(randItem());
+            items.add(randItem());
+            items.add(randItem());
         }
         if(roundNumber > 0 && roundNumber % 7 == 0){
             checkPenalty(nodeMap);
@@ -689,6 +708,15 @@ public class GameState implements Serializable {
                 item = new Book(skin);
         }
         return item;
+    }
+
+    /**
+     * Get the list of items.
+     *
+     * @return Array of Items
+     */
+    public Array<Item> getItems() {
+        return items;
     }
 
     /**

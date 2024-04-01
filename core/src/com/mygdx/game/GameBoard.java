@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -42,7 +43,7 @@ import java.util.List;
 public class GameBoard extends GameScreen {
     // Observables are used to inform about events to subscribed Observers. The Observer Pattern
     private Observable<PlayerProfile> pauseEvent = new Observable<PlayerProfile>();
-    private Observable<Void> shopEvent = new Observable<Void>();
+    private Observable<Array<Item>> shopEvent = new Observable<>(); // Calls event with all the available items in the GameState
     private Observable<GameState> endEvent = new Observable<GameState>();
     public Observable<Void> agilityTestEvent = new Observable<>();
 
@@ -120,7 +121,7 @@ public class GameBoard extends GameScreen {
                }
                else if (keycode == Input.Keys.I) {
                    // Go to shop screen
-                   shopEvent.notifyObservers(null);
+                   shopEvent.notifyObservers(gameState.getItems());
                }
                else if (keycode == Input.Keys.SPACE) {
                    rollButton.fire(new ChangeListener.ChangeEvent());
@@ -748,7 +749,7 @@ public class GameBoard extends GameScreen {
     }
 
     public void addPauseListener(Observer<PlayerProfile> ob) { pauseEvent.addObserver(ob); }
-    public void addShopListener(Observer<Void> ob) { shopEvent.addObserver(ob); }
+    public void addShopListener(Observer<Array<Item>> ob) { shopEvent.addObserver(ob); }
     public void addEndListener(Observer<GameState> ob) { endEvent.addObserver(ob); }
     public void addAgilityTestListener(Observer<Void> ob) { agilityTestEvent.addObserver(ob); }
 }
