@@ -216,7 +216,11 @@ public class GameState implements Serializable {
         for (Player player : playerList) {
             player.setCurrentTile(nodeIDs.get(nodeIDs.size() - 1), nodeMap);
             nodeIDs.remove(nodeIDs.size() - 1);
-            player.addItem(randItem());
+            player.addItem(new Book(skin));
+            player.addItem(new Bike(skin));
+            player.addItem(new FreezeItem(skin));
+            player.addItem(new MultiDice(skin));
+            player.addItem(new Shield(skin));
         }
 
         //Initializing Stocks
