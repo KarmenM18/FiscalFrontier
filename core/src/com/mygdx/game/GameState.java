@@ -290,7 +290,6 @@ public class GameState implements Serializable {
         // Wipe Player's calculated turn values
         getCurrentPlayer().endTurn(nodeMap);
         removeStar(nodeMap);
-        // checkPenalty(nodeMap);
         checkStar(nodeMap);
         currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
         if (getCurrentPlayer().isFrozen()) {
@@ -377,7 +376,7 @@ public class GameState implements Serializable {
         //should only run when map has
         //not getting the right current node
         currentStar = 0;
-        for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+        for (Map.Entry<String, Node> node : nodeMap.entrySet()) {
             if (node.getValue() instanceof StarNode) {
                 currentStar++;
             }
@@ -386,7 +385,7 @@ public class GameState implements Serializable {
         int starLimit = Utility.getRandom(minStar, maxStar); //setting random number of max star every turn
         if(currentStar < starLimit){ //only add new star if currentStar is less than maxStar
             List<Node> normalNodeList = new ArrayList<Node>();
-            for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+            for (Map.Entry<String, Node> node : nodeMap.entrySet()) {
                 Node node1 = node.getValue();
                 if (node1 instanceof NormalNode) {
                     normalNodeList.add(node1);
@@ -437,22 +436,20 @@ public class GameState implements Serializable {
         nodeMap.put(x + "," + y, globalPenaltyNode);
     }
 
-// TODO Penalty Nodes not removable?
-// Fixed, shuffle every 7 rounds, called in nextRound
-//    /**
-//     * check number of penalty nodes on the board and shuffle/remove/add randomly
-//     * @param nodeMap
-//     */
-    public void checkPenalty(HashMap<String, Node> nodeMap){
+    /**
+     * check number of penalty nodes on the board
+     * @param nodeMap Map of Nodes to use
+     */
+    public void checkPenalty(Map<String, Node> nodeMap){
         currentPen = 0;
-        for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+        for (Map.Entry<String, Node> node : nodeMap.entrySet()) {
             if (node.getValue() instanceof PenaltyNode) {
                 currentPen++;
             }
         }
         if(currentPen < Utility.getRandom(minPen, maxPen)){
             List<Node> normalNodeList = new ArrayList<Node>();
-            for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+            for (Map.Entry<String, Node> node : nodeMap.entrySet()) {
                 Node node1 = node.getValue();
                 if (node1 instanceof NormalNode) {
                     normalNodeList.add(node1);
@@ -473,7 +470,7 @@ public class GameState implements Serializable {
 
         } else if (currentPen > minPen) {
             List<Node> penaltyNodeList = new ArrayList<Node>();
-            for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+            for (Map.Entry<String, Node> node : nodeMap.entrySet()) {
                 Node node1 = node.getValue();
                 if (node1 instanceof PenaltyNode) {
                     penaltyNodeList.add(node1);

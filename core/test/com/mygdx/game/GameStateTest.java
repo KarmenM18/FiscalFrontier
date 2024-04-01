@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Node.Node;
 import com.mygdx.game.Node.NormalNode;
+import com.mygdx.game.Node.PenaltyNode;
 import com.mygdx.game.Node.StarNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -167,5 +168,24 @@ class GameStateTest {
                 break;
             }
         }
+    }
+
+    @Test
+    void checkPenalty() {
+        PlayerProfile profile = new PlayerProfile("test",0,0,0);
+        GameState gs = new GameState(List.of(profile), asset, 0, false);
+
+        // Run checkPenalty until there are 3 penaltyNodes, the max. It will loop forever if it doesn't work.
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            int penaltyNum;
+            do {
+                gs.checkPenalty(gs.getNodeMap());
+
+                penaltyNum = 0;
+                for (Node node : gs.getNodeMap().values()) {
+                    if (node instanceof PenaltyNode) penaltyNum++;
+                }
+            } while (penaltyNum < 3);
+        });
     }
 }

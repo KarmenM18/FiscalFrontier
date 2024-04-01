@@ -42,9 +42,6 @@ class ItemTest {
     @Test
     void getName() {
         Item item = new Item("testItem", asset.get(Config.getInstance().getUiPath()));
-        Player player = Mockito.mock(Player.class);
-        GameState state = Mockito.mock(GameState.class);
-        Stage stage = Mockito.mock(Stage.class);
 
         assertEquals("testItem", item.getName());
     }
@@ -52,9 +49,6 @@ class ItemTest {
     @Test
     void isPassive() {
         Item item = new Item("testItem", asset.get(Config.getInstance().getUiPath()));
-        Player player = Mockito.mock(Player.class);
-        GameState state = Mockito.mock(GameState.class);
-        Stage stage = Mockito.mock(Stage.class);
 
         assertFalse(item.isPassive());
 
@@ -65,9 +59,6 @@ class ItemTest {
     @Test
     void loadTextures() {
         Item item = new Item("testItem", asset.get(Config.getInstance().getUiPath()));
-        Player player = Mockito.mock(Player.class);
-        GameState state = Mockito.mock(GameState.class);
-        Stage stage = Mockito.mock(Stage.class);
 
         item.loadTextures(asset.get(Config.getInstance().getUiPath()));
         assertNotNull(item.usedItemDialog);

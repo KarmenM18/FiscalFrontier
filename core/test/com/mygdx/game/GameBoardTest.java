@@ -33,27 +33,19 @@ class GameBoardTest {
         assertDoesNotThrow(() -> board.show());
     }
 
-    // TODO
-
     @Test
-    void render() {
+    void turnChange() {
         GameBoard board = new GameBoard(Mockito.mock(SpriteBatch.class), asset);
         PlayerProfile profile = new PlayerProfile("test",0,0,0);
         GameState state = new GameState(Collections.singletonList(profile), asset, 0, false);
         board.setGameState(state);
 
-        board.render(10);
-    }
-
-    @Test
-    void setGameState() {
-    }
-
-    @Test
-    void turnChange() {
-    }
-
-    @Test
-    void getGameState() {
+        // Simulate turns until the end of the game
+        for (int i = 0; i < 25; i++) {
+            board.turnChange();
+            assertFalse(board.getGameState().isGameOver());
+        }
+        board.turnChange();
+        assertTrue(board.getGameState().isGameOver());
     }
 }

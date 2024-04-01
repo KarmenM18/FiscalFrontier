@@ -2,7 +2,6 @@ package com.mygdx.game.Node;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.game.Node.Node;
 import com.mygdx.game.Player;
 
 import java.util.Map;
@@ -11,7 +10,7 @@ public class NormalNode extends Node {
     protected int baseMoney = 25;
 
     public NormalNode(int mapX, int mapY, boolean north, boolean east, boolean south, boolean west, Map<String, Node> map, AssetManager assets) {
-        super(mapX, mapY, north, east, south, west, map, assets);
+        super(mapX, mapY, north, east, south, west, assets);
     }
 
     public NormalNode(int mapX, int mapY, AssetManager assets) {
