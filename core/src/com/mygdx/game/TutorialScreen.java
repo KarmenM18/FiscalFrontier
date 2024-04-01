@@ -12,13 +12,15 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
+/**
+ * Screen that provides detailed instructions on how to play the game.
+ *
+ * @author Earl Castillo (ecastil3)
+ */
 public class TutorialScreen extends GameScreen{
-    private final Observable<Void> mainmenu = new Observable<>();
 
-    //UI for TutorialScreen
-    private Table table;
-    private Table background;
-    private ScrollPane scroll;
+    /** Event returns to main menu. */
+    private final Observable<Void> mainmenu = new Observable<>();
 
     /**
      * @param batch  SpriteBatch to initialize the Stage with
@@ -27,7 +29,7 @@ public class TutorialScreen extends GameScreen{
     public TutorialScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
-        table = new Table();
+        Table table = new Table();
         int textWidth = 1800;
 
         //Adding information for Tutorial
@@ -162,13 +164,13 @@ public class TutorialScreen extends GameScreen{
         table.add(line21).width(textWidth).left();
 
         //Adding to scroll pane
-        scroll = new ScrollPane(table, skin);
+        ScrollPane scroll = new ScrollPane(table, skin);
         scroll.setHeight(1000);
         scroll.setScrollBarPositions(false, true);
         scroll.setScrollbarsVisible(true);
 
         //Adding to background
-        background = new Table();
+        Table background = new Table();
         background.setFillParent(true);
         background.add(scroll).fillX().expandX();
 
@@ -185,8 +187,10 @@ public class TutorialScreen extends GameScreen{
         });
     }
 
+
     /**
-     * @param ob Adds listener to go back to main menu screen
+     * Assigns an observer to listen for the event to return to main menu.
+     * @param ob Observer to listen for event to return to main menu.
      */
     public void addBackToMenu(Observer<Void> ob) {mainmenu.addObserver(ob);}
 }

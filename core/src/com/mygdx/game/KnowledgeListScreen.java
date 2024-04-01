@@ -15,19 +15,24 @@ import java.util.LinkedList;
 
 /**
  * Shows all knowledge that the current player has learned based on player's current knowledge level
- * @author ecatil3
+ *
+ * @author Earl Castillo (ecastil3)
  * @version 1.0
  */
 public class KnowledgeListScreen extends GameScreen{
-    private Observable<Void> pauseScreenEvent = new Observable<>();
 
+    /** Event to return to pause screen. */
+    private Observable<Void> pauseScreenEvent = new Observable<>();
     private Table background;
+    /** Container for all UI elements. */
     private Table table;
+    /** Allows screen to be scrolled. */
     private ScrollPane scroller;
+    /** List of knowledge for a player. */
     private LinkedList<String> playerKnowledge = new LinkedList<>();
 
     /**
-     * Knoledge Screen Constructor / initialization
+     * Constructor initializes knowledge screen.
      * @param batch SpriteBatch from libgdx
      * @param assets AssetManager from libgdx
      */
@@ -58,7 +63,8 @@ public class KnowledgeListScreen extends GameScreen{
     public void setPlayerKnowledge (LinkedList<String> knowledge) {this.playerKnowledge = knowledge;}
 
     /**
-     * @param ob Observer listener to get back to pause screen
+     * Assigns an observer to listen for the event to return to the pause screen.
+     * @param ob Observer listener to get back to pause screen.
      */
     public void addBackToPause(Observer<Void> ob) {pauseScreenEvent.addObserver(ob);}
 
@@ -85,5 +91,6 @@ public class KnowledgeListScreen extends GameScreen{
         background.add(scroller).fill().expand();
 
         this.stage.addActor(background);
+
     }
 }

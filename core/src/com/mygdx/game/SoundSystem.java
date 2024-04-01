@@ -3,15 +3,18 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-
 import java.util.HashMap;
 
 /**
- * Class to play game sounds
- * Singleton Pattern
+ * Responsible for playing sounds in the game. Implements the singleton pattern.
+ *
+ * @author Franck Limtung (flimtung)
  */
 public class SoundSystem {
+
+    /** All game sounds. */
     private HashMap<String, Sound> soundsMap = new HashMap<>();
+    /** Game's background music. */
     private Music music;
 
     /**
@@ -86,4 +89,5 @@ public class SoundSystem {
             sound.dispose();
         }
     }
+
 }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * @see ManageStudentsScreen
  * @see PlayerProfile
  *
- * @author Joelene Hales
+ * @author Joelene Hales (jhales5)
  */
 public class InstructorDashboardScreen extends GameScreen{
 
@@ -155,13 +155,13 @@ public class InstructorDashboardScreen extends GameScreen{
 
     /**
      * Assigns an observer to listen for the event to return to main menu.
-     * @param ob Observer
+     * @param ob Observer to listen for the event to return to main menu.
      */
     public void addMenuListener(Observer<Void> ob) { this.menuEvent.addObserver(ob); }
 
     /**
      * Assigns an observer to listen for the event to enter manage students mode.
-     * @param ob Observer
+     * @param ob Observer to listen for the event to enter manage students mode.
      */
     public void addManageStudentsListener(Observer<Void> ob) { this.manageStudentsEvent.addObserver(ob); }
 

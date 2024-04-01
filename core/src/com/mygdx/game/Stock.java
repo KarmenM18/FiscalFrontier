@@ -2,38 +2,68 @@ package com.mygdx.game;
 import java.util.Random;
 
 /**
- * Holds the logic for simulating the stock market fluctuation
+ * Holds the logic for simulating the stock market fluctuation.
+ *
+ * @author Earl Castillo (ecastil3)
  */
 public class Stock {
 
-    private String tickerName;  //Name of the stock
-    private int price;          //Stock Buy Price per QTY
-    private String description; //Description outlining the risks and reward
-    private double priceChange; //Price Change since last round as a %
-    private double divPayChange;//Dividend Pay Change as a %
-    private double divPay;      //For how much to pay out the dividends as a %
+    /** Name of the stock. */
+    private String tickerName;
+    /** Stock's current buy price per quantity. */
+    private int price;
+    /** Description outlining the risks and reward of the stock. */
+    private String description;
+    /** Percentage price changed since last round. */
+    private double priceChange;
+    /** Percentage dividend pay changed since last round. */
+    private double divPayChange;
+    /** Dividend payout percentage. */
+    private double divPay;
 
-    //For the "risk" of the stock
+    /* For the "risk" and price change of the stock */
+
+    /** Minimum growth change. */
     private double minChangeGrowth;
+    /** Minimum decline change. */
     private double minChangeDecline;
+    /** Maximum growth change. */
     private double maxChangeGrowth;
+    /** Maximum decline change. */
     private double maxChangeDecline;
+    /** Represents the stock's risk. */
     private int risk;
+    /** Represents the dividend's risk. */
     private int divRisk;
+    /** Used to generate randomized aspects of stock change. */
     private Random rand;
 
+
     /**
-     * Constructor for preset stocks
+     * Constructor for preset stocks.
+     *
+     * @param name Stock's name
+     * @param price Stock's current buy price per quantity
+     * @param description Description outlining the risks and reward of the stock.
+     * @param mincg Minimum growth change.
+     * @param mincd Minimum decline change.
+     * @param maxcg Maximum growth change.
+     * @param maxcd Maximum decline change
+     * @param divPay Dividend payout percentage
+     * @param risk Representation of the stock's risk.
+     * @param divRisk Representation of the dividend's risk.
      */
     public Stock(String name, int price, String description,
-                 double mincg, double mincd, double maxchg, double maxcd, double divPay, int risk, int divRisk) {
+                 double mincg, double mincd, double maxcg, double maxcd, double divPay, int risk, int divRisk) {
+
+        // Initialize stock's attributes
         this.tickerName = name;
         this.price = price;
         this.priceChange = 0;
         this.description = description;
         this.minChangeGrowth = mincg;
         this.minChangeDecline = mincd;
-        this.maxChangeGrowth = maxchg;
+        this.maxChangeGrowth = maxcg;
         this.maxChangeDecline = maxcd;
         this.divPay = divPay;
         this.risk = risk;
@@ -49,49 +79,60 @@ public class Stock {
     }
 
     /**
-     * @return dividend payout every 5 rounds. Also rounds the number up
+     * Returns the dividend payout per 5 rounds. Fractional values are rounded up
+     * @return Dividend payout per 5 rounds
      */
     public int dividendPay() {return (int) Math.ceil(this.price * (this.divPay/100));}
 
     /**
-     * @return the stock's current price
+     * Returns the stock's current price
+     * @return Stock's current price
      */
     public int getPrice(){return this.price;}
 
     /**
-     * @return returns dividend payout information in %
+     * Returns the dividend payout percentage
+     * @return Dividend payout percentage
      */
     public double getDivPay() {return divPay;}
 
     /**
+     * Returns the stock's description. Outlines the risks and reward of the stock.
      * @return Description about the stock
      */
     public String getDescription() {return this.description;}
 
     /**
-     * @return The stock ticker Name
+     * Returns the stock's ticker name.
+     * @return Stock ticker name
      */
     public String getTickerName(){return this.tickerName;}
 
     /**
-     * @return Returns the price change as a % since last update
-     * Capital gain or loss
+     * Returns the percentage price change of the stock since last update. Capital gain or loss.
+     * @return Percentage price change of the stock since last update
      */
     public double getPriceChange(){return this.priceChange;}
 
     /**
-     * @return Returns the dividend pay change as a % since
-     * last update
+     * Returns the percentage dividend pay change since last update.
+     * @return Percentage dividend pay change since last update.
      */
     public double getDivPayChange(){return this.divPayChange;}
 
     /**
-     * Updates the stock price every round
-     * risk is determined from a number from 1 to 9;
-     * with 1 representing a 10% risk for stock to decline
-     * up to a max risk of 9 having a 90% chance to decline
+     * Updates the stock price and dividend pay every round.
+     * <br><br>
      *
-     * For Dividend pay
+     * The stock price and dividend pay are updated as follows:
+     * <br>
+     *
+     * <b>Stock Risk:</b>
+     * Risk is determined from a number from 1 to 9, with 1 representing a 10% risk for stock to decline, up to a max
+     * risk of 9 having a 90% chance to decline.
+     * <br>
+     *
+     * <b>Dividend pay:</b>
      * divRisk 1 -> 10% chance to decrease divPay. 1% increase in divPay or 0.5% divPay decrease
      * divRisk 3 -> 30% chance to decrease divPay. 10% incrase in divPay or 2% divPay decrease
      * divRisk 5 -> 50% chance to decrease divPay. 30% increase in divPay or 50% divPay decrease
