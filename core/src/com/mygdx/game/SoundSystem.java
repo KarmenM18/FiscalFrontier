@@ -74,7 +74,7 @@ public class SoundSystem {
             // Load the sound
             loadSound(name);
         }
-        soundsMap.get(name).play(0.15f);
+        soundsMap.get(name).play();
     }
 
     /**
