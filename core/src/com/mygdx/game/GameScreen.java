@@ -12,6 +12,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
  * Parent class contains attributes and methods common to all gameplay screens.
+ *
+ * @author Franck Limtung (flimtung)
  */
 public class GameScreen extends ScreenAdapter {
 

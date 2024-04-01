@@ -1,7 +1,4 @@
-/**
- * Stores a game state. Used by the GameBoard. Can be saved and loaded.
- * At the end of a game, the players profiles should be updated with anything relevant stored here.
- */
+
 package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
@@ -14,50 +11,76 @@ import com.mygdx.game.Items.MultiDice;
 import com.mygdx.game.Items.Shield;
 import com.mygdx.game.Node.*;
 import com.mygdx.game.Node.StarNode;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-
-
-import javax.print.attribute.standard.SheetCollate;
 import java.io.Serializable;
 import java.util.*;
 
+
+/**
+ * Stores all information for a game state
+ * <br><br>
+ * Including the difficulty, player list, which player's turn it currently is, the round number, the map of game board
+ * tiles, number of stars, and the available stocks. Can be saved and loaded. Used to update student profiles at the
+ * end of a game.
+ * @see SaveSystem
+ *
+ * @author Franck Limtung (flimtung)
+ * @author Kevin Chen (kchen546)
+ * @author Earl Castillo (ecastil3)
+ */
 public class GameState implements Serializable {
-    private int id; // The id used to differentiate game saves. Should be unique for each different game.
+
+    /** Unique ID used to differentiate game state save files. Used to cleanup save files after termination of a game. */
+    private int id;
+    /** List of players in the game. */
     private List<Player> playerList;
+    /** Player whose turn it is at a given moment. */
     private int currPlayerTurn;
+    /** Current turn number. */
     private int turnNumber;
-
-    //Stocks
+    /** All available stocks. */
     private Stock [] stocks;
-
-    // Items
+    /** All items. */
     private Array<Item> items;
 
-    /**
-     * TODO: maybe add warning at round 24 25??
-     */
+    /** Current round number. */  // TODO: maybe add warning at round 24 25??
     private int roundNumber;
+    /** Represents the gameboard map. */
     private HashMap<String, Node> nodeMap;
+    /** Used to load assets. */
     transient private AssetManager assetMan;
+    /** Maximum number of stars allowed on the gameboard at any given time. */
     private final int maxStar = 3;
+    /** Minimum number of stars required on the gameboard at any given time. */
     private final int minStar = 1;
+    /** Current number of stars on the gameboard. */
     private int currentStar;
+    /** Maximum number of penalty tiles allowed on the gameboard at any given time. */
     private final int maxPen = 3;
+    /** Minimum number of penalty tiles required on the gameboard at any given time. */
     private final int minPen = 1;
+    /** Current number of penalty nodes required on the gameboard at any given time. */
     private int currentPen;
-    private boolean gameOver = false; // Set to true when roundNumber exceeds the round maximum. Should be checked by GameBoard
-    private boolean hardMode = false; // Hard mode changes the game mechanics to be less forgiving.
-    transient private boolean debugMode = false; // Not saved; set to true whenever debugMode is enabled
+    /**
+     * Indicates if the game has ended. <br><br>
+     * Set to true when the number of rounds exceeds the maximum number of rounds. Checked by Gameboard
+     */
+    private boolean gameOver = false;
+    /** Indicates if difficulty level is set to hard. Hard mode changes the game mechanics to be less forgiving. */
+    private boolean hardMode = false;
+    /** Indicates if debug mode is currently enabled. */
+    transient private boolean debugMode = false;
+
 
     /**
-     * Constructor
-     * Will throw error if the profileList is null or empty
-     * @param profileList the list of PlayerProfiles participating in the game
-     * @param assets AssetManager to use
-     * @param id UNIQUE ID of the gameState. Used to cleanup saves after termination of a game
+     * Constructor initializes a new game state.
+     *
+     * @param profileList List of students participating in the game
+     * @param assets AssetManager used to load assets
+     * @param id Unique ID of the gameState. Used to cleanup saves after termination of a game
      * @param hardMode controls if hard mode is enabled
+     * @throws IllegalArgumentException If the profile list is null or empty
      */
-    public GameState(List<PlayerProfile> profileList, AssetManager assets, int id, boolean hardMode) {
+    public GameState(List<PlayerProfile> profileList, AssetManager assets, int id, boolean hardMode) throws IllegalArgumentException {
         assetMan = assets;
         this.hardMode = hardMode;
         this.id = id;
@@ -227,13 +250,14 @@ public class GameState implements Serializable {
         iniStocks();
     }
 
+
     /**
      * No-arg constructor for deserialization
      */
     private GameState() {}
 
     /**
-     * Reinitialize objects owned by the GameState which couldn't be fully serialized.
+     * Re-initialize objects owned by the GameState which couldn't be fully serialized.
      *
      * @param assets an AssetManager loaded with all the assets required by the GameState
      */
@@ -256,9 +280,13 @@ public class GameState implements Serializable {
         }
     }
 
+
     /**
-     * moving to next round, not affecting anything other than player level
-     * for now
+     * Moves to the next round in the game.
+     * <br><br>
+     * Each turn, dividends are paid out and stocks are updated.
+     * Every 2 rounds, each player's level is increased.
+     * Every 5 rounds, new items are added to the game board.
      */
     public void nextRound(){
         if(turnNumber % playerList.size() == 0 && turnNumber != 0){
@@ -306,6 +334,8 @@ public class GameState implements Serializable {
         }
         //Updating safe-medium stocks / dividends
     }
+
+
     /**
      * End the current Player's turn, and start the next Player's turn
      */
@@ -336,72 +366,91 @@ public class GameState implements Serializable {
 
         nextRound(); // Check current round;
     }
+
+    /**
+     * Returns if hard mode is enabled.
+     * @return True if hard mode is enabled, false if otherwise
+     */
     public boolean getHardMode(){
         return this.hardMode;
     }
+
+
     /**
      * Get current Player. Based on the current turn.
-     *
-     * @return Player
+     * @return Player whose turn it is
      */
     public Player getCurrentPlayer() { return playerList.get(currPlayerTurn); }
 
     /**
+     * Returns a list of all players in the game
      * @return List of Players
      */
     public List<Player> getPlayerList() { return playerList; }
 
     /**
+     * Returns the map of gameboard tiles.
      * @return Map of nodes
      */
     public Map<String, Node> getNodeMap() { return nodeMap; }
 
     /**
-     * @return the current roundNumber
+     * Returns the current round number.
+     * @return Current round number.
      */
     public int getRound() { return roundNumber; }
 
     /**
-     * Sets the current round.
-     * @param round Round number
+     * Sets the current round number.
+     * @param round Round number.
      */
     public void setRound(int round) {
         this.roundNumber = round;
     }
 
     /**
-     * @return the current turnNumber
+     * Returns the current turn.
+     * @return Current turn number.
      */
     public int getTurn() { return turnNumber; }
 
     /**
-     * global penalty event for event node, reduce all player's money
-     * @param penaltyAmount
+     * Global penalty event for event node.
+     * <br><br>
+     * In easy mode, the penalty reduces all player's money by a given amount, unless the player currently has a negative
+     * amount of money. In hard mode, it reduces all player's stars by 1. If the player does not have a star, it reduces
+     * their money by the given amount. If the player has a shield, they are protected from the penalty's effects.
+     * @param penaltyAmount Amount to reduce each player's money.
      */
     public void globalPenaltyEvent(int penaltyAmount){
         //needs to be put here due to activation order
         for (Player p : getPlayerList()){
-            if (p.useShield()) continue;
+            if (p.useShield()) continue;  // Player has shield -- consume shield to prevent penalty
 
-            if(hardMode){
-                if(p.getStars() > 0){
-                    p.setStars(p.getStars() - 1);
-                }else{
-                    p.setMoney(p.getMoney() - penaltyAmount);
+            if(hardMode){ // Hard mode enabled
+
+                if(p.getStars() > 0){  // Player has stars
+                    p.setStars(p.getStars() - 1);  // Deduct one star
+                }else{  // Player does not have stars
+                    p.setMoney(p.getMoney() - penaltyAmount);  // Reduce money by penalty amount
                 }
-            }else {
-                if(p.getMoney() > 0){
-                    p.setMoney(p.getMoney() - penaltyAmount);
-                }else{
-                    // Do nothing
+            }
+            else {  // Easy mode
+
+                // Check that reducing the player's money would not result in a negative value
+                if(p.getMoney() - penaltyAmount >= 0 ){
+                    p.setMoney(p.getMoney() - penaltyAmount);  // Reduce money by penalty amount
                 }
+
             }
         }
     }
 
+
+
     /**
-     * Runs when there is less star than per turn limit
-     * per turn limit is rand based on minStar and maxStar
+     * Adds a star to the game board. Run when there are fewer stars on the game board than the per turn limit.
+     * Generates a random number between mininum and maximum allowed number of stars.
      * @param nodeMap
      */
     public void checkStar(Map<String, Node> nodeMap){
@@ -441,8 +490,8 @@ public class GameState implements Serializable {
     }
 
     /**
-     * make taken star node back to normal node
-     * @param nodeMap the map of nodes on the board
+     * Convert a node which previously had a star back to a normal node.
+     * @param nodeMap The map of nodes on the board
      */
     public void removeStar(Map<String, Node> nodeMap){
         Node currentNode = nodeMap.get(getCurrentPlayer().getCurrentTile());
@@ -462,6 +511,15 @@ public class GameState implements Serializable {
         }
     }
 
+    /**
+     * Creates a penalty node
+     * @param x Penalty node's x-coordinate
+     * @param y Penalty node's y-coordinate
+     * @param north North
+     * @param east East
+     * @param south South
+     * @param west West
+     */
     private void createGlobalPenaltyNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
         GlobalPenaltyNode globalPenaltyNode = new GlobalPenaltyNode(x, y, north, east, south, west, nodeMap, assetMan);
         globalPenaltyNode.addEventListener(penaltyValue -> globalPenaltyEvent(penaltyValue));
@@ -469,8 +527,8 @@ public class GameState implements Serializable {
     }
 
     /**
-     * check number of penalty nodes on the board
-     * @param nodeMap Map of Nodes to use
+     * Check number of penalty nodes on the board.
+     * @param nodeMap Map of nodes to use.
      */
     public void checkPenalty(Map<String, Node> nodeMap){
         currentPen = 0;
@@ -524,12 +582,13 @@ public class GameState implements Serializable {
     }
 
     /**
-     * @return all stocks available to purchase
+     * Returns a list of all stocks available to purchase.
+     * @return All stocks available to purchase
      */
     public Stock [] getAllStocks () {return this.stocks;}
 
     /**
-     * Method to clean up code a bit. Initializes all 6 stock options
+     * Initializes all 6 stock options
      * 1.) Safe Growth Stock
      * 2.) Medium Growth Stock
      * 3.) High Risk Growth Stock
@@ -665,15 +724,22 @@ public class GameState implements Serializable {
     }
 
     /**
-     * @return true if the game is over, otherwise false
+     * Checks if the game is over.
+     * @return True if the game is over, otherwise false
      */
     public boolean isGameOver() {return gameOver;}
 
     /**
-     * @return integer GameState's ID
+     * Returns the game state's unique ID
+     * @return Game state's ID
      */
     public int getID() {return id;}
 
+    /**
+     * Payout dividend of stock to player.
+     * @param player Player to pay.
+     * @param stockID Stock's ID number.
+     */
     private void payoutDividend (Player player, int stockID) {
 
         //Finding how much of each stock that the player owns
@@ -688,9 +754,9 @@ public class GameState implements Serializable {
     }
 
     /**
-     * choose a random item from existing items
+     * Choose a random item from existing items.
      * TODO find a way to get all Item subclass and choose from that instead
-     * @return Item
+     * @return Item randomly chosen.
      */
     private Item randItem(){
         int rand = Utility.getRandom(1,4);
@@ -700,6 +766,7 @@ public class GameState implements Serializable {
         switch (rand){
             case 1:
                 item = new Bike(skin);
+                break;
             case 2:
                 item = new FreezeItem(skin);
                 break;
@@ -716,15 +783,15 @@ public class GameState implements Serializable {
     }
 
     /**
-     * Get the list of items.
-     *
-     * @return Array of Items
+     * Get the array of items.
+     * @return Array of items.
      */
     public Array<Item> getItems() {
         return items;
     }
 
     /**
+     * Check if debug is enabled.
      * @return debugMode
      */
     public boolean isDebugMode() {
@@ -732,7 +799,8 @@ public class GameState implements Serializable {
     }
 
     /**
-     * @param debugMode boolean flag
+     * Enable or disable debug mode.
+     * @param debugMode True to enable hard mode, false to disable debug mode.
      */
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
