@@ -26,7 +26,7 @@ public class SoundSystem {
      */
     private SoundSystem() {
         // Load music
-        music = Gdx.audio.newMusic(Gdx.files.internal(Config.getInstance().getSoundsFolder() + "music.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal(Config.getInstance().getSoundsFolder() + "mozart.mp3"));
         music.setLooping(true);
     }
 

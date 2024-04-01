@@ -440,7 +440,7 @@ public class GameState implements Serializable {
 // TODO Penalty Nodes not removable?
 // Fixed, shuffle every 7 rounds, called in nextRound
 //    /**
-//     * check number of penalty nodes on the board
+//     * check number of penalty nodes on the board and shuffle/remove/add randomly
 //     * @param nodeMap
 //     */
     public void checkPenalty(HashMap<String, Node> nodeMap){
@@ -657,6 +657,12 @@ public class GameState implements Serializable {
         //Amount player has + how much the stock pays per share * how many shares the player owns.
         player.setMoney(playMoney + (divPay*owned));
     }
+
+    /**
+     * choose a random item from existing items
+     * TODO find a way to get all Item subclass and choose from that instead
+     * @return Item
+     */
     private Item randItem(){
         int rand = Utility.getRandom(1,4);
         Item item;
