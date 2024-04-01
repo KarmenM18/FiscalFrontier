@@ -42,7 +42,7 @@ public class GameState implements Serializable {
     /** All items. */
     private Array<Item> items;
 
-    /** Current round number. */  // TODO: maybe add warning at round 24 25??
+    /** Current round number. */
     private int roundNumber;
     /** Represents the gameboard map. */
     private HashMap<String, Node> nodeMap;

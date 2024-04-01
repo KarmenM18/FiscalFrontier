@@ -1,39 +1,41 @@
 package com.mygdx.game;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
-import com.badlogic.gdx.utils.Json;
-import com.mygdx.game.Items.Item;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.io.Serializable;
 
 /**
  * Represents a player when not on the game board.
+ * <br><br>
+ * Stores all the student's persistent information, including their highest achieved individual game score, overall
+ * lifetime score (the cumulative score from all played games), their knowledge level, and the tips they have unlocked.
+ *
+ * @author Karmen Minhas (kminhas7)
+ * @author Joelene Hales (jhales5)
  */
 public class PlayerProfile {
 
+    /** Student's name. */
     private String name;
+    /** Student's lifetime score (cumulative score from all played game) */
     private int lifetimeScore;
+    /** Student's highest achieved individual game score. */
     private int highScore;
+    /** Student's knowledge level. */
     private int knowledgeLevel;
-    private LinkedList<String> learned = new LinkedList<>(); //Storing all the learned knowledge from a knowledge catalog
-    private String spritePath; // Path of the sprite to use when rendering the Player
+    /** Stores all the learned knowledge from the knowledge catalog. Based on the student's knowledge level. */
+    private LinkedList<String> learned = new LinkedList<>();
+    /** Path of the sprite to use when rendering the Player */
+    private String spritePath;
 
     /**
      * Constructor used to load an existing player profile.
      *
-     * @param name
-     * @param lifetimeScore
-     * @param highScore
-     * @param knowledgeLevel
+     * @param name Student's name
+     * @param lifetimeScore Student's lifetime score
+     * @param highScore Student's high score
+     * @param knowledgeLevel Student's knowledge level
      */
     public PlayerProfile(String name, int lifetimeScore, int highScore, int knowledgeLevel) {
 
@@ -63,8 +65,7 @@ public class PlayerProfile {
     private PlayerProfile() {}
 
     /**
-     * Increases the player's knowledge level and updates
-     * their learned knowledge list
+     * Increases the player's knowledge level and updates their learned knowledge base.
      */
     public void updateKnowledgeLevel () {
         this.knowledgeLevel++;
@@ -72,66 +73,73 @@ public class PlayerProfile {
     }
 
     /**
-     * @return the Player's name
+     * Returns the studen't name.
+     * @return Student's name
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
-     * Purpose: sets the name of the Player
+     * Purpose: sets the name of the student.
+     * @param sName New name for student
      */
-    public void setName(String pName) {
-        this.name = pName;
+    public void setName(String sName) {
+        this.name = sName;
     }
 
     /**
-     * Purpose: gets the Player's lifetime score
-     * @return lifetimeScore of Player
+     * Purpose: gets the student's lifetime score (cumulative score from all played games)
+     * @return Student's lifetime score
      */
     public int getLifetimeScore() {
-        return lifetimeScore;
+        return this.lifetimeScore;
     }
 
     /**
-     * Purpose: sets the Player's lifetime score
+     * Sets the student's lifetime score
+     * @param newScore Student's lifetime score
      */
     public void setLifetimeScore(int newScore) {
         this.lifetimeScore = newScore;
     }
 
     /**
-     * Purpose: gets the Player's highest score unlocked
-     * @return the Player's maximum score in a single game
+     * Purpose: gets the slayer's highest score unlocked
+     * @return the slayer's maximum score in a single game
      */
     public int getHighScore() {
-        return highScore;
+        return this.highScore;
     }
 
     /**
-     * Purpose: sets the Player's new high score
+     * Purpose: sets the student's new high score
+     * @param newScore New high score
      */
     public void setHighScore(int newScore) {
         this.highScore = newScore;
     }
 
     /**
-     * Purpose: gets the Player's knowledge level
-     * @return knowledgeLevel of Player
+     * Purpose: gets the student's knowledge level
+     * @return Student's knowledge level
      */
     public int getKnowledgeLevel() {
         return knowledgeLevel;
     }
 
     /**
-     * Purpose: sets the Player's knowledgeLevel and updates the knowledge base.
+     * Purpose: sets the student's knowledge level and updates the knowledge base.
+     * @param newLevel New knowledge level
      */
     public void setKnowledgeLevel(int newLevel) {
         this.knowledgeLevel = newLevel;
         this.updateKnowledgeBase();
     }
 
-     /** @return the file path of the Player's Sprite
+     /**
+      * Returns the filepath of the player's sprite.
+      * @return File path of the player's Sprite
      */
     public String getSpritePath() { return spritePath; }
 
@@ -172,13 +180,14 @@ public class PlayerProfile {
     }
 
     /**
-     * @return LinkedList of all knowledge learned
+     * Returns a list of the student's knowledge base.
+     * @return List of the student's knowledge base.
      */
     public LinkedList<String> getLearned () {return this.learned;}
 
     /**
      * Returns the number of tips unlocked.
-     * @return Number of tips unlocked
+     * @return Number of tips unlocked.
      */
     public int getTipCount() {
         return this.knowledgeLevel*5;
