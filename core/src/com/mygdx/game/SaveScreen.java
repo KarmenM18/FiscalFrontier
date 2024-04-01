@@ -13,27 +13,39 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+/**
+ * Screen displayed when loading a saved game state.
+ * <br><br>
+ * Displays a list of saved game states, with buttons that allow users to load or delete the save.
+ *
+ * @author Franck Limtung (flimtung)
+ * @author Kevin Chen (kchen546)
+ */
 public class SaveScreen extends GameScreen {
-    private Observable<String> loadSaveEvent = new Observable<String>(); // Should bind to MainGame and load the save with the specified name
-    private Observable<Void> menuEvent = new Observable<Void>(); // Go back to the main menu
 
-    private ScrollPane scrollPane; // Used so we can have a scrollable list of saves
+    /** Event loads a selected saved game state. */
+    private Observable<String> loadSaveEvent = new Observable<String>(); // Should bind to MainGame and load the save with the specified name
+    /** Event returns to main menu. */
+    private Observable<Void> menuEvent = new Observable<Void>();
+
+    /** Contains all UI elements. */
     private Table table;
+    /** Allows screen to scroll. */
+    private ScrollPane scrollPane;
+    /** Button to return to main menu. */
     private Button menuButton;
 
     /**
-     * Constructor.
+     * Constructor initializes the screen's GUI.
      *
      * @param batch  SpriteBatch to initialize the Stage with
      * @param assets AssetManager to load assets with
@@ -77,6 +89,11 @@ public class SaveScreen extends GameScreen {
         });
     }
 
+
+    /**
+     * Attempts to find saves and displays an error message if no saved game states could be found. Called before
+     * displaying the screen.
+     */
     @Override
     public void show() {
         try {
@@ -88,10 +105,10 @@ public class SaveScreen extends GameScreen {
     }
 
     /**
-     * Used to get an unused ID number when creating new GameStates.
+     * Generate an unused ID number to use to create a new GameStates.
      *
-     * @param sSystem a SaveSystem to deserialize JSONs with
-     * @return unique integer ID
+     * @param sSystem Used to deserialize JSON files
+     * @return Unique integer ID
      */
     public int getUniqueID(SaveSystem sSystem) throws FileNotFoundException {
         File[] fileList = getFileList();
@@ -121,6 +138,7 @@ public class SaveScreen extends GameScreen {
 
     /**
      * Get the last save played.
+     *
      * @param stage Stage to show possible error dialogs on
      * @param skin Skin to draw possible error dialogs
      * @throws FileNotFoundException if the saves folder isn't found
@@ -157,8 +175,9 @@ public class SaveScreen extends GameScreen {
 
     /**
      * Remove all GameStates with a given ID. Used when the game ends.
-     * @param id the ID value to match
-     * @param sSystem the SaveSystem to use to get GameStates.
+     *
+     * @param id The ID of the game state
+     * @param sSystem The SaveSystem object used to get game states.
      */
     public void deleteByID(int id, SaveSystem sSystem) throws FileNotFoundException {
         File[] fileList = getFileList();
@@ -185,8 +204,11 @@ public class SaveScreen extends GameScreen {
         }
     }
 
+
     /**
      * Find new saves in the saves folder
+     *
+     * @throws FileNotFoundException If the save folder wasn't found. It will not be thrown if the folder is just empty.
      */
     private void findSaves() throws FileNotFoundException {
         // Remove old buttons and create new ones as needed
@@ -238,11 +260,12 @@ public class SaveScreen extends GameScreen {
         }
     }
 
+
     /**
-     * Get the list of saves in the save folder.
+     * Get the list of all saved game states in the save folder.
      *
      * @return an array of Files
-     * @throws FileNotFoundException if the save folder wasn't found. It will not throw if the folder is just empty
+     * @throws FileNotFoundException If the save folder wasn't found. It will not be thrown if the folder is just empty.
      */
     private File[] getFileList() throws FileNotFoundException {
         File saveFolder = new File("saves");
@@ -252,6 +275,17 @@ public class SaveScreen extends GameScreen {
         return fileList;
     }
 
+
+    /**
+     * Assigns an observer to listen for the event to load the selected game save state.
+     * @param ob Observer to listen for the event to load the selected game save state.
+     */
     public void addLoadSaveListener(Observer<String> ob) { loadSaveEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to return to main menu.
+     * @param ob Observer to listen for the event to return to main menu.
+     */
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
+
 }
