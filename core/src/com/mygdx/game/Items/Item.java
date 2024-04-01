@@ -53,6 +53,7 @@ public class Item {
      * @param skin skin to use to style the dialog box
      */
     public Item(String name, Skin skin) {
+
         this(name, false, skin);
     }
 

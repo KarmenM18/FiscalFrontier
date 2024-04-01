@@ -6,14 +6,17 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.mygdx.game.Items.*;
 import com.mygdx.game.Items.Bike;
 import com.mygdx.game.Items.FreezeItem;
 import com.mygdx.game.Items.MultiDice;
 import com.mygdx.game.Items.Shield;
 import com.mygdx.game.Node.*;
 import com.mygdx.game.Node.StarNode;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 
+import javax.print.attribute.standard.SheetCollate;
 import java.io.Serializable;
 import java.util.*;
 
@@ -35,8 +38,8 @@ public class GameState implements Serializable {
     private final int maxStar = 3;
     private final int minStar = 1;
     private int currentStar;
-    private final int maxPen = 5;
-    private final int minPen = 3;
+    private final int maxPen = 3;
+    private final int minPen = 1;
     private int currentPen;
     private boolean gameOver = false; // Set to true when roundNumber exceeds the round maximum. Should be checked by GameBoard
     private boolean hardMode = false; // Hard mode changes the game mechanics to be less forgiving.
@@ -81,6 +84,7 @@ public class GameState implements Serializable {
                 player.addItem(new FreezeItem(skin));
             }
         }
+        //Matrix representing the map, easier to visualize and configure
         int map[][] = { {1,1,2,1,1,3,1,1,0,0},
                         {5,0,0,0,0,0,0,1,0,0},
                         {1,0,1,1,1,5,1,1,1,2},
@@ -96,6 +100,7 @@ public class GameState implements Serializable {
         3 = penalty
         4 = event
         */
+        //Matrix representing node-node direction, easier to visualize and configure
         int direction[][]={ {3,4,4,4,4,4,4,4,0,0},
                             {3,0,0,0,0,0,0,1,0,0},
                             {3,0,2,2,3,4,4,14,4,4},
@@ -116,7 +121,6 @@ public class GameState implements Serializable {
         24 = E/W
         34 = S/W
         */
-        //TODO direction matrix to 3D, innermost store array of 3 directions
         nodeMap = new HashMap<String, Node>();
         for(int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
@@ -267,7 +271,15 @@ public class GameState implements Serializable {
                 p.levelUp();
             }
         }
-
+        //every 5 rounds give all player a random item
+        if(roundNumber > 0 && roundNumber % 5 == 0){
+            for (Player p : getPlayerList()){
+                p.addItem(randItem());
+            }
+        }
+        if(roundNumber > 0 && roundNumber % 7 == 0){
+            checkPenalty(nodeMap);
+        }
         //Updating safe-medium stocks / dividends
     }
     /**
@@ -426,12 +438,11 @@ public class GameState implements Serializable {
     }
 
 // TODO Penalty Nodes not removable?
-//
+// Fixed, shuffle every 7 rounds, called in nextRound
 //    /**
 //     * check number of penalty nodes on the board
 //     * @param nodeMap
 //     */
-    /*
     public void checkPenalty(HashMap<String, Node> nodeMap){
         currentPen = 0;
         for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
@@ -459,9 +470,29 @@ public class GameState implements Serializable {
             PenaltyNode newPen = new PenaltyNode(x, y, north, east, south, west, nodeMap, assetMan);
             nodeMap.remove(randKey);
             nodeMap.put(randKey, newPen);
+
+        } else if (currentPen > minPen) {
+            List<Node> penaltyNodeList = new ArrayList<Node>();
+            for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
+                Node node1 = node.getValue();
+                if (node1 instanceof PenaltyNode) {
+                    penaltyNodeList.add(node1);
+                    Utility.shuffle(penaltyNodeList);
+                }
+            }
+            Node randNode = penaltyNodeList.get(Utility.getRandom(0, penaltyNodeList.size() - 1));
+            String randKey = randNode.getID();
+            int x = randNode.getMapX();
+            int y = randNode.getMapY();
+            boolean north = randNode.getNorth();
+            boolean south = randNode.getSouth();
+            boolean west = randNode.getWest();
+            boolean east = randNode.getEast();
+            NormalNode newNorm = new NormalNode(x, y, north, east, south, west, nodeMap, assetMan);
+            nodeMap.remove(randKey);
+            nodeMap.put(randKey, newNorm);
         }
     }
-    */
 
     /**
      * @return all stocks available to purchase
@@ -626,7 +657,28 @@ public class GameState implements Serializable {
         //Amount player has + how much the stock pays per share * how many shares the player owns.
         player.setMoney(playMoney + (divPay*owned));
     }
-
+    private Item randItem(){
+        int rand = Utility.getRandom(1,4);
+        Item item;
+        Config config = Config.getInstance();
+        Skin skin = this.assetMan.get(config.getUiPath(), Skin.class);
+        switch (rand){
+            case 1:
+                item = new Bike(skin);
+            case 2:
+                item = new FreezeItem(skin);
+                break;
+            case 3:
+                item = new MultiDice(skin);
+                break;
+            case 4:
+                item = new Shield(skin);
+                break;
+            default:
+                item = new Book(skin);
+        }
+        return item;
+    }
 
     /**
      * @return debugMode

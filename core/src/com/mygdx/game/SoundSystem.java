@@ -53,6 +53,7 @@ public class SoundSystem {
      */
     public void playMusic() {
         music.setPosition(0);
+        music.setVolume(0.7f);
         music.play();
     }
 
@@ -73,7 +74,7 @@ public class SoundSystem {
             // Load the sound
             loadSound(name);
         }
-        soundsMap.get(name).play();
+        soundsMap.get(name).play(0.15f);
     }
 
     /**
