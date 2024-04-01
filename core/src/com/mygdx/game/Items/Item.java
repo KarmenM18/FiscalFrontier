@@ -32,12 +32,19 @@ public class Item {
      * @param passive whether the Item is passive or active
      * @param skin skin to use to style the dialog box
      */
+    /*
     public Item(String name, boolean passive, Skin skin, int price, String description) {
         this.name = name;
         this.passive = passive;
         loadTextures(skin);
         this.price = price;
         this.description = description;
+    }
+    */
+    public Item(String name, boolean passive, Skin skin) {
+        this.name = name;
+        this.passive = passive;
+        loadTextures(skin);
     }
 
     /**
@@ -46,7 +53,6 @@ public class Item {
      * @param skin skin to use to style the dialog box
      */
     public Item(String name, Skin skin) {
-
         this(name, false, skin);
     }
 
@@ -110,7 +116,8 @@ public class Item {
     public String displayItemInfo() {
         System.out.println(this.name + ": " + this.price);
         System.out.println(this.description);
-        System.out.println
+        //System.out.println
+        return null;
     }
 
     /**

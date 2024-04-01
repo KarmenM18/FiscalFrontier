@@ -278,8 +278,8 @@ public class GameState implements Serializable {
         // Wipe Player's calculated turn values
         getCurrentPlayer().endTurn(nodeMap);
         removeStar(nodeMap);
+        // checkPenalty(nodeMap);
         checkStar(nodeMap);
-        checkPenalty(nodeMap);
         currPlayerTurn = (currPlayerTurn + 1) % playerList.size();
         if (getCurrentPlayer().isFrozen()) {
             getCurrentPlayer().setFrozen(false);
@@ -327,6 +327,11 @@ public class GameState implements Serializable {
     public int getRound() { return roundNumber; }
 
     /**
+     * @return the current turnNumber
+     */
+    public int getTurn() { return turnNumber; }
+
+    /**
      * global penalty event for event node, reduce all player's money
      * @param penaltyAmount
      */
@@ -345,7 +350,7 @@ public class GameState implements Serializable {
                 if(p.getMoney() > 0){
                     p.setMoney(p.getMoney() - penaltyAmount);
                 }else{
-                    p.setMoney(0);
+                    // Do nothing
                 }
             }
         }
@@ -356,7 +361,7 @@ public class GameState implements Serializable {
      * per turn limit is rand based on minStar and maxStar
      * @param nodeMap
      */
-    public void checkStar(HashMap<String, Node> nodeMap){
+    public void checkStar(Map<String, Node> nodeMap){
         //should only run when map has
         //not getting the right current node
         currentStar = 0;
@@ -365,7 +370,7 @@ public class GameState implements Serializable {
                 currentStar++;
             }
         }
-        //System.out.println(currentStar); // for testing
+
         int starLimit = Utility.getRandom(minStar, maxStar); //setting random number of max star every turn
         if(currentStar < starLimit){ //only add new star if currentStar is less than maxStar
             List<Node> normalNodeList = new ArrayList<Node>();
@@ -396,7 +401,7 @@ public class GameState implements Serializable {
      * make taken star node back to normal node
      * @param nodeMap the map of nodes on the board
      */
-    public void removeStar(HashMap<String, Node> nodeMap){
+    public void removeStar(Map<String, Node> nodeMap){
         Node currentNode = nodeMap.get(getCurrentPlayer().getCurrentTile());
         if(currentNode instanceof StarNode){
             if(!((StarNode) currentNode).hasStar){
@@ -414,16 +419,19 @@ public class GameState implements Serializable {
         }
     }
 
-    public void createGlobalPenaltyNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
+    private void createGlobalPenaltyNode(int x, int y, boolean north, boolean east, boolean south, boolean west) {
         GlobalPenaltyNode globalPenaltyNode = new GlobalPenaltyNode(x, y, north, east, south, west, nodeMap, assetMan);
         globalPenaltyNode.addEventListener(penaltyValue -> globalPenaltyEvent(penaltyValue));
         nodeMap.put(x + "," + y, globalPenaltyNode);
     }
 
-    /**
-     * check number of penalty nodes on the board
-     * @param nodeMap
-     */
+// TODO Penalty Nodes not removable?
+//
+//    /**
+//     * check number of penalty nodes on the board
+//     * @param nodeMap
+//     */
+    /*
     public void checkPenalty(HashMap<String, Node> nodeMap){
         currentPen = 0;
         for (HashMap.Entry<String, Node> node : nodeMap.entrySet()) {
@@ -453,6 +461,8 @@ public class GameState implements Serializable {
             nodeMap.put(randKey, newPen);
         }
     }
+    */
+
     /**
      * @return all stocks available to purchase
      */

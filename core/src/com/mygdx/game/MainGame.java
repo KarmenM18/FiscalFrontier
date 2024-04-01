@@ -109,7 +109,6 @@ public class MainGame extends Game {
 		});
 		gameBoard.addAgilityTestListener(v -> {
 			SoundSystem.getInstance().stopMusic();
-			SoundSystem.getInstance().playAgilityMusic();
 			agilityTestScreen.setHardMode(gameBoard.getGameState().getHardMode());
 			setScreen(agilityTestScreen);
 		});
@@ -279,7 +278,6 @@ public class MainGame extends Game {
 			Player player = gameBoard.getGameState().getCurrentPlayer();
 			player.setMoney(player.getMoney() + earnings);
 			gameBoard.turnChange();
-			SoundSystem.getInstance().stopAgilityMusic();
 			SoundSystem.getInstance().playMusic();
 			setScreen(gameBoard);
 		});
@@ -330,7 +328,7 @@ public class MainGame extends Game {
 	 *
 	 * @param gs the GameState to save
 	 */
-	public void saveGameState(GameState gs, String saveName) {
+	private void saveGameState(GameState gs, String saveName) {
 
 		// Save game state
 		saveSystem.saveGameState(gs, saveName);
@@ -351,7 +349,7 @@ public class MainGame extends Game {
 	 *
 	 * @param path the path where the serialized JSON is located
 	 */
-	public GameState loadGameState(String path) {
+	private GameState loadGameState(String path) {
 		return saveSystem.readGameState(path, assets);
 	}
 
