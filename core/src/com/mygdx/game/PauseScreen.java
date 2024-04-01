@@ -127,6 +127,7 @@ public class PauseScreen extends GameScreen {
         saveGameDialog.text("Enter save name:");
         saveGameDialog.getContentTable().row();
         saveGameDialog.getContentTable().add(saveNameInput).fill();
+        saveGameDialog.button("Cancel", false);
         saveGameDialog.button("Continue", true);
 
 

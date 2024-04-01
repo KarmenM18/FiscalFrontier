@@ -298,8 +298,9 @@ public class GameState implements Serializable {
             items.add(randItem());
             items.add(randItem());
             items.add(randItem());
-            items.add(randItem());
-            items.add(randItem());
+            // Less items
+            //items.add(randItem());
+            //items.add(randItem());
         }
         if(roundNumber > 0 && roundNumber % 7 == 0){
             checkPenalty(nodeMap);

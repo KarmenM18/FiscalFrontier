@@ -68,7 +68,11 @@ public class GameBoard extends GameScreen {
      * @see AgilityTestScreen
      */
     public Observable<Void> agilityTestEvent = new Observable<>();
-
+    /**
+     * Event saves the current game state.
+     * @see MainGame
+     */
+    private Observable<String> saveGameEvent = new Observable<>();
 
     /* Input processing */
 
@@ -190,6 +194,25 @@ public class GameBoard extends GameScreen {
                }
                else if (keycode == Input.Keys.SPACE) {
                    rollButton.fire(new ChangeListener.ChangeEvent());
+               }
+               else if (ctrl && keycode == Input.Keys.S) {
+                   // Display save dialog
+                   TextField saveNameInput = new TextField("NewGame", skin);
+                   Dialog saveGameDialog = new Dialog("Save Menu", skin) {
+                       @Override
+                       protected void result(Object object) {
+                           if ((Boolean) object) {
+                               String filename = saveNameInput.getText();
+                               saveGameEvent.notifyObservers(filename);
+                           }
+                       }
+                   };
+                   saveGameDialog.text("Enter save name:");
+                   saveGameDialog.getContentTable().row();
+                   saveGameDialog.getContentTable().add(saveNameInput).fill();
+                   saveGameDialog.button("Cancel", false);
+                   saveGameDialog.button("Continue", true);
+                   saveGameDialog.show(hudStage);
                }
                else if (ctrl && keycode == Input.Keys.NUMPAD_ADD) { cameraZoomIn = true; }
                else if (ctrl && keycode == Input.Keys.NUMPAD_SUBTRACT) { cameraZoomOut = true; }
@@ -855,4 +878,7 @@ public class GameBoard extends GameScreen {
     public void addAgilityTestListener(Observer<Void> ob) { agilityTestEvent.addObserver(ob); }
 
 
+    public void addSaveGameListener(Observer<String> ob) {
+        saveGameEvent.addObserver(ob);
+    }
 }
