@@ -113,6 +113,7 @@ public class MainGame extends Game {
 			agilityTestScreen.setHardMode(gameBoard.getGameState().getHardMode());
 			setScreen(agilityTestScreen);
 		});
+		gameBoard.addSaveGameListener(saveName -> saveGameState(gameBoard.getGameState(), saveName));
 
 		//For back to screen buttons
 		knowledgeListScreen.addBackToPause(v -> setScreen(pauseScreen));
