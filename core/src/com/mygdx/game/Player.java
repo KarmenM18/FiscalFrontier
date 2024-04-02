@@ -504,8 +504,6 @@ public class Player implements Serializable {
      * Calculates and sets the player's score. <br><br>
      * The player's score is calculated from their stars and money using the formula:
      * Score = 1000 * stars + money + investments
-     *
-     * @return Player's score
      */
     public void calculateScore() {
         this.score = 1000 * this.stars + this.money + this.investments;
