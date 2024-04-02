@@ -75,4 +75,7 @@ equips you with the knowledge and skills to make smart financial decisions. :)
 # How to run:
 - After downloading the self extracting archive, extract the primary game folder to anywhere you choose.
 - Ensure the `external` and `saves` directory have been extracted properly.
-- Then, run the executable or jar file.
+- Then click on "Edit Configurations" on the top right in Intellij. 
+- Add a new Gradle configuration from the + in the top left. 
+- under the Run field type "run" and click okay. 
+- Click on the green Play Icon in the top right corner to run the game. 
