@@ -70,3 +70,9 @@ correct answers and speed bonuses for quick responses.
 Navigating the Fiscal Frontier aims to provide an engaging and educational experience for players to improve their 
 financial literacy  skills, aiming to bridge the gap in personal finance education for players. We hope that our game 
 equips you with the knowledge and skills to make smart financial decisions. :)
+
+
+# How to run:
+- After downloading the self extracting archive, extract the primary game folder to anywhere you choose.
+- Ensure the `external` and `saves` directory have been extracted properly.
+- Then, run the executable or jar file.
