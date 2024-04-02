@@ -1,9 +1,8 @@
 # CS 2212 Final Software Project: Navigating the Fiscal Frontier
-Welcome to Fiscal Frontier, a financial education game developed by Group 73 as our final project for CS 2212.
-
 *Authors:* Earl Castillo (ecastil3), Karmen Minhas (kminhas7), Joelene Hales (jhales5), Franck Limtung (flimtung), 
 Kevin Chen (kchen546)
 
+Welcome to Fiscal Frontier, a financial education game developed by Group 73 as our final project for CS 2212.
 
 ### Overview 🌍
 The Fiscal Frontier is designed to take players on a journey to explore and enhance their personal finance skills, practice 
