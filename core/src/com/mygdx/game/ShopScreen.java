@@ -142,7 +142,6 @@ public class ShopScreen extends GameScreen {
      * to the user.
      */
     private void showAvailableInvestments() {
-        System.out.println("Entered Investments");
         investments = new Table();
         Label blank = new Label(" ", skin);
 

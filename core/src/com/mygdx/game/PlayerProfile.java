@@ -190,7 +190,7 @@ public class PlayerProfile {
      * @return Number of tips unlocked.
      */
     public int getTipCount() {
-        return this.knowledgeLevel*5;
+        return this.learned.size();
     }
 
 }
