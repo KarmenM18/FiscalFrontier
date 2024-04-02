@@ -12,42 +12,71 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
 /**
- * This screen implements the Agility Test, a test of elementary math skills. Activated by the Agility Test Node.
+ * This screen implements the Agility Test minigame, a test of elementary math skills.
+ * <br><br>
+ * Activated by the Agility Test Node. The player will be given math questions to solve in a set amount of time. Players
+ * earn money in the game based on their performance in the minigame, with each question answered correctly rewarding $20.
+ *
+ * @author Franck Limtung (flimtung)
  */
 public class AgilityTestScreen extends GameScreen {
-    // Event returns to board and reports the player's earnings
-    private Observable<Integer> boardEvent = new Observable<>();
-    private Table table;
-    private Table promptTable;
-    private Table inputTable;
 
+    /** Event returns to board and reports the player's earnings. */
+    private Observable<Integer> boardEvent = new Observable<>();
+
+    /** Amount player earned from the minigame. */
     private int earnings = 0;
-    private double difficulty = 0.5f; // Scalable difficulty.
-    private int first; // First part of the expression
-    private int second; // Second part of the expression
-    private Character operationType; // Type of operation applied
-    private int answer; // Result of operation
-    private int level = 1; // Player gets 12 questions. Each question is worth $20
-    private long endTime; // Time when the question is automatically failed
+    /** Scalable question difficulty. */
+    private double difficulty = 0.5f;
+    /** First part of the expression. */
+    private int first;
+    /** Second part of the expression. */
+    private int second;
+    /** Type of operation applied. */
+    private Character operationType;
+    /** Result of operation. */
+    private int answer;
+    /**
+     * Minigame level (question number). <br><br>
+     * Player gets 12 questions. Each question is worth $20.
+     */
+    private int level = 1;
+    /** Time when the question is automatically failed. */
+    private long endTime;
+    /** Toggle hard mode. */
     private boolean hardMode = false;
 
+    /* UI elements */
+    /** Contains all UI elements. */
+    private Table table;
+    /** Contains the UI elements that display the question. */
+    private Table promptTable;
+    /** Contains the UI elements that receive answer input. */
+    private Table inputTable;
+    /** Screen title. */
     private Label title;
+    /** Displays the player's earnings from the minigame. */
     private Label earningLabel;
+    /** Displays the time remaining.*/
     private Label timerLabel;
+    /** Displays the question to answer. */
     private Label questionLabel;
+    /** Displays the expression to be solved. */
     private Label exprLabel;
+    /** Displays the correct answer. */
     private Label answerLabel;
+    /** Input field for player to enter their answer. */
     private TextField inputField;
+    /** Button confirms the player's answer. */
     private TextButton submitButton;
 
     /**
-     * Constructor initializes the screen.
+     * Constructor initializes the minigame screen.
      *
      * @param batch  SpriteBatch to initialize the Stage with
      * @param assets AssetManager to load assets with
@@ -306,7 +335,7 @@ public class AgilityTestScreen extends GameScreen {
     /**
      * Enable hard mode
      *
-     * @param hardMode true or false
+     * @param hardMode True to enable hard mode.
      */
     public void setHardMode(boolean hardMode) {
         this.hardMode = hardMode;
@@ -314,7 +343,7 @@ public class AgilityTestScreen extends GameScreen {
 
     /**
      * Assigns an observer to listen for the event to return to main menu.
-     * @param ob Observer
+     * @param ob Observer to listen for the event to return to main menu.
      */
     public void addBoardListener(Observer<Integer> ob) { boardEvent.addObserver(ob); }
 }

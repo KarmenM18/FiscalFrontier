@@ -3,15 +3,18 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-
 import java.util.HashMap;
 
 /**
- * Class to play game sounds
- * Singleton Pattern
+ * Responsible for playing sounds in the game. Implements the singleton pattern.
+ *
+ * @author Franck Limtung (flimtung)
  */
 public class SoundSystem {
+
+    /** All game sounds. */
     private HashMap<String, Sound> soundsMap = new HashMap<>();
+    /** Game's background music. */
     private Music music;
 
     /**
@@ -26,7 +29,7 @@ public class SoundSystem {
      */
     private SoundSystem() {
         // Load music
-        music = Gdx.audio.newMusic(Gdx.files.internal(Config.getInstance().getSoundsFolder() + "mozart.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal(Config.getInstance().getSoundsFolder() + "music2.mp3"));
         music.setLooping(true);
     }
 
@@ -53,7 +56,7 @@ public class SoundSystem {
      */
     public void playMusic() {
         music.setPosition(0);
-        music.setVolume(0.7f);
+        music.setVolume(0.5f);
         music.play();
     }
 
@@ -70,11 +73,20 @@ public class SoundSystem {
      * @param name name of the sound file
      */
     public void playSound(String name) {
+        playSound(name,1.0f);
+    }
+
+    /**
+     * more refined playSound with volume
+     * @param name
+     * @param vol
+     */
+    public void playSound(String name, float vol) {
         if (soundsMap.get(name) == null) {
             // Load the sound
             loadSound(name);
         }
-        soundsMap.get(name).play();
+        soundsMap.get(name).play(vol);
     }
 
     /**
@@ -86,4 +98,5 @@ public class SoundSystem {
             sound.dispose();
         }
     }
+
 }

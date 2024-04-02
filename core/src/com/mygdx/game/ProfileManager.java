@@ -344,14 +344,14 @@ public class ProfileManager implements Serializable {
      * @param newScore Individual game score to add to lifetime score.
      * @throws IllegalArgumentException If a student with the entered name does not exist.
      */
-    public void addLifetimeScore(String name, int newScore) throws IllegalArgumentException {
+    public void updateLifetimeScore(String name, int newScore) throws IllegalArgumentException {
 
         if (!this.exists(name)) {  // Check that the student exists
             throw new IllegalArgumentException("Student with the entered name does not exist.");
         }
 
         PlayerProfile profile = getProfile(name);  // Retrieve the profile of the student with the given name
-        profile.setLifetimeScore(profile.getLifetimeScore() + newScore);  // Update student's lifetime score
+        profile.setLifetimeScore(newScore);        // Update student's lifetime score
 
         this.saveProfiles(this.studentInformation, this.studentInformationFilename);  // Write changes to file
         this.updateHighScoreFiles();  // Update high score tables

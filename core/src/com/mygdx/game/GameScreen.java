@@ -3,23 +3,30 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+
+/**
+ * Parent class contains attributes and methods common to all gameplay screens.
+ *
+ * @author Franck Limtung (flimtung)
+ */
 public class GameScreen extends ScreenAdapter {
+
+    /** Used to load assets. */
     protected AssetManager assets;
+    /** Skin used to create and render objects. */
     protected Skin skin;
+    /** Processes input and handles events by calling the correct actor. */
     protected Stage stage;
 
+
     /**
-     * Constructor.
+     * Constructor initializes the game screen.
      *
      * @param batch SpriteBatch to initialize the Stage with
      * @param assets AssetManager to load assets with
@@ -55,11 +62,9 @@ public class GameScreen extends ScreenAdapter {
     }
 
     /**
-     * Called when the screen is resized
-     *
-     *
-     * @param width
-     * @param height
+     * Resizes the screen.
+     * @param width New screen width.
+     * @param height New screen height.
      */
     @Override
     public void resize(int width, int height) {
@@ -74,4 +79,5 @@ public class GameScreen extends ScreenAdapter {
     public void dispose() {
         stage.dispose();
     }
+
 }

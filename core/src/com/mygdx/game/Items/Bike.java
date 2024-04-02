@@ -20,6 +20,8 @@ public class Bike extends Item {
      */
     public Bike(Skin skin) {
         super("Bike", false, skin);
+        this.price = 200;
+        this.description = "Used to go anywhere on the board.";
     }
 
     /**

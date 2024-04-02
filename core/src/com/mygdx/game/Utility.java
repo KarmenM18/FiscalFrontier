@@ -5,11 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.io.File;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -17,11 +12,14 @@ import static java.lang.Math.abs;
 
 /**
  * Various utility functions used throughout the program
+ *
+ * @author Franck Limtung (flimtung)
  */
 public final class Utility {
-    private static final Random random = new Random();
 
-    // Private constructor to prevent subclassing
+    /**
+     * Private constructor to prevent subclassing
+     */
     private Utility() {}
 
     /**
@@ -31,7 +29,12 @@ public final class Utility {
      * @param max the maximum value of the range
      */
     public static int getRandom(int min, int max) throws IllegalArgumentException {
-        if (min > max) throw new IllegalArgumentException();
+
+        if (min > max) {
+            throw new IllegalArgumentException();
+        }
+
+        Random random = new Random();  // Create new randomizer
 
         return min + random.nextInt((max - min) + 1);
     }

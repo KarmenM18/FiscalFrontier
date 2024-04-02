@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
@@ -20,29 +19,47 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This screen handles difficulty and Player selection.
+ * Screen displayed at the beginning of a new game. Includes difficulty and player selection.
+ *
+ * @author Franck Limtung (flimtung)
+ * @author Kevin Chen (kchen546)
  */
 public class NewGameScreen extends GameScreen {
-    // Event returns to main menu
+
+    /** Event returns to main menu. */
     private Observable<Void> menuEvent = new Observable<>();
+    /** Event creates a new game state with the selected player list and switches to the game board. */
     private Observable<Map.Entry<ArrayList<PlayerProfile>, Boolean>> createGameEvent = new Observable<>();
+    /**  Responsible for storing and managing student profiles. */
     private ProfileManager profileManager;
+    /** Stores all UI elements. */
     private Table table;
+    /** Left column of UI elements. */
     private Table leftTable;
+    /** Right column of UI elements */
     private Table rightTable;
-
+    /** Selected players' student profiles. */
     HashMap<String, PlayerProfile> profilesMap;
+    /** List of selected players' names. */
     private Array<String> selectedPlayerNames;
-    private List<String> selectedPlayersBox; // A LibGDX List widget to show selected Players
-    private TextButton deleteSelectedButton; // Delete the currently selected Player (if any) from the box
-
+    /** LibGDX list widget displays selected players. */
+    private List<String> selectedPlayersBox;
+    /** Button to remove the currently selected player from the player list. */
+    private TextButton deleteSelectedButton;
+    /** Label above player selection box. */
     private Label selectPlayerLabel;
+    /** List of names of all players that may be selected. Does not include the currently selected players. */
     private Array<String> selectablePlayerNames;
-    private SelectBox<String> playerSelector; // SelectBox widget to select Players
+    /** LibGDX widget to select players. */
+    private SelectBox<String> playerSelector;
+    /** Button to begin the game. */
     private TextButton startButton;
-
+    /** Button to return to main menu. */
     private TextButton returnButton;
+    /** Checkbox to select hard mode. */
     private CheckBox hardModeCheckBox;
+
+
     /**
      * Constructor initializes the screen.
      *
@@ -153,7 +170,6 @@ public class NewGameScreen extends GameScreen {
         hardModeCheckBox = new CheckBox("Hard mode", skin);
 
         returnButton = new TextButton("Return to Main Menu", skin);
-
         returnButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -181,8 +197,13 @@ public class NewGameScreen extends GameScreen {
         rightTable.add(returnButton).padTop(100);
 
         stage.addActor(table);
+
     }
 
+
+    /**
+     * Displays the screen.
+     */
     @Override
     public void show() {
         // Add list of player profiles to the selector
@@ -205,11 +226,17 @@ public class NewGameScreen extends GameScreen {
         Gdx.input.setInputProcessor(stage);
     }
 
+
     /**
      * Assigns an observer to listen for the event to return to main menu.
-     * @param ob Observer
+     * @param ob Observer to listen for the event to return to main menu.
      */
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
 
+    /**
+     * Assigns an observer to listen for the event to create a new game state and switch to gameboard.
+     * @param ob Observer to listen for the event to create a new game state and switch to gameboard.
+     */
     public void addCreateGameStateListener(Observer<Map.Entry<ArrayList<PlayerProfile>, Boolean>> ob) { createGameEvent.addObserver(ob); }
+
 }

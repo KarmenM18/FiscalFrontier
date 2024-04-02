@@ -46,7 +46,7 @@ import java.util.Arrays;
  * @see ProfileManager
  * @see InstructorDashboardScreen
  *
- * @author Joelene Hales
+ * @author Joelene Hales (jhales5)
  */
 public class ManageStudentsScreen extends GameScreen {
 
@@ -586,25 +586,25 @@ public class ManageStudentsScreen extends GameScreen {
 
     /**
      * Assigns an observer to listen for the event to return to the instructor dashboard.
-     * @param ob Observer.
+     * @param ob Observer to listen for the event to return to the instructor dashboard.
      */
     public void addBackListener(Observer<Void> ob) { this.instructorDashboardEvent.addObserver(ob); }
 
     /**
      * Assigns an observer to listen for the event to add a new student.
-     * @param ob Observer.
+     * @param ob Observer to listen for the event to add a new student.
      */
     public void addAddStudentListener(Observer<String> ob) { this.addStudentEvent.addObserver(ob); }
 
     /**
      * Assigns an observer to listen for the event to edit an existing student.
-     * @param ob Observer.
+     * @param ob Observer to listen for the event to edit an existing student.
      */
     public void addEditStudentListener(Observer<String> ob) { this.editStudentEvent.addObserver(ob); }
 
     /**
      * Assigns an observer to listen for the event to remove a student.
-     * @param ob Observer.
+     * @param ob Observer to listen for the event to remove a student.
      */
     public void addRemoveStudentListener(Observer<String> ob) { this.removeStudentEvent.addObserver(ob); }
 

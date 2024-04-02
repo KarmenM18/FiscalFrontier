@@ -420,41 +420,37 @@ class ProfileManagerTest {
     @Test
     void addLifetimeScoreFakeStudent() {
         // Attempt to update the lifetime score of a student that does not exist
-        assertThrows(IllegalArgumentException.class, () ->{profileManager.addLifetimeScore("FakeStudent", 100);});
+        assertThrows(IllegalArgumentException.class, () ->{profileManager.updateLifetimeScore("FakeStudent", 100);});
     }
 
     @Test
-    void addLifetimeScoreListUpdates() {
+    void updateLifetimeScoreListUpdates() {
 
         // Add to the student's overall lifetime score
-        int initialValue = 60;  // Lifetime score before updates
-        int toAdd = 7;          // Amount to add
+        int newScore = 750;  // New lifetime score
+        profileManager.updateLifetimeScore("Student3", newScore);
 
-        profileManager.addLifetimeScore("Student3", toAdd);
-
-        // Check that all lists were updated
-        assertEquals(initialValue + toAdd, profileManager.getStudentProfiles().get(2).getLifetimeScore());
-        assertEquals(initialValue + toAdd, profileManager.getHighScoreList().get(4).getLifetimeScore());
-        assertEquals(initialValue + toAdd, profileManager.getLifetimeHighScoreList().get(3).getLifetimeScore());
+        // Check that all lists were updated. Student should move to the top of the lifetime score high score list.
+        assertEquals(newScore, profileManager.getStudentProfiles().get(2).getLifetimeScore());
+        assertEquals(newScore, profileManager.getHighScoreList().get(4).getLifetimeScore());
+        assertEquals(newScore, profileManager.getLifetimeHighScoreList().get(0).getLifetimeScore());
 
     }
 
     @Test
-    void addLifetimeScoreFileUpdates() {
+    void updateLifetimeScoreFileUpdates() {
 
         // Add to the student's overall lifetime score
-        int initialValue = 60;  // Lifetime score before updates
-        int toAdd = 7;          // Amount to add
-
-        profileManager.addLifetimeScore("Student3", toAdd);
+        int newScore = 750;  // New lifetime score
+        profileManager.updateLifetimeScore("Student3", newScore);
 
         // Load the database with another instance to confirm changes were written to file
         ProfileManager secondManager = new ProfileManager(studentFile, highScoreFile, lifetimeScoreFile);
 
         // Confirm each database file was written
-        assertEquals(initialValue + toAdd, secondManager.getStudentProfiles().get(2).getLifetimeScore());         // Changed in student profiles database
-        assertEquals(initialValue + toAdd, secondManager.getHighScoreList().get(4).getLifetimeScore());           // Changed in high score database
-        assertEquals(initialValue + toAdd, secondManager.getLifetimeHighScoreList().get(3).getLifetimeScore());   // Changed in lifetime high score database
+        assertEquals(newScore, secondManager.getStudentProfiles().get(2).getLifetimeScore());         // Changed in student profiles database
+        assertEquals(newScore, secondManager.getHighScoreList().get(4).getLifetimeScore());           // Changed in high score database
+        assertEquals(newScore, secondManager.getLifetimeHighScoreList().get(0).getLifetimeScore());   // Changed in lifetime high score database
 
 
     }

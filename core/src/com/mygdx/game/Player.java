@@ -25,9 +25,9 @@ import static java.lang.Math.abs;
  * such as their name, level, and high score, is stored in their persistent student profile.
  * @see PlayerProfile
  *
- * @author Joelene Hales
- * @author Franck Limtung
- * @author Earl Castillo
+ * @author Joelene Hales (jhales5)
+ * @author Franck Limtung (flimtung)
+ * @author Earl Castillo (ecastil3)
  */
 public class Player implements Serializable {
 

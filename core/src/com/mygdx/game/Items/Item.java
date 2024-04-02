@@ -32,7 +32,6 @@ public class Item {
      * @param passive whether the Item is passive or active
      * @param skin skin to use to style the dialog box
      */
-    /*
     public Item(String name, boolean passive, Skin skin, int price, String description) {
         this.name = name;
         this.passive = passive;
@@ -40,7 +39,8 @@ public class Item {
         this.price = price;
         this.description = description;
     }
-    */
+
+
     public Item(String name, boolean passive, Skin skin) {
         this.name = name;
         this.passive = passive;
@@ -128,7 +128,7 @@ public class Item {
      * @return True if the item was added to cart, false otherwise
      */
     public boolean addToCart(Player player, GameState state, Stage stage) {
-        if use(player, state, stage) = true { // item should be removed, meaning that it's already been added to cart
+        if (use(player, state, stage)) { // item should be removed, meaning that it's already been added to cart
             return true;
         }
         else {

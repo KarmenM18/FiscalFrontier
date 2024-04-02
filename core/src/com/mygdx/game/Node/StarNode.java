@@ -129,7 +129,7 @@ public class StarNode extends Node {
             checkStar();
 
             // Feedback
-            SoundSystem.getInstance().playSound("gainedStar.mp3");
+            SoundSystem.getInstance().playSound("gainedStar.mp3", 0.35f);
             ActionTextSystem.addText("+1 Star", player.getSprite().getX(), player.getSprite().getY() + 50, 0.5f);
     }
     /**

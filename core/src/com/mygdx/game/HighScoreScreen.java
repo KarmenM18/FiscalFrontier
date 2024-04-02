@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * top 5 student scores achieved in their respective category. Each entry includes the student's name, the score achieved,
  * and their ranking among other players in the category.
  *
- * @author Joelene Hales
+ * @author Joelene Hales (jhales5)
  */
 public class HighScoreScreen extends GameScreen {
 
@@ -167,7 +167,7 @@ public class HighScoreScreen extends GameScreen {
 
     /**
      * Assigns an observer to listen for the event to return to main menu.
-     * @param ob Observer
+     * @param ob Observer to listen for the event to return to main menu.
      */
     public void addMenuListener(Observer<Void> ob) { menuEvent.addObserver(ob); }
 

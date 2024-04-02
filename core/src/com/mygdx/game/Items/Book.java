@@ -6,8 +6,6 @@ import com.mygdx.game.GameState;
 import com.mygdx.game.Player;
 
 public class Book extends Item{
-    protected int price = 10;
-    protected String description = "Power Up: provides the necessary knowledge to boost player up by 1 level.";
 
     /**
      * Constructor - sets the price of a Book and sets the associated Item description for the user to view.
@@ -15,7 +13,10 @@ public class Book extends Item{
      * @param skin used to style the associated dialog box
      */
     public Book(Skin skin) {
-        super("Book", false, skin, price, description);
+        super("Book", false, skin);
+        this.price = 50;
+        this.description = "Power Up: provides the necessary knowledge to boost player up by 1 level.";
+
     }
 
     /**

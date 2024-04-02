@@ -3,9 +3,6 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -14,44 +11,68 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ray3k.stripe.FreeTypeSkinLoader;
-
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 /**
  * The main class of the game. Handles interaction with the saving system and the switching of screens.
+ *
+ * @author Franck Limtung (flimtung)
+ * @author Joelene Hales (jhales5)
+ * @author Earl Castillo (ecastil3)
+ * @author Kevin Chen (kchen546)
  */
 public class MainGame extends Game {
-	SpriteBatch batch;
 
-	//All Screens needed for the game
+	/** Used to load sprites. */
+	private SpriteBatch batch;
+	/** Used to load assets. */
+	private AssetManager assets = new AssetManager();
+	/** Handles functions relating to saving and loading game states. */
+	private SaveSystem saveSystem = new SaveSystem();
+	/** Responsible for managing student profiles and high scores. */
+	private ProfileManager profileManager;
+	/** Used to enable debug mode*/
+	private boolean debugMode = false;
+
+	/* Screens*/
+
+	/** Game board screen. */
 	private GameBoard gameBoard;
+	/** Game pause screen. */
 	private PauseScreen pauseScreen;
+	/** Game shop screen. */
 	private ShopScreen shopScreen;
+	/** Main menu screen. */
 	private MainMenuScreen mainMenuScreen;
+	/** Screen displaying a student's knowledge base. */
 	private KnowledgeListScreen knowledgeListScreen;
+	/** Game save screen. */
 	private SaveScreen saveScreen;
-	private InstructorDashboardScreen instructorDashboardScreen;
-	private ManageStudentsScreen manageStudentsScreen;
+	/** Game ending screen. */
 	private EndScreen endScreen;
+	/** Instructor dashboard screen. */
+	private InstructorDashboardScreen instructorDashboardScreen;
+	/** Manage students mode of instructor dashboard. */
+	private ManageStudentsScreen manageStudentsScreen;
+	/** High score screen. */
 	private HighScoreScreen highScoreScreen;
+	/** Screen displayed when creating a new game. */
 	private NewGameScreen newGameScreen;
+	/** Tutorial screen. */
 	private TutorialScreen tutorialScreen;
+	/** Agility test minigame screen. */
 	private AgilityTestScreen agilityTestScreen;
 
-	private AssetManager assets = new AssetManager();
-	private SaveSystem saveSystem = new SaveSystem();
 
-	private ProfileManager profileManager;
-
-	private boolean debugMode = false; // Indicates that we are in debug mode.
-	
+	/**
+	 * Initializes the application's screens.
+	 */
 	@Override
 	public void create() {
-		batch = new SpriteBatch();
+
 		// Load assets
+		batch = new SpriteBatch();
 		Config config = Config.getInstance();
 
 		// Set renderClear color
@@ -96,9 +117,10 @@ public class MainGame extends Game {
 		//Set starting screen
 		setScreen(mainMenuScreen);
 		// Set GameBoard observers
-		gameBoard.addShopListener(v -> {
+		gameBoard.addShopListener(items -> {
 			shopScreen.setCurrentPlayer(gameBoard.getGameState().getCurrentPlayer());
 			shopScreen.setStocksAvailable(gameBoard.getGameState().getAllStocks());
+			shopScreen.setItems(items);
 			shopScreen.updateScreen();
 			setScreen(shopScreen);
 		});
@@ -112,6 +134,7 @@ public class MainGame extends Game {
 			agilityTestScreen.setHardMode(gameBoard.getGameState().getHardMode());
 			setScreen(agilityTestScreen);
 		});
+		gameBoard.addSaveGameListener(saveName -> saveGameState(gameBoard.getGameState(), saveName));
 
 		//For back to screen buttons
 		knowledgeListScreen.addBackToPause(v -> setScreen(pauseScreen));
@@ -148,7 +171,7 @@ public class MainGame extends Game {
 			// Modify the PlayerProfile based on what happened in the game
 			this.profileManager.changeKnowledgeLevel(profile.getName(), profile.getKnowledgeLevel());
 			this.profileManager.updateHighScore(profile.getName(), profile.getHighScore());
-			this.profileManager.addLifetimeScore(profile.getName(), profile.getLifetimeScore());
+			this.profileManager.updateLifetimeScore(profile.getName(), profile.getLifetimeScore());
 
 			// Reload all screens involving scores and levels to reflect changes
 			this.reloadScoreScreens();
@@ -283,6 +306,9 @@ public class MainGame extends Game {
 		});
 	}
 
+	/**
+	 * Renders the screens.
+	 */
 	@Override
 	public void render() {
 		super.render(); // Render current screen
@@ -301,7 +327,10 @@ public class MainGame extends Game {
 			debugBatch.end();
 		}
 	}
-	
+
+	/**
+	 * Disposes of resources.
+	 */
 	@Override
 	public void dispose() {
 		mainMenuScreen.dispose();
@@ -325,7 +354,6 @@ public class MainGame extends Game {
 
 	/**
 	 * Save a GameState to file and update the student database and high score tables.
-	 *
 	 * @param gs the GameState to save
 	 */
 	private void saveGameState(GameState gs, String saveName) {
@@ -346,7 +374,6 @@ public class MainGame extends Game {
 
 	/**
 	 * Load a GameState from file
-	 *
 	 * @param path the path where the serialized JSON is located
 	 */
 	private GameState loadGameState(String path) {

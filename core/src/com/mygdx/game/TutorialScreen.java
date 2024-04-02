@@ -12,13 +12,15 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
+/**
+ * Screen that provides detailed instructions on how to play the game.
+ *
+ * @author Earl Castillo (ecastil3)
+ */
 public class TutorialScreen extends GameScreen{
-    private final Observable<Void> mainmenu = new Observable<>();
 
-    //UI for TutorialScreen
-    private Table table;
-    private Table background;
-    private ScrollPane scroll;
+    /** Event returns to main menu. */
+    private final Observable<Void> mainmenu = new Observable<>();
 
     /**
      * @param batch  SpriteBatch to initialize the Stage with
@@ -27,7 +29,7 @@ public class TutorialScreen extends GameScreen{
     public TutorialScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
 
-        table = new Table();
+        Table table = new Table();
         int textWidth = 1800;
 
         //Adding information for Tutorial
@@ -40,7 +42,7 @@ public class TutorialScreen extends GameScreen{
                 "as well as improve or get exposed to your personal finance journey!", skin);
         Label mechanics = new Label("Game Play Mechanics:", skin);
         Label line2 = new Label("1. Each player will have a chance to move around the board and use items.", skin);
-        Label line3 = new Label("2. Using items and entering the shop must be performed before moving to a tile.", skin);
+        Label line3 = new Label("2. Using items and entering the shop (press I) must be performed before moving to a tile.", skin);
         Label line4 = new Label("3. After rolling a dice, A tile will be highlighted, the player must then click on the " +
                 "highlighted tile to move to the tile", skin);
         Label line5 = new Label("4. Tiles may be of 4 different types", skin);
@@ -60,7 +62,8 @@ public class TutorialScreen extends GameScreen{
         Label line18 = new Label("   -Players on loose coins on event or penalty nodes", skin);
         Label line19 = new Label("   -Stars only cost 100 coins to obtain", skin);
         Label line20 = new Label("At any point during the game, players can hit ESC and view their knowledge that they have learned", skin);
-        Label line21 = new Label("Hit ESC to go back to main menu", skin);
+        Label line21 = new Label("You can press CTRL+S to save the game on the board", skin);
+        Label line22 = new Label("Hit ESC to go back to main menu", skin);
 
         //Scale for titles and headers
         title.setFontScale(3);
@@ -97,6 +100,7 @@ public class TutorialScreen extends GameScreen{
         line19.setAlignment(Align.left);
         line20.setAlignment(Align.left);
         line21.setAlignment(Align.left);
+        line22.setAlignment(Align.left);
 
         //Adding to Title
         table.add(title).width(textWidth).center();
@@ -160,15 +164,17 @@ public class TutorialScreen extends GameScreen{
         table.add(line20).width(textWidth).left();
         table.row();
         table.add(line21).width(textWidth).left();
+        table.row();
+        table.add(line22).width(textWidth).left();
 
         //Adding to scroll pane
-        scroll = new ScrollPane(table, skin);
+        ScrollPane scroll = new ScrollPane(table, skin);
         scroll.setHeight(1000);
         scroll.setScrollBarPositions(false, true);
         scroll.setScrollbarsVisible(true);
 
         //Adding to background
-        background = new Table();
+        Table background = new Table();
         background.setFillParent(true);
         background.add(scroll).fillX().expandX();
 
@@ -185,8 +191,10 @@ public class TutorialScreen extends GameScreen{
         });
     }
 
+
     /**
-     * @param ob Adds listener to go back to main menu screen
+     * Assigns an observer to listen for the event to return to main menu.
+     * @param ob Observer to listen for event to return to main menu.
      */
     public void addBackToMenu(Observer<Void> ob) {mainmenu.addObserver(ob);}
 }

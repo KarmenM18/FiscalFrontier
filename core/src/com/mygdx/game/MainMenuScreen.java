@@ -1,16 +1,7 @@
-/*
- * Class to show options menu before going into the main game baord screen
- * - Continue button
- * - Play / New Game button
- * - Load Game button
- * - Teacher Panel button
- */
-
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -19,45 +10,87 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * The main menu screen. Handles all related functions including loading a save game and starting a new game.
+ * The main menu screen. Provides options to start a new game, load an existing game, open the instructor dashboard,
+ * view the game tutorial, view the high score table, and quit the application.
+ *
+ * @author Franck Limtung (flimtung)
+ * @author Joelene Hales (jhales5)
+ * @author Earl Castillo (ecastil3)
+ * @author Kevin Chen (kchen546)
  */
 public class MainMenuScreen extends GameScreen {
-    private Observable<Void> startGameEvent = new Observable<Void>();
-    private Observable<Void> continueGameEvent = new Observable<Void>();
-    private Observable<Void> instructorDashboardEvent = new Observable<Void>();
-    private Observable<Void> loadGameScreenEvent = new Observable<Void>();
-    private Observable<Void> highScoreScreenEvent = new Observable<Void>();
-    private Observable<Void> debugEvent = new Observable<>();
-    private Observable<Void> tutorialScreenEvent = new Observable<>();
 
-    private Texture backgroundAni;
-    private int width = 1920;
-    private int height = 1080;
-    private Table table;
-    private Table devs;
-    private Table background;
-    private TextButton quitButton;
-    private TextButton playButton;
-    private TextButton continueButton;
-    private TextButton instructorDashboardButton;
-    private TextButton loadGameButton;
-    private TextButton highScoreButton;
-    private TextButton tutorialButton;
-    private Button debugButton;
-
-    private Dialog confirmQuitDialog;
-    private Dialog instructorPasswordDialog;
-    private Dialog debugDialog;
-
-    /** Password to enter instructor dashboard. */
-    private static String correctInstructorPassword;
+    /* Events */
 
     /**
-     * Constructor.
+     * Event to start a new game. *
+     * @see NewGameScreen
+     */
+    private Observable<Void> startGameEvent = new Observable<Void>();
+    /** Event to resume the most recently saved game state. */
+    private Observable<Void> continueGameEvent = new Observable<Void>();
+    /** Event to load and resume a previously saved game state. */
+    private Observable<Void> loadGameScreenEvent = new Observable<Void>();
+    /**
+     * Event opens the instructor dashboard
+     * @see InstructorDashboardScreen
+     */
+    private Observable<Void> instructorDashboardEvent = new Observable<Void>();
+    /**
+     * Event opens the high score table.
+     * @see HighScoreScreen
+     */
+    private Observable<Void> highScoreScreenEvent = new Observable<Void>();
+    /** Event enables debug mode.*/
+    private Observable<Void> debugEvent = new Observable<>();
+    /** Event opens the tutorial screen. */
+    private Observable<Void> tutorialScreenEvent = new Observable<>();
+
+    /* Display */
+
+    /** Background animation */
+    private Texture backgroundAni;
+    /** Screen width. */
+    private int width = 1920;
+    /** Screen height. */
+    private int height = 1080;
+    /** Container for all UI elements */
+    private Table background;
+    /** Contains each button */
+    private Table table;
+    /** Container for developper information*/
+    private Table devs;
+
+    /** Button to quit the application. */
+    private TextButton quitButton;
+    /** Displays confirmation before exiting the application*/
+    private Dialog confirmQuitDialog;
+    /** Button to begin a new game.*/
+    private TextButton playButton;
+    /** Button to resume the most recently saved game. */
+    private TextButton continueButton;
+    /** Button to load a saved game state. */
+    private TextButton loadGameButton;
+    /** Button to open the instructor dashboard*/
+    private TextButton instructorDashboardButton;
+    /** Prompts for password to enter instructor dashboard. */
+    private Dialog instructorPasswordDialog;
+    /** Button to view high score list. */
+    private TextButton highScoreButton;
+    /** Button to open game tutorial screen. */
+    private TextButton tutorialButton;
+    /** Hidden button to enter debug mode. */
+    private Button debugButton;
+    /** Prompts for password to enter debug mode*/
+    private Dialog debugDialog;
+
+
+
+
+    /**
+     * Constructor initializes the main menu screen.
      *
      * @param batch the SpriteBatch used for rendering
      * @param assets the AssetManager loaded with all necessary assets
@@ -65,8 +98,6 @@ public class MainMenuScreen extends GameScreen {
     public MainMenuScreen(SpriteBatch batch, AssetManager assets) {
         super(batch, assets);
         int textWidth = 100;
-
-        correctInstructorPassword = "CS2212";
 
         // Setup GUI
         background = new Table();
@@ -161,7 +192,7 @@ public class MainMenuScreen extends GameScreen {
 
             String inputPassword = password.getText();
 
-            if (inputPassword.equals(correctInstructorPassword)) {  // Correct password entered
+            if (inputPassword.equals(Config.getInstance().getInstructorPassword())) {  // Correct password entered
                 instructorPasswordDialog.hide();
                 instructorDashboardEvent.notifyObservers(null);
             }
@@ -289,12 +320,48 @@ public class MainMenuScreen extends GameScreen {
         debugDialog.getButtonTable().add(debugContinueButton);
     }
 
-    // Listener setters
+
+    /* Event listeners */
+
+    /**
+     * Assigns an observer to listen for the event to start a new game.
+     * @param ob Observer to listen for the event to start a new game.
+     */
     public void addStartGameListener(Observer<Void> ob) { startGameEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to continue the most recently saved game state.
+     * @param ob Observer to listen for the event to continue the most recently saved game state.
+     */
     public void addContinueGameListener(Observer<Void> ob) { continueGameEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to open the instructor dashboard.
+     * @param ob Observer to listen for the event to open the instructor dashboard.
+     */
     public void addInstructorDashboardListener(Observer<Void> ob) { instructorDashboardEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to load and resume saved game state.
+     * @param ob Observer to listen for the event to load and resume a saved game state.
+     */
     public void addLoadGameListener(Observer<Void> ob) { loadGameScreenEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to view high score list screen.
+     * @param ob Observer to listen for the event to view high score list screen.
+     */
     public void addHighScoreListener(Observer<Void> ob) { highScoreScreenEvent.addObserver(ob); }
+
+    /**
+     * Assigns an observer to listen for the event to view the game's tutorial.
+     * @param ob Observer to listen for the event to view the game tutorial.
+     */
     public void addTutorialScreenListener(Observer<Void> ob) {tutorialScreenEvent.addObserver(ob);}
+
+    /**
+     * Assigns an observer to listen for the event to enter debug mode.
+     * @param ob Observer to listen for the event to enter debug mode.
+     */
     public void addDebugListener(Observer<Void> ob) { debugEvent.addObserver(ob); }
 }

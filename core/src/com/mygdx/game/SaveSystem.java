@@ -1,22 +1,27 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Class used to save and load game states.
+ *
+ * @author Franck Limtung (flimtung)
+ */
 public class SaveSystem {
-    Json json = new Json();
 
+    /** Object used to read/write game state data to/from file. */
+    private final Json json = new Json();
+
+    /**
+     * Initialize the save system. Includes special treatment of texture objects.
+     */
     public SaveSystem() {
         // Textures don't support serialization. We skip textures and reconstruct them after loading
         json.setSerializer(Texture.class, new Json.Serializer<Texture>() {
