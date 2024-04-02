@@ -24,7 +24,7 @@ maximum score achieved, and knowledge base.
 Instructors can monitor their students' progress using the Instructor Dashboard. This dashboard displays information 
 about students' levels, high scores, lifetime scores, and the number of educational tips unlocked. Instructors can 
 manage student profiles, including adding new profiles, editing existing ones, and removing profiles.
-
+The Instructor dashboard password is "CS2212".
 
 ### High Score Table 🏆
 The High Score Table automatically updates after each game, tracking the top five scores in two categories: highest 
@@ -53,7 +53,7 @@ every turn, depending on their volatility.
 The pause menu enables players to save or load games, view their knowledge catalog, or access the shop. The debug mode, 
 activated with a hidden button and password, allows for modifying player stats, changing tile types, skipping rounds, 
 and accessing debug options during gameplay.
-
+The debug mode can be activated by pressing a partially transparent button in the lower right corner of the screen, and entering the password "noclip".
 
 ### End Screen and High Score Update 
 After completing a game, players are shown an end screen listing their scores and achievements. All saves linked to that 
@@ -78,4 +78,14 @@ equips you with the knowledge and skills to make smart financial decisions. :)
 - Then click on "Edit Configurations" on the top right in Intellij. 
 - Add a new Gradle configuration from the + in the top left. 
 - under the Run field type "run" and click okay. 
-- Click on the green Play Icon in the top right corner to run the game. 
+- Click on the green Play Icon in the top right corner to run the game.
+- To run tests, add a new Gradle configuration and type "test".
+### Source code information:
+- The Javadoc is located in the `JavaDocOutput` folder
+- Source files are located in `core/src/`
+- Test source files are located in `core/test`
+
+### Libraries used:
+- LibGDX Version 1.12.1 https://libgdx.com/
+- Raeleus Stripe 1.4.5 https://github.com/raeleus/stripe
+- Mockito 4.2.0 https://site.mockito.org/
