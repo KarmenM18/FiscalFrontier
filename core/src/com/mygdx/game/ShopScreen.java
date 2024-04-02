@@ -1,6 +1,3 @@
-/*
-TODO: Documentation
- */
 
 package com.mygdx.game;
 
@@ -16,6 +13,18 @@ import com.mygdx.game.Observer.Observable;
 import com.mygdx.game.Observer.Observer;
 
 import java.text.DecimalFormat;
+/**
+ * The Shop Screen; page where stock information is shown, and buying/selling operations occur. Players can also
+ * purchase Items, which depends on whether the Player has enough coins to make purchases.
+ * <br><br>
+ * Contains code for UI with buttons to buy and sell stocks, shows the user's balance before and after buying or selling
+ * their stocks, displays all stocks available in the market, and makes updates to Player info based on how they interact
+ * with ShopScreen stocks/items.
+ *
+ * @see GameScreen
+ * @see PlayerProfile
+ *
+ */
 
 public class ShopScreen extends GameScreen {
     private Observable<Void> boardEvent = new Observable<Void>();
