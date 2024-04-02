@@ -6,6 +6,12 @@ import com.mygdx.game.GameState;
 import com.mygdx.game.Items.Item;
 import com.mygdx.game.Player;
 
+/**
+ * Creates a MultiDice Item that can be accessed through the ShopScreen.
+ * @author Franck Limtung (flimtung)
+ * @author Kevin Chen (kchen546)
+ */
+
 public class MultiDice extends Item {
     public MultiDice(Skin skin){
         super("MultiDice", false, skin);
