@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 /**
  * This Item allows a Player to freeze another Player for a turn
+ * @author Franck Limtung (flimtung)
  */
 public class FreezeItem extends Item {
     transient GameState gameState; // Transient, only set when use() is activated and used in the dialog

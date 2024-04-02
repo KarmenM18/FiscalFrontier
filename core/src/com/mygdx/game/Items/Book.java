@@ -5,6 +5,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.mygdx.game.GameState;
 import com.mygdx.game.Player;
 
+/**
+ * Creates a Book item to be added to the ShopScreen.
+ * @author Franck Limtung (flimtung)
+ * @author Karmen Minhas (kminhas7)
+ * @author Kevin Chen (kchen546)
+ */
+
 public class Book extends Item{
 
     /**

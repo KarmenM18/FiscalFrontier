@@ -28,8 +28,11 @@ import java.text.DecimalFormat;
  * with ShopScreen stocks/items.
  *
  * @see GameScreen
- * @see PlayerProfile
+ * @link PlayerProfile
  *
+ * @author Karmen Minhas (kminhas7)
+ * @author Earl Castillo (ecastil3)
+ * @author Franck Limtung (flimtung)
  */
 
 /**

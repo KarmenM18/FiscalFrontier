@@ -17,6 +17,9 @@ import com.mygdx.game.Player;
  * checks whether an item is passive or not. Items are linked and displayed to the ShopScreen, which contains the
  * interface for the user to navigate, view, and select items to purchase, while considering the amount of coins they
  * have to make a given purchase.
+ *
+ * @author Karmen Minhas (kminhas7)
+ * @author Franck Limtung (flimtung)
  */
 
 public class Item {
@@ -27,7 +30,7 @@ public class Item {
     protected String description; // A brief description of the item
 
     /**
-     * PURPOSE: Standard constructor
+     * Standard constructor
      * @param name the Item's name
      * @param passive whether the Item is passive or active
      * @param skin skin to use to style the dialog box
@@ -48,7 +51,7 @@ public class Item {
     }
 
     /**
-     * PURPOSE: Constructor with omitted passive parameter. Will default to not passive.
+     * Constructor with omitted passive parameter. Will default to not passive.
      * @param name the Item's name
      * @param skin skin to use to style the dialog box
      */
@@ -58,12 +61,12 @@ public class Item {
     }
 
     /**
-     * PURPOSE: No-arg constructor for deserialization
+     * No-arg constructor for deserialization
      */
     protected Item() {}
 
     /**
-     * PURPOSE: Creates and presents graphical display box that appears when an item is activated
+     * Creates and presents graphical display box that appears when an item is activated
      * @param skin to style the dialog box that appears
      */
     public void loadTextures(Skin skin) {

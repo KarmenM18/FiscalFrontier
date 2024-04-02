@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 /**
  * The Bike allows the player to go to any tile on the map in one move.
+ * @author Franck Limtung (flimtung)
  */
 public class Bike extends Item {
     /**
