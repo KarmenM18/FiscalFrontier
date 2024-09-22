@@ -4,6 +4,8 @@ Kevin Chen (kchen546)
 
 Welcome to Fiscal Frontier, a financial education game developed by Group 73 as our final project for CS 2212.
 
+Demo Video: https://youtu.be/cwU87hQf9q0
+
 ### Overview 🌍
 The Fiscal Frontier is designed to take players on a journey to explore and enhance their personal finance skills, practice 
 financial decision-making, while also exposing them to a simulated stock market. The gameplay is reminiscent of Mario 
